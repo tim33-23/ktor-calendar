@@ -1,5 +1,6 @@
 package com.example.plugins
 
+import com.example.plugins.routing.IndexData
 import com.example.services.ElectionsService
 import io.ktor.server.auth.*
 import io.ktor.util.*

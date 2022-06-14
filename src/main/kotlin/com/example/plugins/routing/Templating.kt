@@ -1,4 +1,4 @@
-package com.example.plugins
+package com.example.plugins.routing
 
 import freemarker.cache.*
 import io.ktor.server.freemarker.*
