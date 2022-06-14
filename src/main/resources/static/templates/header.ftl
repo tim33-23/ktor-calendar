@@ -10,7 +10,7 @@
             </form>
             <ul class="nav">
                 <li class="nav-item"><a href="/login" class="nav-link link-dark px-2">Вход</a></li>
-                <li class="nav-item"><a href="/registration" class="nav-link link-dark px-2">Регистрация</a></li>
+                <li class="nav-item"><a href="/electionsForRegistration" class="nav-link link-dark px-2">Регистрация</a></li>
             </ul>
         </div>
     </nav>

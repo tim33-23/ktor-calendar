@@ -1,5 +1,6 @@
 package com.example.plugins
 
+import com.example.services.ElectionsService
 import io.ktor.server.auth.*
 import io.ktor.util.*
 import io.ktor.server.sessions.*
@@ -18,6 +19,8 @@ fun Application.configureSecurity() {
         }
     }
 
+    data class DataRegistration(val roles: List<String>, val election: String)
+
     routing {
         get("/session/increment") {
             val session = call.sessions.get<MySession>() ?: MySession()
@@ -30,5 +33,28 @@ fun Application.configureSecurity() {
         get("/login") {
             call.respond(FreeMarkerContent("templates/login.ftl", mapOf("data" to IndexData(listOf(1, 2, 3))), ""))
         }
+
+        get("/electionsForRegistration"){
+            val electionsService = ElectionsService()
+            call.respond(FreeMarkerContent("templates/electionsForRegistration.ftl", mapOf("elections" to electionsService.getElectionsForRegistration()), ""))
+        }
+
+        post("/registrationWithElection"){
+            val formParameters = call.receiveParameters()
+            val election = formParameters["election"].toString()
+            val roles = ElectionsService().getRoleForElection()
+            val dataRegistration = DataRegistration(roles, election)
+            call.respond(FreeMarkerContent("templates/registrationWithElection.ftl", mapOf("data" to dataRegistration)))
+        }
+
+        post("/registration"){
+            val formParameters = call.receiveParameters()
+            val election = "election"
+            val roles = listOf<String>("Кандидат", "СМИ")
+            val dataRegistration = DataRegistration(roles, election)
+            call.respond(FreeMarkerContent("templates/registrationWithElection.ftl", mapOf("data" to dataRegistration)))
+        }
     }
+
+
 }
