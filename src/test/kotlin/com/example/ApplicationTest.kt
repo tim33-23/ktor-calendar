@@ -18,7 +18,7 @@ import io.ktor.server.testing.*
 import com.example.plugins.*
 
 class ApplicationTest {
-    @Test
+    //@Test
     fun testRoot() = testApplication {
         application {
             configureRouting()
