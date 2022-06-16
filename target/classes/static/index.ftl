@@ -4,12 +4,17 @@
 <body>
 <#include "templates/header.ftl"/>
 <main>
-
-    <div class="container" align="center">
-        <h1>
-            Добро пожаловать!
-        </h1>
-    </div>
+    <#if role?has_content && role=="ЦИК">
+        <#include "templates/bodyForCEC.ftl"/>
+        <#elseif role?has_content && role!="ЦИК">
+            <#include "templates/generalBody.ftl"/>
+        <#else>
+        <div class="container" align="center">
+            <h1>
+                Добро пожаловать!
+            </h1>
+        </div>
+    </#if>
 </main>
 </body>
 </html>

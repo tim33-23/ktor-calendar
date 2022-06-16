@@ -7,6 +7,10 @@ class ElectionsService{
         return listOf<String>("Выборы главы администрации Липецкой области 08 сентября 2019 г.\t\t\t\t\t\n", "Выборы главы администрации Липецкой области 08 сентября 2020 г.\t\t\t\t\t\n")
     }
 
+    fun getAllElections(): List<String>{
+        return listOf<String>("Выборы главы администрации Липецкой области 08 сентября 2019 г.\t\t\t\t\t\n", "Выборы главы администрации Липецкой области 08 сентября 2020 г.\t\t\t\t\t\n")
+    }
+
     fun getRoleForElection(): List<String>{
         return listOf<String>("Кандидат", "СМИ")
     }

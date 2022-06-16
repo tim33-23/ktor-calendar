@@ -14,18 +14,10 @@ fun Application.configureRegistration() {
     data class DataRegistration(val roles: List<String>, val election: String)
 
     routing {
-/*        get("/session/increment") {
-            val session = call.sessions.get<MySession>() ?: MySession()
-            call.sessions.set(session.copy(count = session.count + 1))
-            call.respondText("Counter is ${session.count}. Refresh to increment.")
-        }*/
-    }
-
-    routing {
 
         get("/electionsForRegistration"){
             val electionsService = ElectionsService()
-            call.respond(FreeMarkerContent("templates/electionsForRegistration.ftl", mapOf("elections" to electionsService.getElectionsForRegistration()), ""))
+            call.respond(FreeMarkerContent("templates/registration/electionsForRegistration.ftl", mapOf("elections" to electionsService.getElectionsForRegistration()), ""))
         }
 
         post("/registrationWithElection"){
@@ -33,7 +25,7 @@ fun Application.configureRegistration() {
             val election = formParameters["election"].toString()
             val roles = ElectionsService().getRoleForElection()
             val dataRegistration = DataRegistration(roles, election)
-            call.respond(FreeMarkerContent("templates/registrationWithElection.ftl", mapOf("data" to dataRegistration)))
+            call.respond(FreeMarkerContent("templates/registration/registrationWithElection.ftl", mapOf("data" to dataRegistration)))
         }
 
         post("/registration"){
@@ -41,7 +33,7 @@ fun Application.configureRegistration() {
             val election = "election"
             val roles = listOf<String>("Кандидат", "СМИ")
             val dataRegistration = DataRegistration(roles, election)
-            call.respond(FreeMarkerContent("templates/registrationWithElection.ftl", mapOf("data" to dataRegistration)))
+            call.respond(FreeMarkerContent("templates/registration/registrationWithElection.ftl", mapOf("data" to dataRegistration)))
         }
     }
 

@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <#include "../templates/head-config.ftl"/>
+    <#include "../head-config.ftl"/>
 </head>
 <body>
-<#include "../templates/header.ftl"/>
+<#include "../header.ftl"/>
 <main>
     <div class="container" style="padding-top: 80px">
         <h2 align="center">

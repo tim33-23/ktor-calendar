@@ -1,37 +1,8 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <#include "../templates/head-config.ftl"/>
+    <#include "../head-config.ftl"/>
     <style>
-        .brd {
-            border: 2px solid black; /* Параметры границы */
-            background: #f0f0f0; /* Цвет фона */
-            padding: 0px; /* Поля вокруг текста */
-        }
-        .brdr {
-            border-top: 2px solid black;
-            border-bottom: 2px solid black;
-            border-left: 2px solid black;
-            border-right: 1px solid black; /* Параметры границы */
-            background: #f0f0f0; /* Цвет фона */
-            padding-top: 10px; /* Поля вокруг текста */
-        }
-        .brdl {
-            border-top: 2px solid black;
-            border-bottom: 2px solid black;
-            border-left: 1px solid black;
-            border-right: 2px solid black; /* Параметры границы */
-            background: #f0f0f0; /* Цвет фона */
-            padding: 0px; /* Поля вокруг текста */
-        }
-        .brdrl {
-            border-top: 2px solid black;
-            border-bottom: 2px solid black;
-            border-left: 1px solid black;
-            border-right: 1px solid black; /* Параметры границы */
-            background: #f0f0f0; /* Цвет фона */
-            padding: 0px; /* Поля вокруг текста */
-        }
         .mycol{
             padding: 0;
             margin: 0;
@@ -39,7 +10,7 @@
     </style>
 </head>
 <body>
-<#include "../templates/header.ftl"/>
+<#include "../header.ftl"/>
 <#assign section=""/>
 <main>
     <div class="container" style="margin-top: 10px;">
