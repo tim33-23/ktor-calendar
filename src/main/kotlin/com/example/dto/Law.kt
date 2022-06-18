@@ -7,18 +7,17 @@ import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 data class Law(val id: Int,
-                 val idSection: Int,
-                 val idElection: Int,
-                 val description: String,
-                 val dateBeginEvent: LocalDateTime,
-                 val duration: Int)
+                 val article: Int,
+                 val paragraph: Int,
+                 val part: Float,
+                 val scopeLegislation: String)
 
 object Laws : Table() {
     val id = integer("id_law").autoIncrement()
     val article = integer("article")
     val paragraph = float("paragraph")
-    val description = varchar("part", 1024)
-    val dateBeginEvent = datetime("scope_of_legislation")
+    val part = float("part")
+    val scopeLegislation = varchar("scope_of_legislation", 100)
 
     override val primaryKey = PrimaryKey(id)
 }
