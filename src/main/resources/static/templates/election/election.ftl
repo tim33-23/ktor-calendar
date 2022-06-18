@@ -16,7 +16,7 @@
     <div class="container" style="margin-top: 10px;">
         <div class="container">
             <h2 align="center">
-                <br>${election}
+                <br>${election.nameElection}
             </h2>
         </div>
         <div class="row mb-0">

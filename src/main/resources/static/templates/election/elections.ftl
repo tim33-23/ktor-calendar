@@ -15,10 +15,10 @@
             <div class="row mb-3">
                 <form class="row mb-3" method="post" action="/election">
                     <label for="election" style="display: none"></label>
-                    <input name="election" id="election" value="${election}" style="display: none">
+                    <input name="election" id="election" value="${election.id}" style="display: none">
                     <button class="row mb" style="border: none" type="submit">
                         <div class="col-md-8 themed-grid-col">
-                            <h4>${election}</h4>
+                            <h4>${election.nameElection}</h4>
                         </div>
                         <div class="col-md-4 themed-grid-col"><h4>2019г</h4></div>
                     </button>

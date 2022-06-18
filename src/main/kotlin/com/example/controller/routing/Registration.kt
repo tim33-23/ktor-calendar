@@ -1,6 +1,5 @@
 package com.example.plugins.routing
 
-import com.example.services.ElectionsService
 import io.ktor.server.application.*
 import io.ktor.server.freemarker.*
 import io.ktor.server.request.*

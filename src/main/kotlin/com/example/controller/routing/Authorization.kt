@@ -51,17 +51,11 @@ fun Application.configureAuthorization() {
             if (checkAccount(email, password)) {
                 val role = getRole(email)
                 val name = getProfile(email)
-                call.sessions.set(UserSession(email = email,role = getRole(email),name = name))
-                call.respond(FreeMarkerContent("index.ftl", mapOf("name" to name, "role" to role)))
-            } else {
+                call.sessions.set(UserSession(email = email, role = getRole(email), name = name))
                 call.respondRedirect("/")
-            }
-        }
-
-        authenticate("auth-session") {
-            get("/") {
-                val userSession = call.principal<UserSession>()
-                call.respond(FreeMarkerContent("index.ftl", mapOf("name" to userSession?.name, "role" to userSession?.role)))
+            } else {
+                val message = "Ошибка"
+                call.respond(FreeMarkerContent("templates/authorization/login.ftl", mapOf("message" to message)))
             }
         }
 
@@ -69,6 +63,18 @@ fun Application.configureAuthorization() {
         get("/logout") {
             call.sessions.clear<UserSession>()
             call.respondRedirect("/")
+        }
+
+        authenticate("auth-session") {
+            get("/") {
+                val userSession = call.principal<UserSession>()
+                call.respond(
+                    FreeMarkerContent(
+                        "index.ftl",
+                        mapOf("name" to userSession?.name, "role" to userSession?.role)
+                    )
+                )
+            }
         }
     }
 
