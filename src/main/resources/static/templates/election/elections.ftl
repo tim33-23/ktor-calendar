@@ -8,7 +8,7 @@
 <main>
     <div class="container" style="padding-top: 80px">
         <div class="row mb-3">
-            <div class="col-md-8 themed-grid-col"><h2>Наименование</h2></div>
+            <div class="col-md-8 themed-grid-col"><h2>Название</h2></div>
             <div class="col-md-4 themed-grid-col"><h2>Дата проведения</h2></div>
         </div>
         <#list elections as election>
@@ -20,7 +20,7 @@
                         <div class="col-md-8 themed-grid-col">
                             <h4>${election.nameElection}</h4>
                         </div>
-                        <div class="col-md-4 themed-grid-col"><h4>2019г</h4></div>
+                        <div class="col-md-4 themed-grid-col"><h4>${election.dateBeginElection}</h4></div>
                     </button>
                 </form>
             </div>

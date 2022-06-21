@@ -1,6 +1,6 @@
 package com.example.dao
 
-import com.example.dto.Elections
+import com.example.dto.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -17,7 +17,17 @@ object DatabaseFactory {
         val password = "175293"
         val database = Database.connect(jdbcURL, driverClassName, user, password)
         transaction(database) {
+            SchemaUtils.create(Describeds)
             SchemaUtils.create(Elections)
+            SchemaUtils.create(Events)
+            //SchemaUtils.create(EventsWithSectionsAndLaws)
+            SchemaUtils.create(Laws)
+            SchemaUtils.create(NextEvents)
+            SchemaUtils.create(Participants)
+            SchemaUtils.create(Responsibles)
+            SchemaUtils.create(Roles)
+            SchemaUtils.create(Sections)
+
         }
     }
 

@@ -1,13 +1,11 @@
 package com.example.dao
 
-import com.example.dto.Election
-import com.example.dto.Event
-import com.example.dto.Participant
-import com.example.dto.Participants
+import com.example.dto.*
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
-import sun.security.util.Password
 
 interface DAOFacade {
+
 
     //Election
     suspend fun allElections(): List<Election>
@@ -19,23 +17,61 @@ interface DAOFacade {
 
     //Event
     suspend fun allEvents(): List<Event>
-    suspend fun eventsForElection(): List<Event>
+    suspend fun eventsForElection(idElection: Int): List<Event>
     suspend fun event(id: Int): Event?
-    suspend fun addNewEvent(nameElection: String, dataBeginElection: LocalDateTime): Event?
+    suspend fun addNewEvent(idElection: Int,
+                            idSection: Int,
+                            description: String,
+                            dataBeginEvent: LocalDateTime,
+                            duration: Int): Event?
+
     suspend fun editEvent(id: Int,
-                          idSection: Int,
                           idElection: Int,
+                          idSection: Int,
                           description: String,
                           dateBeginEvent: LocalDateTime,
                           duration: Int): Boolean
+
     suspend fun deleteEvent(id: Int): Boolean
 
 
     //Participant
     suspend fun participant(email: String, password: String): Participant?
-    suspend fun addNewParticipant(nameElection: String, dataBeginElection: LocalDateTime): Participant?
-    suspend fun editParticipant(id: Int, nameElection: String, dataBeginElection: LocalDateTime): Boolean
+    suspend fun addNewParticipant(surname: String?,
+                                  name: String,
+                                  middleName: String?,
+                                  email: String,
+                                  password: String): Participant?
+
+    suspend fun editParticipant(surname: String?,
+                                name: String,
+                                middleName: String?,
+                                email: String,
+                                password: String): Boolean
     suspend fun deleteParticipant(id: Int): Boolean
 
+    //Role
+    suspend fun role(id: Int): Role?
+    suspend fun rolesForElection(idElection: Int): List<Role>
+    suspend fun rolesForEvent(idEvent: Int): List<Role>
 
+    //Section
+    suspend fun section(idSection: Int): Section?
+    suspend fun sectionsForEvents(events: List<Event>): List<Section>
+    suspend fun sectionsForElection(election: Election): List<Section>
+
+    //Law
+    suspend fun law(id: Int): Law?
+    suspend fun allLaws(): List<Law>
+    suspend fun lawsForEvent(idEvent: Int): List<Law>
+
+    //complex
+    suspend fun eventsWithSectionAndLows(election: Election): List<EventsWithSectionsAndLaw>?
+    suspend fun addNewEventWithSectionAndLow(election: Election,
+                                             section: Section,
+                                             law: Law,
+                                             role: Role,
+                                             description: String,
+                                             dataBeginEvent: LocalDate,
+                                             duration: Int, idPreviewEvent: Int?): Boolean
 }

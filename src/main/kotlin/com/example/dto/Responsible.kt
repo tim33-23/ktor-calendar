@@ -11,7 +11,7 @@ data class Responsible(val idRole: Int, val idEvent: Int)
 
 object Responsibles: Table() {
     val idRole = integer("id_role").references(Roles.id)
-    val idEvent = integer("id_Event").references(Events.id)
+    val idEvent = integer("id_event").references(Events.id)
     
     override val primaryKey = PrimaryKey(arrayOf(idRole, idEvent))
 }

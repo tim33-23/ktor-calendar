@@ -11,7 +11,7 @@ data class Described(val idEvent: Int, val idLaw: Int)
 
 object Describeds: Table() {
     val idEvent = integer("id_event").references(Events.id)
-    val idLaw = integer("id_Event").references(Laws.id)
+    val idLaw = integer("id_law").references(Laws.id)
 
     override val primaryKey = PrimaryKey(arrayOf(idEvent, idLaw))
 }

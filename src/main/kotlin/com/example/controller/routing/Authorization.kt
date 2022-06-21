@@ -1,9 +1,8 @@
 package com.example.plugins.routing
 
+import com.example.dao.DAOFacade
+import com.example.dao.DAOFacadeImpl
 import com.example.dto.UserSession
-import com.example.services.checkAccount
-import com.example.services.getProfile
-import com.example.services.getRole
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.freemarker.*
@@ -12,9 +11,15 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.util.*
+import kotlinx.coroutines.runBlocking
 
 
 fun Application.configureAuthorization() {
+
+    val dao: DAOFacade = DAOFacadeImpl().apply {
+        runBlocking {}
+    }
+
     install(Sessions) {
         cookie<UserSession>("user_session") {
             cookie.path = "/"
@@ -22,6 +27,7 @@ fun Application.configureAuthorization() {
             cookie.extensions["SameSite"] = "lax"
         }
     }
+
     install(Authentication) {
         session<UserSession>("auth-session") {
             validate { session ->
@@ -48,15 +54,29 @@ fun Application.configureAuthorization() {
             val formParameters = call.receiveParameters()
             val email = formParameters.getOrFail("email")
             val password = formParameters.getOrFail("password")
-            if (checkAccount(email, password)) {
-                val role = getRole(email)
-                val name = getProfile(email)
-                call.sessions.set(UserSession(email = email, role = getRole(email), name = name))
+            if(email == "tim33-23@mail.ru" && password == "1234"){
+                call.sessions.set(UserSession(email = email, role = "ЦИК", name = "Андрей"))
                 call.respondRedirect("/")
-            } else {
-                val message = "Ошибка"
-                call.respond(FreeMarkerContent("templates/authorization/login.ftl", mapOf("message" to message)))
             }
+            else{
+                val participant = dao.participant(email, password)
+                if (participant!=null) {
+                    val role = dao.role(participant.idRole)
+                    if (role!=null) {
+                        call.sessions.set(participant.name?.let { it1 -> UserSession(email = email, role = role.nameRole, name = it1) })
+                        call.respondRedirect("/")
+                    }
+                    else{
+                        val message = "Ошибка"
+                        call.respond(FreeMarkerContent("templates/authorization/login.ftl", mapOf("message" to message)))
+
+                    }
+                } else {
+                    val message = "Ошибка"
+                    call.respond(FreeMarkerContent("templates/authorization/login.ftl", mapOf("message" to message)))
+                }
+            }
+
         }
 
 

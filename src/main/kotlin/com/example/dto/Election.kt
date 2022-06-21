@@ -8,6 +8,9 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 data class Election(val id: Int, val nameElection: String, val dateBeginElection: LocalDateTime)
 
+data class ElectionForFremarker(val id: Int, val nameElection: String, val dateBeginElection: String)
+
+
 object Elections : Table() {
     val id = integer("id_election").autoIncrement()
     val nameElection = varchar("name_election", 1024)

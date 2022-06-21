@@ -3,6 +3,9 @@ package com.example.plugins
 import com.example.converts.DateFormat
 import com.example.dao.DAOFacade
 import com.example.dao.DAOFacadeImpl
+import com.example.dto.Election
+import com.example.dto.ElectionForFremarker
+import com.example.dto.EventsWithSectionsAndLawAndDateInString
 import com.example.dto.UserSession
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -22,6 +25,10 @@ fun Application.configureElection() {
         runBlocking {}
     }
 
+    fun getElectionForTemlates(election: Election) : ElectionForFremarker {
+        return ElectionForFremarker(election.id, election.nameElection, DateFormat().format(election.dateBeginElection))
+    }
+
 
     routing {
         // Static plugin. Try to access `/static/index.ftl`
@@ -32,42 +39,176 @@ fun Application.configureElection() {
         authenticate("auth-session") {
             get("/elections") {
                 val userSession = call.principal<UserSession>()
+                val elections = dao.allElections();
+                val electionsForFreemarker = mutableListOf<ElectionForFremarker>()
+                for (election in elections) {
+                    electionsForFreemarker += ElectionForFremarker(
+                        election.id,
+                        election.nameElection,
+                        DateFormat().format(election.dateBeginElection)
+                    )
+                }
                 call.respond(
                     FreeMarkerContent(
                         "templates/election/elections.ftl",
-                        mapOf("elections" to dao.allElections(), "name" to userSession?.name, "role" to userSession?.role)
+                        mapOf(
+                            "elections" to electionsForFreemarker,
+                            "name" to userSession?.name,
+                            "role" to userSession?.role
+                        )
                     )
                 )
             }
-
 
             post("/election") {
                 val userSession = call.principal<UserSession>()
                 val formParameters = call.receiveParameters()
                 val idElection = formParameters["election"].toString().toInt()
                 val election = dao.election(idElection)
-                val events = dao.allEvents()
-                call.respond(
-                    FreeMarkerContent(
-                        "templates/election/election.ftl",
-                        mapOf("events" to events, "election" to election, "name" to userSession?.name, "role" to userSession?.role)
+                if (election != null) {
+                    val events = dao.eventsWithSectionAndLows(election)
+                    var eventsForFreeMarker: List<EventsWithSectionsAndLawAndDateInString> = mutableListOf()
+                    if (events != null) {
+                        for (event in events) {
+                            val eventForFreeMarker = EventsWithSectionsAndLawAndDateInString(
+                                event.idEvent,
+                                event.nameSection,
+                                event.description,
+                                DateFormat().format(event.dateBeginEvent),
+                                DateFormat().format(event.dateBeginEvent, event.duration),
+                                event.laws,
+                                event.roles
+                            )
+                            eventsForFreeMarker += eventForFreeMarker
+                        }
+                    }
+                    val electionForFreemarker = ElectionForFremarker(
+                        election.id,
+                        election.nameElection,
+                        DateFormat().format(election.dateBeginElection)
                     )
-                )
+                    call.respond(
+                        FreeMarkerContent(
+                            "templates/election/election.ftl",
+                            mapOf(
+                                "events" to eventsForFreeMarker,
+                                "election" to electionForFreemarker,
+                                "name" to userSession?.name,
+                                "role" to userSession?.role
+                            )
+                        )
+                    )
+                } else {
+                    val elections = dao.allElections()
+                    val electionsForFreemarker = mutableListOf<ElectionForFremarker>()
+                    for (oneElection in elections) {
+                        electionsForFreemarker += ElectionForFremarker(
+                            oneElection.id,
+                            oneElection.nameElection,
+                            DateFormat().format(oneElection.dateBeginElection)
+                        )
+                    }
+                    call.respond(
+                        FreeMarkerContent(
+                            "templates/elections.ftl",
+                            mapOf(
+                                "message" to "Данный календарный план не найдед",
+                                "elections" to electionsForFreemarker,
+                                "name" to userSession?.name,
+                                "role" to userSession?.role
+                            )
+                        )
+                    )
+                }
             }
 
-            get("/editElections") {
+            get("/editElection") {
                 val userSession = call.principal<UserSession>()
-                call.respond(
-                    FreeMarkerContent(
-                        "templates/election/elections.ftl",
-                        mapOf("elections" to dao.allElections(), "name" to userSession?.name, "role" to userSession?.role)
+                if (userSession?.role == "ЦИК" || userSession?.role == "ТИК") {
+                    val idElection = call.request.queryParameters["idElection"]?.toIntOrNull()
+                    if (idElection != null) {
+                        val election = dao.election(idElection)
+                        if (election != null) {
+                            val sections = dao.sectionsForElection(election)
+                            val roles = dao.rolesForElection(election.id)
+                            val laws = dao.allLaws()
+                            val events = dao.eventsForElection(election.id)
+                            call.respond(
+                                FreeMarkerContent(
+                                    "templates/election/editElection.ftl",
+                                    mapOf(
+                                        "sections" to sections,
+                                        "roles" to roles,
+                                        "laws" to laws,
+                                        "events" to events,
+                                        "election" to election?.let { it1 -> getElectionForTemlates(it1) },
+                                        "name" to userSession.name,
+                                        "role" to userSession.role
+                                    )
+                                )
+                            )
+                        }
+                        call.respond(
+                            FreeMarkerContent(
+                                "templates/election/elections.ftl",
+                                mapOf(
+                                    "message" to "Календарный план не найден",
+                                    "election" to election?.let { it1 -> getElectionForTemlates(it1) },
+                                    "name" to userSession.name,
+                                    "role" to userSession.role
+                                )
+                            )
+                        )
+                    } else {
+                        call.respond(
+                            FreeMarkerContent(
+                                "index.ftl",
+                                mapOf(
+                                    "message" to "Календарный план не найден",
+                                    "name" to userSession.name,
+                                    "role" to userSession.role
+                                )
+                            )
+                        )
+                    }
+                } else {
+                    call.respond(
+                        FreeMarkerContent(
+                            "index.ftl",
+                            mapOf("name" to userSession?.name, "role" to userSession?.role)
+                        )
                     )
-                )
+                }
             }
 
-            post("/editElection"){
-
+            post("/editElection") {
+                val userSession = call.principal<UserSession>()
+                if (userSession?.role == "ЦИК" || userSession?.role == "ТИК") {
+                    val formParameters = call.receiveParameters()
+                    val idElection = formParameters.getOrFail("idElection").toInt()
+                    val nameElection = formParameters.getOrFail("nameElection")
+                    val dateBegin = formParameters.getOrFail("dateBegin").toLocalDateTime()
+                    dao.editElection(idElection, nameElection, dateBegin)
+                    val election = dao.election(idElection)
+                    val dateTime = election?.dateBeginElection
+                    val dateTimeString = DateFormat().format(dateTime)
+                    call.respond(
+                        FreeMarkerContent(
+                            "templates/election/editElection.ftl",
+                            mapOf(
+                                "nameElection" to election?.nameElection,
+                                "dateBeginElection" to dateTimeString,
+                                "idElection" to election?.id,
+                                "name" to userSession.name,
+                                "role" to userSession.role
+                            )
+                        )
+                    )
+                } else {
+                    call.respondRedirect("/")
+                }
             }
+
 
             get("/createElection") {
                 val userSession = call.principal<UserSession>()
@@ -79,18 +220,28 @@ fun Application.configureElection() {
                 )
             }
 
-
-
             post("/createElection") {
                 val userSession = call.principal<UserSession>()
-                if(userSession?.role == "ЦИК" || userSession?.role == "ТИК"){
+                if (userSession?.role == "ЦИК" || userSession?.role == "ТИК") {
                     val formParameters = call.receiveParameters()
                     val nameElection = formParameters.getOrFail("nameElection")
                     val dateBegin = formParameters.getOrFail("dateBegin").toLocalDateTime()
                     val election = dao.addNewElection(nameElection, dateBegin)
-                    call.respondRedirect("/election/${election?.id}/editElection")
-                }
-                else{
+                    val dateTime = election?.dateBeginElection
+                    val dateTimeString = DateFormat().format(dateTime)
+                    call.respond(
+                        FreeMarkerContent(
+                            "templates/election/editElection.ftl",
+                            mapOf(
+                                "nameElection" to election?.nameElection,
+                                "dateBeginElection" to dateTimeString,
+                                "idElection" to election?.id,
+                                "name" to userSession.name,
+                                "role" to userSession.role
+                            )
+                        )
+                    )
+                } else {
                     call.respond(
                         FreeMarkerContent(
                             "index.ftl",
@@ -98,67 +249,21 @@ fun Application.configureElection() {
                         )
                     )
                 }
-
             }
 
-            get("/election/{id}"){
-                val userSession = call.principal<UserSession>()
-                val id = call.parameters.getOrFail<Int>("id").toInt()
-                call.respond(
-                    FreeMarkerContent(
-                        "templates/election/election.ftl",
-                        mapOf("election" to dao.election(id),
-                            "name" to userSession?.name,
-                            "role" to userSession?.role)))
-            }
 
-            get ("/election/{id}/editElection"){
+            get("/addEventsForElection") {
                 val userSession = call.principal<UserSession>()
-                val id = call.parameters.getOrFail<Int>("id").toInt()
-                val election = dao.election(id)
-                val dateTime = election?.dateBeginElection
-                val dateTimeString = DateFormat().format(dateTime)
                 call.respond(
                     FreeMarkerContent(
-                        "templates/election/editElection.ftl",
-                        mapOf("nameElection" to election?.nameElection,
-                            "dateBeginElection" to dateTimeString,
-                            "name" to userSession?.name,
-                            "role" to userSession?.role
-                        )
+                        "templates/election/elections.ftl",
+                        mapOf("name" to userSession?.name, "role" to userSession?.role)
                     )
                 )
             }
 
-            post("/election/{id}/editElection"){
-                val userSession = call.principal<UserSession>()
-                val id = call.parameters.getOrFail<Int>("id").toInt()
-                if(userSession?.role == "ЦИК" || userSession?.role == "ТИК"){
-                    val election = dao.election(id)
-                    val dateTime = election?.dateBeginElection
-                    val dateTimeString = DateFormat().format(dateTime)
-                    val formParameters = call.receiveParameters()
-                    val nameElection = formParameters.getOrFail("nameElection")
-                    val dateBegin = formParameters.getOrFail("dateBegin").toLocalDateTime()
-                    val chekEdit = dao.editElection(id, nameElection, dateBegin)
-                    call.respond(
-                        FreeMarkerContent(
-                            "templates/election/editElection.ftl",
-                            mapOf("nameElection" to election?.nameElection,
-                                "dateBeginElection" to dateTimeString,
-                                "name" to userSession.name,
-                                "role" to userSession.role
-                            )
-                        )
-                    )
-                }
-                else{
-                    call.respondRedirect("/")
-                }
-            }
-
         }
-
 
     }
 }
+

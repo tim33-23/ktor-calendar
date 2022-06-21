@@ -8,5 +8,7 @@ fun Application.applyAllConfigurations() {
     configureAuthorization()
     configureRegistration()
     configureElection()
+    configureRouting()
     configureTemplating()
+
 }
