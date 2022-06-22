@@ -117,7 +117,7 @@
                                         <div>
                                             <#list event.laws as law>
                                                 <p>
-                                                    ст ${law.article}
+                                                    <#if law.article?has_content>ст ${law.article}</#if>
                                                     <#if law.paragraph?has_content> п ${law.paragraph}</#if>
                                                     <#if law.part?has_content> ч ${law.part}</#if>
                                                     ${law.scopeLegislation}

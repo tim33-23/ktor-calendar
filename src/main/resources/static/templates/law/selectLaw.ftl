@@ -10,7 +10,7 @@
                 <select id="idLaw" name="idLaw" style="max-width: 100%">
                     <#list laws as law>
                         <option value="${law.id}">
-                            ст ${law.article}
+                            <#if law.article?has_content>ст ${law.article}</#if>
                             <#if law.paragraph?has_content> п ${law.paragraph}</#if>
                             <#if law.part?has_content> ч ${law.part}</#if>
                             <#if law.scopeLegislation?has_content> ${law.scopeLegislation}</#if>

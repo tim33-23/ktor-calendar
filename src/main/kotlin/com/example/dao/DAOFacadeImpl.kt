@@ -7,8 +7,8 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.plus
 import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.kotlin.datetime.Day
-import kotlin.time.Duration.Companion.days
+import java.lang.Exception
+
 
 class DAOFacadeImpl : DAOFacade {
 
@@ -58,6 +58,17 @@ class DAOFacadeImpl : DAOFacade {
         id = row[Sections.id],
         nameSection = row[Sections.nameSection]
     )
+
+    private fun resultRowToResponsibles(row: ResultRow) = Responsible(
+        idRole = row[Responsibles.idRole],
+        idEvent = row[Responsibles.idEvent]
+    )
+
+    private fun resultRowToDescribes(row: ResultRow) = Described(
+        idEvent = row[Describeds.idEvent],
+        idLaw = row[Describeds.idLaw]
+    )
+
 
     private fun resultRowToLaw(row: ResultRow) = Law(
         id = row[Laws.id],
@@ -127,19 +138,26 @@ class DAOFacadeImpl : DAOFacade {
         idElection: Int,
         idSection: Int,
         description: String,
-        dateBeginEvent: LocalDateTime,
+        dateBeginEvent: LocalDate,
         duration: Int
-    ): Boolean {
-        TODO("Not yet implemented")
+    ): Boolean = dbQuery{
+        Events.update ({ Events.id eq id}){
+            it[Events.duration] = duration
+            it[Events.idElection] = idElection
+            it[Events.idSection] = idSection
+            it[Events.dateBeginEvent] = dateBeginEvent
+            it[Events.description] = description
+        }
+        return@dbQuery true
     }
 
     override suspend fun deleteEvent(id: Int): Boolean {
         TODO("Not yet implemented")
     }
 
-    override suspend fun participant(email: String, password: String): Participant? = dbQuery{
-        Participants.
-        select{Participants.email.eq(email) and Participants.password.eq(password)}
+    override suspend fun participant(email: String, password: String): Participant = dbQuery{
+        Participants
+            .select{Participants.email.eq(email) and Participants.password.eq(password)}
             .map(::resultRowToParticipant).first()
     }
 
@@ -188,6 +206,60 @@ class DAOFacadeImpl : DAOFacade {
         roles.toSet().toList()
     }
 
+    override suspend fun addRoleForEvent(idRole: Int, idEvent: Int): Boolean = dbQuery{
+        try{
+            val insertStatement = Responsibles.insert {
+                it[Responsibles.idRole] = idRole
+                it[Responsibles.idEvent] = idEvent
+            }.resultedValues?.singleOrNull()
+            insertStatement!=null
+        }
+        catch (ex: Exception){
+            return@dbQuery false
+        }
+    }
+
+    override suspend fun addNewRoleForEvent(nameRole: String, idEvent: Int): Boolean = dbQuery{
+
+        val role = Roles.insert {
+            it[Roles.nameRole] = nameRole
+        }.resultedValues?.singleOrNull()?.let(::resultRowToRole)
+
+        if(role!=null) {
+            val insertStatement = Responsibles.insert {
+                it[Responsibles.idRole] = role.id
+                it[Responsibles.idEvent] = idEvent
+            }.resultedValues?.singleOrNull()
+            insertStatement!= null
+        }
+        false
+    }
+
+    override suspend fun deleteRoleForEvent(idRole: Int, idEvent: Int): String? = dbQuery{
+        val roles = rolesForEvent(idEvent)
+        if(roles.size>1){
+            val responsibles = Responsibles
+                .select{Responsibles.idRole eq idRole}.map(::resultRowToResponsibles)
+            if(responsibles.size>1){
+                Responsibles.deleteWhere { (Responsibles.idEvent eq idEvent) and  (Responsibles.idRole eq idRole)}
+                return@dbQuery "Испонитель для мероприятия удален"
+            }
+            else{
+                val participant = Participants.select{Participants.idRole eq idRole}.map(::resultRowToParticipant)
+                if(participant.isEmpty()){
+                    Responsibles.deleteWhere { (Responsibles.idEvent eq idEvent) and  (Responsibles.idRole eq idRole)}
+                    Roles.deleteWhere { Roles.id eq idRole }
+                    return@dbQuery "Испонитель полностью удален"
+                }
+                else{
+                    return@dbQuery "Нельзя удалить исполнителя! Имеются зарегистрированные исполнители"
+                }
+            }
+
+        }
+        "Мероприятие должна иметь как минимум одну роль"
+    }
+
     override suspend fun section(idSection: Int): Section? = dbQuery{
         Sections
             .select {Sections.id eq idSection}
@@ -213,6 +285,78 @@ class DAOFacadeImpl : DAOFacade {
         sectionsForEvents(events)
     }
 
+    override suspend fun editedSectionForEvent(idSection: Int, idEvent: Int): String? = dbQuery {
+
+        val event = event(idEvent)
+        val oldSection = event?.let { section(it.idSection) }
+
+        if(oldSection!= null && event!=null){
+            val events = Events
+                .select{Events.idSection eq oldSection.id}
+                .map(::resultRowToEvent)
+
+            if(events.size>1){
+                Events.update( { (Events.id eq idEvent) } ){
+                    it[Events.description] = event.description
+                    it[Events.idSection] = idSection
+                    it[Events.duration] = event.duration
+                    it[Events.dateBeginEvent] = event.dateBeginEvent
+                    it[Events.idElection] = event.idElection
+                }
+                return@dbQuery "Мероприятие поменяла раздел"
+            }
+            else{
+                Events.update( { (Events.id eq idEvent) } ){
+                    it[Events.description] = event.description
+                    it[Events.idSection] = idSection
+                    it[Events.duration] = event.duration
+                    it[Events.dateBeginEvent] = event.dateBeginEvent
+                    it[Events.idElection] = event.idElection
+                }
+                Sections.deleteWhere { Sections.id eq oldSection.id }
+                return@dbQuery "Раздел полностью удален"
+            }
+        }
+
+        "Не удалось найти раздел или мероприятие"
+    }
+
+    override suspend fun editedNewSectionForEvent(nameSection: String, idEvent: Int): String? = dbQuery{
+
+        val event = event(idEvent)
+        val election = event?.let { election(it.idElection) }
+        val oldSection = event?.let { section(it.idSection) }
+
+        val sections = election?.let { sectionsForElection(it) }
+
+        if(sections!= null && sections.isNotEmpty()){
+            for(section in sections){
+                if(section.nameSection == nameSection){
+                    return@dbQuery "Данный раздел не является новым, выберите его из уже существующих"
+                }
+            }
+            val insertStatement = Sections.insert { it[Sections.nameSection] = nameSection }
+            val newSection = insertStatement.resultedValues?.singleOrNull()?.let(::resultRowSection)
+
+            if(newSection!=null){
+                Events.update({ Events.id eq idEvent }){
+                    it[Events.idSection] = newSection.id
+                }
+            }
+
+            if(oldSection!=null) {
+                val events = Events.select { Events.idSection eq oldSection.id }.map(::resultRowToEvent)
+                if (events.isEmpty()){
+                    Sections.deleteWhere { Sections.id eq oldSection.id }
+                    return@dbQuery "Раздел добавлен, старый полностью удален"
+                }
+            }
+            return@dbQuery "Раздел добавлен"
+        }
+
+        return@dbQuery "Разделы для выборов не найдены"
+    }
+
     override suspend fun law(id: Int): Law? = dbQuery{
         Laws
             .select {Laws.id eq id}
@@ -226,7 +370,71 @@ class DAOFacadeImpl : DAOFacade {
     }
 
     override suspend fun lawsForEvent(idEvent: Int): List<Law> = dbQuery{
+        Laws.join(Describeds, JoinType.INNER, Describeds.idLaw, Laws.id)
+            .select {Describeds.idEvent eq idEvent}.map(::resultRowToLaw)
+    }
 
+    override suspend fun addLawForEvent(idLaw: Int, idEvent: Int): String? = dbQuery{
+        try{
+            val insertStatement = Describeds.insert {
+                it[Describeds.idEvent] = idEvent
+                it[Describeds.idLaw] = idLaw
+            }.resultedValues?.singleOrNull()
+            if(insertStatement!=null)
+                return@dbQuery "Закон добавлен для мероприятия"
+            else
+                "Ошибка при добавление закона"
+        }
+        catch (ex: Exception){
+            return@dbQuery "Ошибка при добавление закона"
+        }
+    }
+
+    override suspend fun addNewLawForEvent(law: Law, idEvent: Int): String? = dbQuery{
+
+        val selectLaw = Laws
+            .select{
+                (Laws.article eq law.article) and (Laws.part eq law.part) and (Laws.paragraph eq law.paragraph) and (Laws.scopeLegislation eq law.scopeLegislation)
+            }
+            .map(::resultRowToLaw)
+
+        if(selectLaw.isNotEmpty())
+            return@dbQuery "Данный закон уже усть в списке"
+
+        val newLaw = Laws.insert {
+            it[Laws.paragraph] = law.paragraph
+            it[Laws.article] = law.article
+            it[Laws.scopeLegislation] = law.scopeLegislation
+            it[Laws.part] = law.part
+        }.resultedValues?.singleOrNull()?.let(::resultRowToLaw)
+
+        if(newLaw!=null) {
+            val insertStatement = Describeds.insert {
+                it[Describeds.idEvent] = idEvent
+                it[Describeds.idLaw] = newLaw.id
+            }.resultedValues?.singleOrNull()
+            if(insertStatement!= null)
+               return@dbQuery "Новый закон добавлен"
+        }
+        return@dbQuery "Ошибка при добавление закона!"
+    }
+
+    override suspend fun deletedLawForEvent(idLaw: Int, idEvent: Int): String? = dbQuery{
+        val laws = lawsForEvent(idEvent)
+        if(laws.size>1){
+            val described = Describeds
+                .select{Describeds.idLaw eq idLaw}.map(::resultRowToDescribes)
+            if(described.size>1){
+                Describeds.deleteWhere { (Describeds.idEvent eq idEvent) and  (Describeds.idLaw eq idLaw)}
+                return@dbQuery "Закон больше не регламентирует мероприятие"
+            }
+            else {
+                Describeds.deleteWhere { (Describeds.idEvent eq idEvent) and (Describeds.idLaw eq idLaw) }
+                Laws.deleteWhere { Laws.id eq idLaw }
+                return@dbQuery "Закон полностью удален"
+            }
+        }
+        "Мероприятие должно быть регламентированно как минимум одним законом"
     }
 
     override suspend fun eventsWithSectionAndLows(election: Election): List<EventsWithSectionsAndLaw>? = dbQuery{
@@ -244,7 +452,7 @@ class DAOFacadeImpl : DAOFacade {
             var roles = mutableListOf<String>()
             val r = events.select{
                 (Events.idElection eq election.id) and (Events.id eq event.idEvent)}
-                .map(::resultRowToRole)
+                .map(::resultRowToRole).toSet().toList()
             if(r.isNotEmpty())
             for(role in r){
                 roles+=role.nameRole
@@ -256,14 +464,14 @@ class DAOFacadeImpl : DAOFacade {
             var laws = mutableListOf<Law>()
             val listLaws = events.select{
                 (Events.idElection eq election.id) and (Events.id eq event.idEvent)}
-                .map(::resultRowToLaw)
+                .map(::resultRowToLaw).toSet().toList()
             if(listLaws.isNotEmpty())
                 for(law in listLaws){
-                    laws+=listLaws
+                    laws+=law
                 }
             event.laws = laws
         }
-        eventsWithRolesAndLaws
+        eventsWithRolesAndLaws.toSet().toList()
     }
 
     override suspend fun addNewEventWithSectionAndLow(

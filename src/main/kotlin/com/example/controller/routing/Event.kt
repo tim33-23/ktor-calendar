@@ -22,7 +22,7 @@ fun Application.configureRouting() {
         runBlocking {}
     }
 
-    fun getElectionForTemlates(election: Election) : ElectionForFremarker {
+    fun getElectionForTemlates(election: Election): ElectionForFremarker {
         return ElectionForFremarker(election.id, election.nameElection, DateFormat().format(election.dateBeginElection))
     }
 
@@ -110,8 +110,8 @@ fun Application.configureRouting() {
                             dao.addNewEventWithSectionAndLow(
                                 election,
                                 section,
-                                law,
-                                role,
+                                law!!,
+                                role!!,
                                 description,
                                 it1,
                                 durationEvent,
@@ -194,7 +194,7 @@ fun Application.configureRouting() {
                 val userSession = call.principal<UserSession>()
                 if (userSession?.role == "ЦИК" || userSession?.role == "ТИК") {
                     val idElection = call.request.queryParameters["idElection"]?.toIntOrNull()
-                    if(idElection != null) {
+                    if (idElection != null) {
                         val election = dao.election(idElection)
                         val events = election?.let { it1 -> dao.eventsWithSectionAndLows(it1) }
                         var eventsForFreeMarker: List<EventsWithSectionsAndLawAndDateInString> = mutableListOf()
@@ -215,7 +215,8 @@ fun Application.configureRouting() {
                         call.respond(
                             FreeMarkerContent(
                                 "templates/event/selectEventForEdited.ftl",
-                                mapOf("events" to eventsForFreeMarker,
+                                mapOf(
+                                    "events" to eventsForFreeMarker,
                                     "name" to userSession.name,
                                     "role" to userSession.role
                                 )
@@ -237,16 +238,17 @@ fun Application.configureRouting() {
                     val roles = event?.let { it1 -> dao.rolesForElection(it1.idElection) }
                     val rolesForEvent = dao.rolesForEvent(idEvent)
                     val laws = dao.allLaws()
-                    var lawsForEvent = dao.la
+                    val lawsForEvent = dao.lawsForEvent(idEvent)
+                    val electionForFremarker = election?.let { it1 -> getElectionForTemlates(it1) }
                     call.respond(
                         FreeMarkerContent(
                             "templates/event/editEvent.ftl",
                             mapOf(
-                                "election" to election,
+                                "election" to electionForFremarker,
                                 "sections" to sections,
                                 "roles" to roles,
                                 "rolesForEvent" to rolesForEvent,
-                                "lawsForEvent" to
+                                "lawsForEvent" to lawsForEvent,
                                 "laws" to laws,
                                 "event" to event,
                                 "name" to userSession.name,
@@ -255,9 +257,351 @@ fun Application.configureRouting() {
                         )
                     )
                 }
-                call.respondRedirect("/")
+                call.respond(
+                    FreeMarkerContent(
+                        "index.ftl",
+                        mapOf("name" to userSession?.name, "role" to userSession?.role)
+                    )
+                )
             }
 
+
+
+            post("/addRole") {
+                val userSession = call.principal<UserSession>()
+                if (userSession?.role == "ЦИК" || userSession?.role == "ТИК") {
+                    val formParameters = call.receiveParameters()
+                    val idEvent = formParameters.getOrFail("idEvent").toInt()
+                    val checkOnSelectionRole = formParameters["checkOnSelectionRole"]
+                    var role: Role? = null
+                    var message: String? = null
+                    var check: Boolean
+                    if (checkOnSelectionRole != null && formParameters["idRole"] != null) {
+                        val idRole = formParameters["idRole"].toString().toInt()
+                        role = dao.role(idRole)
+                        check = dao.addRoleForEvent(idRole, idEvent)
+                    } else {
+                        val nameRole = formParameters["createRole"].toString()
+                        val eventsForRole = dao.rolesForEvent(idEvent)
+                        var checkWhatEventHaveRole: Boolean = false
+                        for (ev in eventsForRole) {
+                            if (ev.nameRole == nameRole) {
+                                checkWhatEventHaveRole = true
+                            }
+                        }
+                        if (!checkWhatEventHaveRole && nameRole!="")
+                            check = dao.addNewRoleForEvent(nameRole, idEvent)
+                        else
+                            check = false
+                    }
+                    val event = dao.event(idEvent)
+                    val election = event?.let { it1 -> dao.election(it1.idElection) }
+                    val sections = election?.let { it1 -> dao.sectionsForElection(it1) }
+                    val roles = event?.let { it1 -> dao.rolesForElection(it1.idElection) }
+
+                    val rolesForEvent = dao.rolesForEvent(idEvent)
+                    val laws = dao.allLaws()
+                    val lawsForEvent = dao.lawsForEvent(idEvent)
+                    val electionForFremarker = election?.let { it1 -> getElectionForTemlates(it1) }
+                    if (check)
+                        message = "Роль добавлена"
+                    else
+                        message = "Проверьте правильность задания параметров для добавления роли"
+                    call.respond(
+                        FreeMarkerContent(
+                            "templates/event/editEvent.ftl",
+                            mapOf(
+                                "election" to electionForFremarker,
+                                "sections" to sections,
+                                "roles" to roles,
+                                "rolesForEvent" to rolesForEvent,
+                                "lawsForEvent" to lawsForEvent,
+                                "laws" to laws,
+                                "event" to event,
+                                "name" to userSession.name,
+                                "role" to userSession.role,
+                                "message" to message
+                            )
+                        )
+                    )
+                } else {
+                    call.respond(
+                        FreeMarkerContent(
+                            "index.ftl",
+                            mapOf("name" to userSession?.name, "role" to userSession?.role)
+                        )
+                    )
+                }
+
+            }
+
+            post("/deletedRole") {
+                val userSession = call.principal<UserSession>()
+                if (userSession?.role == "ЦИК" || userSession?.role == "ТИК") {
+                    val formParameters = call.receiveParameters()
+                    val idEvent = formParameters.getOrFail("idEvent").toInt()
+                    val idRole = formParameters.getOrFail("idRole").toInt()
+                    val message = dao.deleteRoleForEvent(idRole, idEvent)
+                    val event = dao.event(idEvent)
+                    val election = event?.let { it1 -> dao.election(it1.idElection) }
+                    val sections = election?.let { it1 -> dao.sectionsForElection(it1) }
+                    val roles = event?.let { it1 -> dao.rolesForElection(it1.idElection) }
+                    val rolesForEvent = dao.rolesForEvent(idEvent)
+                    val laws = dao.allLaws()
+                    val lawsForEvent = dao.lawsForEvent(idEvent)
+                    val electionForFremarker = election?.let { it1 -> getElectionForTemlates(it1) }
+                    call.respond(
+                        FreeMarkerContent(
+                            "templates/event/editEvent.ftl",
+                            mapOf(
+                                "election" to electionForFremarker,
+                                "sections" to sections,
+                                "roles" to roles,
+                                "rolesForEvent" to rolesForEvent,
+                                "lawsForEvent" to lawsForEvent,
+                                "laws" to laws,
+                                "event" to event,
+                                "name" to userSession.name,
+                                "role" to userSession.role,
+                                "message" to message
+                            )
+                        )
+                    )
+                } else {
+                    call.respond(
+                        FreeMarkerContent(
+                            "index.ftl",
+                            mapOf("name" to userSession?.name, "role" to userSession?.role)
+                        )
+                    )
+                }
+            }
+
+            post("/addLaw") {
+                val userSession = call.principal<UserSession>()
+                if (userSession?.role == "ЦИК" || userSession?.role == "ТИК") {
+                    val formParameters = call.receiveParameters()
+                    val idEvent = formParameters.getOrFail("idEvent").toInt()
+                    var message: String?
+                    val checkOnSelectionLaw = formParameters["checkOnSelectionLaw"]
+
+                    message = if (checkOnSelectionLaw != null) {
+                        val idLaw = formParameters["idLaw"].toString().toInt()
+                        dao.addLawForEvent(idLaw, idEvent)
+                    } else {
+                        val article = formParameters["article"]?.toIntOrNull()
+                        val paragraph = formParameters["paragraph"]?.toFloatOrNull()
+                        val part = formParameters["part"]?.toFloatOrNull()
+                        val scope = formParameters["scope"].toString()
+                        if(article==null && paragraph==null && part == null && scope.isEmpty()){
+                            "Все поля пустые"
+                        }
+                        else {
+                            val law = Law(-1, article, paragraph, part, scope)
+                            dao.addNewLawForEvent(law, idEvent)
+                        }
+                    }
+
+                    val event = dao.event(idEvent)
+                    val election = event?.let { it1 -> dao.election(it1.idElection) }
+                    val sections = election?.let { it1 -> dao.sectionsForElection(it1) }
+                    val roles = event?.let { it1 -> dao.rolesForElection(it1.idElection) }
+                    val rolesForEvent = dao.rolesForEvent(idEvent)
+                    val laws = dao.allLaws()
+                    val lawsForEvent = dao.lawsForEvent(idEvent)
+                    val electionForFremarker = election?.let { it1 -> getElectionForTemlates(it1) }
+                    call.respond(
+                        FreeMarkerContent(
+                            "templates/event/editEvent.ftl",
+                            mapOf(
+                                "election" to electionForFremarker,
+                                "sections" to sections,
+                                "roles" to roles,
+                                "rolesForEvent" to rolesForEvent,
+                                "lawsForEvent" to lawsForEvent,
+                                "laws" to laws,
+                                "event" to event,
+                                "name" to userSession.name,
+                                "role" to userSession.role,
+                                "message" to message
+                            )
+                        )
+                    )
+                } else {
+                    call.respond(
+                        FreeMarkerContent(
+                            "index.ftl",
+                            mapOf("name" to userSession?.name, "role" to userSession?.role)
+                        )
+                    )
+                }
+            }
+
+
+            post("/deletedLaw") {
+                val userSession = call.principal<UserSession>()
+                if (userSession?.role == "ЦИК" || userSession?.role == "ТИК") {
+                    val formParameters = call.receiveParameters()
+                    val idEvent = formParameters.getOrFail("idEvent").toInt()
+                    val idLaw = formParameters.getOrFail("idLaw").toInt()
+                    var message: String?
+
+                    message = dao.deletedLawForEvent(idLaw, idEvent)
+
+                    val event = dao.event(idEvent)
+                    val election = event?.let { it1 -> dao.election(it1.idElection) }
+                    val sections = election?.let { it1 -> dao.sectionsForElection(it1) }
+                    val roles = event?.let { it1 -> dao.rolesForElection(it1.idElection) }
+                    val rolesForEvent = dao.rolesForEvent(idEvent)
+                    val laws = dao.allLaws()
+                    val lawsForEvent = dao.lawsForEvent(idEvent)
+                    val electionForFremarker = election?.let { it1 -> getElectionForTemlates(it1) }
+                    call.respond(
+                        FreeMarkerContent(
+                            "templates/event/editEvent.ftl",
+                            mapOf(
+                                "election" to electionForFremarker,
+                                "sections" to sections,
+                                "roles" to roles,
+                                "rolesForEvent" to rolesForEvent,
+                                "lawsForEvent" to lawsForEvent,
+                                "laws" to laws,
+                                "event" to event,
+                                "name" to userSession.name,
+                                "role" to userSession.role,
+                                "message" to message
+                            )
+                        )
+                    )
+                } else {
+                    call.respond(
+                        FreeMarkerContent(
+                            "index.ftl",
+                            mapOf("name" to userSession?.name, "role" to userSession?.role)
+                        )
+                    )
+                }
+            }
+
+            post("/editSection") {
+                val userSession = call.principal<UserSession>()
+                if (userSession?.role == "ЦИК" || userSession?.role == "ТИК") {
+                    val formParameters = call.receiveParameters()
+                    val idEvent = formParameters.getOrFail("idEvent").toInt()
+                    var message: String?
+                    val checkOnSelectionSection = formParameters["checkOnSelectionSection"]
+
+                    message = if (checkOnSelectionSection != null) {
+                        val idSection = formParameters["idSection"].toString().toInt()
+                        dao.editedSectionForEvent(idSection, idEvent)
+                    } else {
+                        if (formParameters["nameSection"].toString() != "") {
+                            val nameSection = formParameters["nameSection"].toString()
+                            dao.editedNewSectionForEvent(nameSection, idEvent)
+                        } else {
+                            "Вы пытаетесь создать пустой раздел"
+                        }
+                    }
+
+                    val event = dao.event(idEvent)
+                    val election = event?.let { it1 -> dao.election(it1.idElection) }
+                    val sections = election?.let { it1 -> dao.sectionsForElection(it1) }
+                    val roles = event?.let { it1 -> dao.rolesForElection(it1.idElection) }
+                    val rolesForEvent = dao.rolesForEvent(idEvent)
+                    val laws = dao.allLaws()
+                    val lawsForEvent = dao.lawsForEvent(idEvent)
+                    val electionForFremarker = election?.let { it1 -> getElectionForTemlates(it1) }
+                    call.respond(
+                        FreeMarkerContent(
+                            "templates/event/editEvent.ftl",
+                            mapOf(
+                                "election" to electionForFremarker,
+                                "sections" to sections,
+                                "roles" to roles,
+                                "rolesForEvent" to rolesForEvent,
+                                "lawsForEvent" to lawsForEvent,
+                                "laws" to laws,
+                                "event" to event,
+                                "name" to userSession.name,
+                                "role" to userSession.role,
+                                "message" to message
+                            )
+                        )
+                    )
+                } else {
+                    call.respond(
+                        FreeMarkerContent(
+                            "index.ftl",
+                            mapOf("name" to userSession?.name, "role" to userSession?.role)
+                        )
+                    )
+                }
+            }
+
+            post("/editDescriptionEvent") {
+                val userSession = call.principal<UserSession>()
+                if (userSession?.role == "ЦИК" || userSession?.role == "ТИК") {
+                    val formParameters = call.receiveParameters()
+                    val idEvent = formParameters.getOrFail("idEvent").toInt()
+                    var message: String?
+                    val descriptionEvent = formParameters["descriptionEvent"].toString()
+
+                    message = if (descriptionEvent == "") {
+                        "Ошибка. Отсутствует описание мероприятия"
+                    } else {
+                        val event = dao.event(idEvent)
+                        if (event != null) {
+                            val check = dao.editEvent(
+                                event.id,
+                                event.idElection,
+                                event.idSection,
+                                descriptionEvent,
+                                event.dateBeginEvent,
+                                event.duration
+                            )
+                            if (check) {
+                                "Описание изменилось"
+                            }
+
+                            "Ошибка при изменении описания мероприятия"
+                        } else {
+                            "Ошибка при изменении описания мероприятия"
+                        }
+                    }
+                    val event = dao.event(idEvent)
+                    val election = event?.let { it1 -> dao.election(it1.idElection) }
+                    val sections = election?.let { it1 -> dao.sectionsForElection(it1) }
+                    val roles = event?.let { it1 -> dao.rolesForElection(it1.idElection) }
+                    val rolesForEvent = dao.rolesForEvent(idEvent)
+                    val laws = dao.allLaws()
+                    val lawsForEvent = dao.lawsForEvent(idEvent)
+                    val electionForFremarker = election?.let { it1 -> getElectionForTemlates(it1) }
+                    call.respond(
+                        FreeMarkerContent(
+                            "templates/event/editEvent.ftl",
+                            mapOf(
+                                "election" to electionForFremarker,
+                                "sections" to sections,
+                                "roles" to roles,
+                                "rolesForEvent" to rolesForEvent,
+                                "lawsForEvent" to lawsForEvent,
+                                "laws" to laws,
+                                "event" to event,
+                                "name" to userSession.name,
+                                "role" to userSession.role,
+                                "message" to message
+                            )
+                        )
+                    )
+                } else {
+                    call.respond(
+                        FreeMarkerContent(
+                            "index.ftl",
+                            mapOf("name" to userSession?.name, "role" to userSession?.role)
+                        )
+                    )
+                }
+            }
         }
     }
 }

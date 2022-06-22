@@ -29,7 +29,7 @@ interface DAOFacade {
                           idElection: Int,
                           idSection: Int,
                           description: String,
-                          dateBeginEvent: LocalDateTime,
+                          dateBeginEvent: LocalDate,
                           duration: Int): Boolean
 
     suspend fun deleteEvent(id: Int): Boolean
@@ -54,16 +54,26 @@ interface DAOFacade {
     suspend fun role(id: Int): Role?
     suspend fun rolesForElection(idElection: Int): List<Role>
     suspend fun rolesForEvent(idEvent: Int): List<Role>
+    suspend fun addRoleForEvent(idRole: Int, idEvent: Int): Boolean
+    suspend fun addNewRoleForEvent(nameRole: String, idEvent: Int): Boolean
+    suspend fun deleteRoleForEvent(idRole: Int, idEvent: Int): String?
+
 
     //Section
     suspend fun section(idSection: Int): Section?
     suspend fun sectionsForEvents(events: List<Event>): List<Section>
     suspend fun sectionsForElection(election: Election): List<Section>
+    suspend fun editedSectionForEvent(idSection: Int, idEvent: Int): String?
+    suspend fun editedNewSectionForEvent(nameSection: String, idEvent: Int): String?
+
 
     //Law
     suspend fun law(id: Int): Law?
     suspend fun allLaws(): List<Law>
     suspend fun lawsForEvent(idEvent: Int): List<Law>
+    suspend fun addLawForEvent(idLaw: Int, idEvent: Int): String?
+    suspend fun addNewLawForEvent(law: Law, idEvent: Int): String?
+    suspend fun deletedLawForEvent(idLaw: Int, idEvent: Int): String?
 
     //complex
     suspend fun eventsWithSectionAndLows(election: Election): List<EventsWithSectionsAndLaw>?
