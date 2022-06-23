@@ -33,6 +33,9 @@ interface DAOFacade {
                           duration: Int): Boolean
 
     suspend fun deleteEvent(id: Int): Boolean
+    suspend fun checkOnNextEvents(idEvent: Int): Boolean
+    suspend fun listNextEvents(idEvent: Int): List<NextEvent>
+
 
 
     //Participant
@@ -52,6 +55,7 @@ interface DAOFacade {
 
     //Role
     suspend fun role(id: Int): Role?
+    suspend fun updateRole(id : Int, nameRole: String, docum: String): Boolean
     suspend fun rolesForElection(idElection: Int): List<Role>
     suspend fun rolesForEvent(idEvent: Int): List<Role>
     suspend fun addRoleForEvent(idRole: Int, idEvent: Int): Boolean

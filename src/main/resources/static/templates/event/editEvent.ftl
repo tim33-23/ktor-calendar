@@ -28,7 +28,7 @@
                     </td>
                     <td class="col-md-3 themed-grid-col" style="border: 2px solid black">
                         <div align="center">
-                            <h1 style="font-size: 25px"><b>Срок исполнения</b></h1>
+                            <h1 style="font-size: 25px"><b>Период прохождения</b></h1>
                         </div>
                     </td>
                     <td class="col-md-3 themed-grid-col" style="border: 2px solid black">
@@ -58,7 +58,7 @@
                                 </td>
                                 <td class="col-md-3 themed-grid-col" style="border: 2px solid black">
                                     <div>
-                                        <p style="font-size: 18px">c ${event.dateBeginEvent} длительность ${event.duration}</p>
+                                        <p style="font-size: 18px">c ${event.dateBeginEvent} длительность ${event.duration} дней</p>
                                     </div>
                                 </td>
                                 <td class="col-md-3 themed-grid-col" style="border: 2px solid black">

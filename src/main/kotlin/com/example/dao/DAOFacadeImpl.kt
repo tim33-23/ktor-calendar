@@ -18,6 +18,11 @@ class DAOFacadeImpl : DAOFacade {
         dateBeginElection = row[Elections.dateBeginElection],
     )
 
+    private fun resultRowToNextEvent(row: ResultRow) = NextEvent(
+        id = row[NextEvents.id],
+        idPreviewEvent = row[NextEvents.idPreviewEvent],
+    )
+
     private fun resultRowToParticipant(row: ResultRow) = Participant(
         id = row[Participants.id],
         idRole = row[Participants.idRole],
@@ -151,8 +156,40 @@ class DAOFacadeImpl : DAOFacade {
         return@dbQuery true
     }
 
-    override suspend fun deleteEvent(id: Int): Boolean {
-        TODO("Not yet implemented")
+    override suspend fun deleteEvent(id: Int): Boolean = dbQuery{
+        val event = event(id)
+        val laws = lawsForEvent(id)
+        val roles = rolesForEvent(id)
+        val sections = event?.let { section(it.idSection) }
+        Describeds.deleteWhere { Describeds.idEvent eq id }
+        Responsibles.deleteWhere { Responsibles.idEvent eq id }
+        NextEvents.deleteWhere { (NextEvents.id eq id) or (NextEvents.idPreviewEvent eq id) }
+        for(role in roles){
+            deleteRoleForEvent(role.id, id)
+        }
+        for(law in laws){
+            deletedLawForEvent(law.id, id)
+        }
+
+        Events.deleteWhere { Events.id eq id }
+        return@dbQuery true
+    }
+
+    override suspend fun checkOnNextEvents(idEvent: Int): Boolean = dbQuery{
+        val nextEvents = NextEvents.select{
+            NextEvents.idPreviewEvent eq idEvent
+        }.map(::resultRowToNextEvent)
+
+        if(nextEvents.isEmpty())
+            false
+        true
+    }
+
+    override suspend fun listNextEvents(idEvent: Int): List<NextEvent> = dbQuery{
+        val nextEvents = NextEvents.select{
+            NextEvents.idPreviewEvent eq idEvent
+        }.map(::resultRowToNextEvent)
+        return@dbQuery nextEvents
     }
 
     override suspend fun participant(email: String, password: String): Participant = dbQuery{
@@ -190,6 +227,13 @@ class DAOFacadeImpl : DAOFacade {
         Roles.select { Roles.id eq id }
             .map(::resultRowToRole)
             .singleOrNull()
+    }
+
+    override suspend fun updateRole(id: Int, nameRole: String, docum: String): Boolean = dbQuery{
+        Roles.update ({ Roles.id eq id }){
+            it[Roles.nameRole] = nameRole
+            it[Roles.documents] = docum
+        } > 0
     }
 
     override suspend fun rolesForElection(idElection: Int): List<Role> = dbQuery{

@@ -12,15 +12,45 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.util.*
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.toLocalDate
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.*
+import kotlin.time.Duration.Companion.days
 
 fun Application.configureRouting() {
+
 
     val dao: DAOFacade = DAOFacadeImpl().apply {
         runBlocking {}
     }
+
+    suspend fun editeDateNextEvent(nextEvents: List<NextEvent>, dateEndPreviewEvent: LocalDate): Boolean {
+        if (nextEvents.isEmpty()) {
+            return true
+        } else {
+            for (nextEvent in nextEvents) {
+                val event = dao.event(nextEvent.id)
+                var addCheck: Boolean
+                if (event != null) {
+                    addCheck = dao.editEvent(
+                        event.id,
+                        event.idElection,
+                        event.idSection,
+                        event.description,
+                        dateEndPreviewEvent,
+                        event.duration
+                    )
+                }
+                val dateEndEvent = event?.let { dateEndPreviewEvent.plus(it.duration, DateTimeUnit.DAY) }
+                addCheck = dateEndEvent?.let { editeDateNextEvent(dao.listNextEvents(nextEvent.id), it) } == true
+                if (!addCheck)
+                    return false
+            }
+            return true;
+        }
+
+    }
+
 
     fun getElectionForTemlates(election: Election): ElectionForFremarker {
         return ElectionForFremarker(election.id, election.nameElection, DateFormat().format(election.dateBeginElection))
@@ -289,7 +319,7 @@ fun Application.configureRouting() {
                                 checkWhatEventHaveRole = true
                             }
                         }
-                        if (!checkWhatEventHaveRole && nameRole!="")
+                        if (!checkWhatEventHaveRole && nameRole != "")
                             check = dao.addNewRoleForEvent(nameRole, idEvent)
                         else
                             check = false
@@ -393,10 +423,9 @@ fun Application.configureRouting() {
                         val paragraph = formParameters["paragraph"]?.toFloatOrNull()
                         val part = formParameters["part"]?.toFloatOrNull()
                         val scope = formParameters["scope"].toString()
-                        if(article==null && paragraph==null && part == null && scope.isEmpty()){
+                        if (article == null && paragraph == null && part == null && scope.isEmpty()) {
                             "Все поля пустые"
-                        }
-                        else {
+                        } else {
                             val law = Law(-1, article, paragraph, part, scope)
                             dao.addNewLawForEvent(law, idEvent)
                         }
@@ -602,6 +631,125 @@ fun Application.configureRouting() {
                     )
                 }
             }
+
+
+            post("/editDateEvent") {
+                val userSession = call.principal<UserSession>()
+                if (userSession?.role == "ЦИК" || userSession?.role == "ТИК") {
+                    val formParameters = call.receiveParameters()
+                    val idEvent = formParameters.getOrFail("idEvent").toInt()
+                    var message: String?
+                    var dateBeginEvent = formParameters["dateBeginEvent"]?.toLocalDate()
+                    var duration = formParameters["durationEvent"]?.toInt()
+                    var addCheck = true
+                    var event = dao.event(idEvent)
+                    if (event != null) {
+                        if (dateBeginEvent == null)
+                            dateBeginEvent = event.dateBeginEvent
+                        if (duration == null)
+                            duration = event.duration
+                        addCheck = dao.editEvent(
+                            event.id,
+                            event.idElection,
+                            event.idSection,
+                            event.description,
+                            dateBeginEvent,
+                            duration
+                        )
+                        var nextEvents = dao.listNextEvents(event.id)
+
+                        if (nextEvents.isNotEmpty()) {
+                            val dateEndEvent = event.dateBeginEvent.plus(event.duration, DateTimeUnit.DAY)
+                            addCheck = editeDateNextEvent(nextEvents, dateEndEvent)
+                        }
+                    }
+                    if (addCheck) {
+                        message = "Даты поменялись"
+                    } else {
+                        message = "Даты не удалось изменить"
+                    }
+
+                    event = dao.event(idEvent)
+                    val election = event?.let { it1 -> dao.election(it1.idElection) }
+                    val sections = election?.let { it1 -> dao.sectionsForElection(it1) }
+                    val roles = event?.let { it1 -> dao.rolesForElection(it1.idElection) }
+                    val rolesForEvent = dao.rolesForEvent(idEvent)
+                    val laws = dao.allLaws()
+                    val lawsForEvent = dao.lawsForEvent(idEvent)
+                    val electionForFremarker = election?.let { it1 -> getElectionForTemlates(it1) }
+                    call.respond(
+                        FreeMarkerContent(
+                            "templates/event/editEvent.ftl",
+                            mapOf(
+                                "election" to electionForFremarker,
+                                "sections" to sections,
+                                "roles" to roles,
+                                "rolesForEvent" to rolesForEvent,
+                                "lawsForEvent" to lawsForEvent,
+                                "laws" to laws,
+                                "event" to event,
+                                "name" to userSession.name,
+                                "role" to userSession.role,
+                                "message" to message
+                            )
+                        )
+                    )
+                } else {
+                    call.respond(
+                        FreeMarkerContent(
+                            "index.ftl",
+                            mapOf("name" to userSession?.name, "role" to userSession?.role)
+                        )
+                    )
+                }
+            }
+
+
+            post("deletedEvent") {
+                val userSession = call.principal<UserSession>()
+                if (userSession?.role == "ЦИК" || userSession?.role == "ТИК") {
+                    val formParameters = call.receiveParameters()
+                    val idEvent = formParameters.getOrFail("idEvent").toInt()
+                    val event = dao.event(idEvent)
+                    val election = event?.let { it1 -> dao.election(it1.idElection) }
+                    dao.deleteEvent(idEvent)
+
+                    val events = election?.let { it1 -> dao.eventsWithSectionAndLows(it1) }
+                    var eventsForFreeMarker: List<EventsWithSectionsAndLawAndDateInString> = mutableListOf()
+                    if (events != null) {
+                        for (event in events) {
+                            val eventForFreeMarker = EventsWithSectionsAndLawAndDateInString(
+                                event.idEvent,
+                                event.nameSection,
+                                event.description,
+                                DateFormat().format(event.dateBeginEvent),
+                                DateFormat().format(event.dateBeginEvent, event.duration),
+                                event.laws,
+                                event.roles
+                            )
+                            eventsForFreeMarker += eventForFreeMarker
+                        }
+                    }
+                    call.respond(
+                        FreeMarkerContent(
+                            "templates/event/selectEventForEdited.ftl",
+                            mapOf(
+                                "events" to eventsForFreeMarker,
+                                "name" to userSession.name,
+                                "role" to userSession.role
+                            )
+                        )
+                    )
+                } else {
+                    call.respond(
+                        FreeMarkerContent(
+                            "index.ftl",
+                            mapOf("name" to userSession?.name, "role" to userSession?.role)
+                        )
+                    )
+                }
+            }
+
         }
     }
 }

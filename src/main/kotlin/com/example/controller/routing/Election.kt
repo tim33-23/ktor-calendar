@@ -16,6 +16,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.util.*
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toLocalDateTime
 
 
@@ -25,7 +26,7 @@ fun Application.configureElection() {
         runBlocking {}
     }
 
-    fun getElectionForTemlates(election: Election) : ElectionForFremarker {
+    fun getElectionForTemlates(election: Election): ElectionForFremarker {
         return ElectionForFremarker(election.id, election.nameElection, DateFormat().format(election.dateBeginElection))
     }
 
@@ -262,8 +263,104 @@ fun Application.configureElection() {
                 )
             }
 
-        }
 
+            get("/addDocuments") {
+                val userSession = call.principal<UserSession>()
+                if (userSession?.role == "ЦИК" || userSession?.role == "ТИК") {
+                    val idElection = call.request.queryParameters["idElection"]?.toIntOrNull()
+                    val roles = idElection?.let { it1 -> dao.rolesForElection(it1) }
+                    val election = idElection?.let { it1 -> dao.election(it1) }
+                    call.respond(
+                        FreeMarkerContent(
+                            "templates/role/addDocuments.ftl",
+                            mapOf(
+                                "name" to userSession?.name,
+                                "roles" to roles,
+                                "idElection" to idElection,
+                                "election" to election,
+                                "role" to userSession?.role
+                            )
+                        )
+                    )
+                } else {
+                    call.respond(
+                        FreeMarkerContent(
+                            "index.ftl",
+                            mapOf("name" to userSession?.name, "role" to userSession?.role)
+                        )
+                    )
+                }
+            }
+
+            post("/addDocuments") {
+                val userSession = call.principal<UserSession>()
+                if (userSession?.role == "ЦИК" || userSession?.role == "ТИК") {
+                    val formParameters = call.receiveParameters()
+                    val idRole = formParameters["idRole"].toString().toInt()
+                    val documents = formParameters["documents"].toString()
+                    val idElection = formParameters.getOrFail("idElection").toInt()
+                    val election = dao.election(idElection)
+                    val role = dao.role(idRole)
+
+                    val message = if (role != null) {
+                        if (dao.updateRole(role.id, role.nameRole, documents)) {
+                            "Ссылка на документы для ${role.nameRole} добавлена"
+                        } else {
+                            "Ошибка при добавлении"
+                        }
+                    } else "Данный исполнител не найден"
+
+                    val roles = idElection.let { it1 -> dao.rolesForElection(it1) }
+                    call.respond(
+                        FreeMarkerContent(
+                            "templates/role/addDocuments.ftl",
+                            mapOf(
+                                "name" to userSession.name,
+                                "roles" to roles,
+                                "election" to election,
+                                "role" to userSession.role,
+                                "message" to message
+                            )
+                        )
+                    )
+                } else {
+                    call.respond(
+                        FreeMarkerContent(
+                            "index.ftl",
+                            mapOf("name" to userSession?.name, "role" to userSession?.role)
+                        )
+                    )
+                }
+
+            }
+
+            get("/calendar") {
+                val userSession = call.principal<UserSession>()
+                val idElection = call.request.queryParameters["idElection"]?.toIntOrNull()
+                val roles = idElection?.let { it1 -> dao.rolesForElection(it1) }
+                val election = idElection?.let { it1 -> dao.election(it1) }
+                val electionsForRole = election?.let { it1 -> dao.eventsWithSectionAndLows(it1) }
+                var mapBeginEndDate = mapOf<LocalDate, Int>()
+                for(election in mapBeginEndDate){
+
+                }
+                call.respond(
+                    FreeMarkerContent(
+                        "templates/calendar/calendar.ftl",
+                        mapOf(
+                            "name" to userSession?.name,
+                            "roles" to roles,
+                            "idElection" to idElection,
+                            "election" to election,
+                            "role" to userSession?.role,
+                            "interval" to "2"
+                        )
+                    )
+                )
+            }
+        }
     }
+
 }
+
 
