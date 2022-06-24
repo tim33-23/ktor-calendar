@@ -203,10 +203,23 @@ class DAOFacadeImpl : DAOFacade {
         name: String,
         middleName: String?,
         email: String,
-        password: String
-    ): Participant? {
-        TODO("Not yet implemented")
+        phone: String,
+        password: String,
+        idRole: Int
+    ): Participant? = dbQuery{
+        var insertStatement = Participants.insert {
+            it[Participants.idRole] = idRole
+            it[Participants.email] = email
+            it[Participants.name] = name
+            it[Participants.phone] = phone
+            it[Participants.middleName] = middleName
+            it[Participants.password] = password
+            it[Participants.surname] = surname
+        }
+
+        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToParticipant)
     }
+
 
     override suspend fun editParticipant(
         surname: String?,
@@ -220,6 +233,11 @@ class DAOFacadeImpl : DAOFacade {
 
     override suspend fun deleteParticipant(id: Int): Boolean {
         TODO("Not yet implemented")
+    }
+
+    override suspend fun participantRole(email: String): Participant? = dbQuery{
+        Participants
+            .select{Participants.email.eq(email)}.map(::resultRowToParticipant).first()
     }
 
 

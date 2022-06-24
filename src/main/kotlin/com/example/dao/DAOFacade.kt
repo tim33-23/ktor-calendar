@@ -44,7 +44,9 @@ interface DAOFacade {
                                   name: String,
                                   middleName: String?,
                                   email: String,
-                                  password: String): Participant?
+                                  phone: String,
+                                  password: String,
+                                  idRole: Int): Participant?
 
     suspend fun editParticipant(surname: String?,
                                 name: String,
@@ -52,6 +54,8 @@ interface DAOFacade {
                                 email: String,
                                 password: String): Boolean
     suspend fun deleteParticipant(id: Int): Boolean
+
+    suspend fun participantRole(email: String): Participant?
 
     //Role
     suspend fun role(id: Int): Role?

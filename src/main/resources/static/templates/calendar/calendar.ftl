@@ -3,99 +3,163 @@
 <head>
     <#include "../head-config.ftl"/>
 
-    <style>
-        #calendar2 {
-            width: 100%;
-            font: monospace;
-            line-height: 1.2em;
-            font-size: 15px;
-            text-align: center;
-        }
-        #calendar2 thead tr:last-child {
-            font-size: small;
-            color: rgb(85, 85, 85);
-        }
-        #calendar2 thead tr:nth-child(1) td:nth-child(2) {
-            color: rgb(50, 50, 50);
-        }
-        #calendar2 thead tr:nth-child(1) td:nth-child(1):hover, #calendar2 thead tr:nth-child(1) td:nth-child(3):hover {
-            cursor: pointer;
-        }
-        #calendar2 tbody td {
-            color: rgb(44, 86, 122);
-        }
-        #calendar2 tbody td:nth-child(n+6), #calendar2 .holiday {
-            color: rgb(231, 140, 92);
-        }
-        #calendar2 tbody td.today {
-            background: rgb(220, 0, 0);
-            color: #fff;
-        }
-    </style>
 </head>
 
 
 <body>
+
+
 <#include "../header.ftl"/>
-<main>
+<main class="mt-5">
     <#if role?has_content && role=="ЦИК">
-
-        <table id="calendar2">
-            <thead>
-            <tr><td>‹<td colspan="5"><td>›
-            <tr><td>Пн<td>Вт<td>Ср<td>Чт<td>Пт<td>Сб<td>Вс
-            <tbody>
-        </table>
-
-
-        <script>
-            function Calendar2(id, year, month, interval) {
-                var Dlast = new Date(year,month+1,0).getDate(),
-                    D = new Date(year,month,Dlast),
-                    DNlast = new Date(D.getFullYear(),D.getMonth(),Dlast).getDay(),
-                    DNfirst = new Date(D.getFullYear(),D.getMonth(),1).getDay(),
-                    calendar = '<tr>',
-                    month=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
-                if (DNfirst != 0) {
-                    for(var  i = 1; i < DNfirst; i++) calendar += '<td>';
-                }else{
-                    for(var  i = 0; i < 6; i++) calendar += '<td>';
-                }
-                for(var  i = 1; i <= Dlast; i++) {
-                    if (i == new Date().getDate() && D.getFullYear() == new Date().getFullYear() && D.getMonth() == new Date().getMonth()) {
-                        calendar += '<td class="today">' + i;
-                    }else{
-                        calendar += '<td>' + i;
-                    }
-                    if (new Date(D.getFullYear(),D.getMonth(),i).getDay() == 0) {
-                        calendar += '<tr>';
-                    }
-                }
-                for(var  i = DNlast; i < 7; i++) calendar += '<td>&nbsp;';
-                document.querySelector('#'+id+' tbody').innerHTML = calendar;
-                document.querySelector('#'+id+' thead td:nth-child(2)').innerHTML = month[D.getMonth()] +' '+ D.getFullYear();
-                document.querySelector('#'+id+' thead td:nth-child(2)').dataset.month = D.getMonth();
-                document.querySelector('#'+id+' thead td:nth-child(2)').dataset.year = D.getFullYear();
-                if (document.querySelectorAll('#'+id+' tbody tr').length < 6) {  // чтобы при перелистывании месяцев не "подпрыгивала" вся страница, добавляется ряд пустых клеток. Итог: всегда 6 строк для цифр
-                    document.querySelector('#'+id+' tbody').innerHTML += '<tr><td>&nbsp;<td>&nbsp;<td>&nbsp;<td>&nbsp;<td>&nbsp;<td>&nbsp;<td>&nbsp;';
-                }
-            }
-            Calendar2("calendar2", new Date().getFullYear(), new Date().getMonth(), ${interval});
-            // переключатель минус месяц
-            document.querySelector('#calendar2 thead tr:nth-child(1) td:nth-child(1)').onclick = function() {
-                Calendar2("calendar2", document.querySelector('#calendar2 thead td:nth-child(2)').dataset.year, parseFloat(document.querySelector('#calendar2 thead td:nth-child(2)').dataset.month)-1);
-            }
-            // переключатель плюс месяц
-            document.querySelector('#calendar2 thead tr:nth-child(1) td:nth-child(3)').onclick = function() {
-                Calendar2("calendar2", document.querySelector('#calendar2 thead td:nth-child(2)').dataset.year, parseFloat(document.querySelector('#calendar2 thead td:nth-child(2)').dataset.month)+1);
-            }
-        </script>
-
     <#elseif role?has_content && role!="ЦИК">
 
     <#else>
     </#if>
+    <div class="container">
+        <div class="container">
+            <table width="100%">
+                <tr style="width: 100%">
+                    <td align="center">
+                        <div class="row">
+                            <div class="col-1">
 
+                            </div>
+                            <div class="col-2">
+                                <form action="/calendar" method="Post">
+                                    <div  class="form-floating" style="display: none">
+                                        <input type="number" class="form-control" id="idElection" name="idElection" placeholder="" value="${election.id}">
+                                    </div>
+                                    <div  class="form-floating" style="display: none">
+                                        <input type="number" class="form-control" id="mouth" name="mouth" placeholder="" value="${previewMouth}">
+                                    </div>
+                                    <div  class="form-floating" style="display: none">
+                                        <input type="text" class="form-control" id="year" name="year" placeholder="" value="${year?int}">
+                                    </div>
+                                    <div  class="form-floating" style="display: none">
+                                        <input type="text" class="form-control" id="newRole" name="newRole" placeholder="" value="${newRole.id}">
+                                    </div>
+                                    <button class="w-100 btn btn-lg btn-primary" type="submit">Предыдущий</button>
+                                </form>
+                            </div>
+                            <div class="col-6">
+                                <h1 align="center">${mouth} ${year}</h1>
+                            </div>
+                            <div class="col-2">
+                                <form action="/calendar" method="Post">
+                                    <div  class="form-floating" style="display: none">
+                                        <input type="number" class="form-control" id="idElection" name="idElection" placeholder="" value="${election.id}">
+                                    </div>
+                                    <div  class="form-floating" style="display: none">
+                                        <input type="number" class="form-control" id="mouth" name="mouth" placeholder="" value="${nextMouth}">
+                                    </div>
+                                    <div  class="form-floating" style="display: none">
+                                        <input type="text" class="form-control" id="year" name="year" placeholder="" value="${year}">
+                                    </div>
+                                    <div  class="form-floating" style="display: none">
+                                        <input type="text" class="form-control" id="newRole" name="newRole" placeholder="" value="${newRole.id}">
+                                    </div>
+                                    <button class="w-100 btn btn-lg btn-primary" type="submit">Слeдующий</button>
+                                </form>
+                            </div>
+                            <div class="col-1">
+
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr style="width: 100%">
+                    <td align="center">
+                        <div class="row" style="font-size: 25px">
+                            <div class="col">
+                                <b>Понeдельник</b>
+                            </div>
+                            <div class="col">
+                                <b>Вторник</b>
+                            </div>
+                            <div class="col">
+                                <b>Среда</b>
+                            </div>
+                            <div class="col">
+                                <b>Четверг</b>
+                            </div>
+                            <div class="col">
+                                <b>Пятница</b>
+                            </div>
+                            <div class="col">
+                                <b>Суббота</b>
+                            </div>
+                            <div class="col">
+                                <b>Воскресенье</b>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <#list 1..6 as k>
+                    <tr style="width: 100%">
+                        <td style="width: 100%">
+                            <div class="row">
+                                <#list 1..7 as i>
+                                    <#assign countDay = countDay+1/>
+                                    <div class="col" align="center"
+                                            <#if actionDays?has_content && actionDays?seq_contains(countDay)>
+                                                style="background-color: #adb5bd"
+                                            </#if>
+                                    >
+                                        <#if (countDay gt 0) && (countDay lte maxDays)>
+                                            <h1><b>${countDay}</b></h1>
+                                        <#else>
+                                        </#if>
+                                    </div>
+                                </#list>
+                            </div>
+                        </td>
+                    </tr>
+                </#list>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="row mt-3">
+        <div class="col-4"></div>
+        <div class="col-4">
+            <h1 align="center">Исполнитель:<br>${newRole.nameRole}</h1>
+        </div>
+        <div class="col-4"></div>
+    </div>
+
+    <#if role?has_content && role=="ЦИК">
+        <div class="row mt-3" align="center">
+            <div class="col-4"><h1></h1></div>
+            <div class="col-4">
+                <form action="/calendar" method="Post" >
+                    <div>
+                        <div class="form-floating">
+                            <div class="themed-grid-col">
+                                <select id="newRole" name="newRole"  style="max-width: 100%">
+                                    <#list roles as role>
+                                        <option   value="${role.id}">${role.nameRole}</option>
+                                    </#list>
+                                </select>
+                            </div>
+                            <div  class="form-floating" style="display: none">
+                                <input type="number" class="form-control" id="idElection" name="idElection" placeholder="" value="${election.id}">
+                            </div>
+                            <div  class="form-floating" style="display: none">
+                                <input type="number" class="form-control" id="mouth" name="mouth" placeholder="" value="${previewMouth+1}">
+                            </div>
+                            <div  class="form-floating" style="display: none">
+                                <input type="text" class="form-control" id="year" name="year" placeholder="" value="${year?int}">
+                            </div>
+                            <button class="w-100 btn btn-lg btn-primary" type="submit">Поменять исполнителя</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-4"><h1></h1></div>
+        </div>
+    </#if>
 
 </main>
 </body>

@@ -23,7 +23,7 @@ fun Application.configureAuthorization() {
     install(Sessions) {
         cookie<UserSession>("user_session") {
             cookie.path = "/"
-            cookie.maxAgeInSeconds = 600
+            cookie.maxAgeInSeconds = 6000
             cookie.extensions["SameSite"] = "lax"
         }
     }
@@ -34,7 +34,7 @@ fun Application.configureAuthorization() {
                 if(session.role == "ЦИК") {
                     session
                 } else {
-                    null
+                    session
                 }
             }
             challenge {
@@ -76,7 +76,6 @@ fun Application.configureAuthorization() {
                     call.respond(FreeMarkerContent("templates/authorization/login.ftl", mapOf("message" to message)))
                 }
             }
-
         }
 
 
@@ -88,14 +87,27 @@ fun Application.configureAuthorization() {
         authenticate("auth-session") {
             get("/") {
                 val userSession = call.principal<UserSession>()
+                var doc: String? = null
+                if(userSession!=null){
+                    val par = dao.participantRole(email = userSession.email)
+                    val role = par?.let { it1 -> dao.role(it1.idRole) }
+                    if (role != null) {
+                        doc = role.documents.toString()
+                    }
+                }
                 call.respond(
                     FreeMarkerContent(
                         "index.ftl",
-                        mapOf("name" to userSession?.name, "role" to userSession?.role)
+                        mapOf("name" to userSession?.name,
+                            "role" to userSession?.role,
+                            "doc" to doc
+                        )
                     )
                 )
             }
         }
+
+
     }
 
 

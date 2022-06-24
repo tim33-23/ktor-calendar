@@ -34,7 +34,7 @@
                             <textarea type="text" class="form-control" id="nameElection" name="nameElection" placeholder="Название календарного плана" rows="4"></textarea>
                         </div>
                         <div  class="form-floating" style="display: none">
-                            <input type="text" class="form-control" id="idElection" name="idElection" placeholder="">
+                            <input type="text" class="form-control" id="idElection" name="idElection" placeholder="" value="${election.id}">
                             <label for="idElection"></label>
                         </div>
                         <div class="form-floating">

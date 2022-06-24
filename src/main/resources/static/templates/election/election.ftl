@@ -67,6 +67,17 @@
                     </form>
                 </div>
             </div>
+            <#elseif role?has_content>
+                <div class="col4"></div>
+                <div class="col-4">
+                    <form action="/calendar" method="get">
+                        <div  class="form-floating" style="display: none">
+                            <input type="number" class="form-control" id="idElection" name="idElection" placeholder="" value="${election.id}">
+                        </div>
+                        <button class="w-100 btn btn-lg btn-primary" type="submit">Посмотреть календарь мероприятий</button>
+                    </form>
+                </div>
+                <div class="col4"></div>
         </#if>
         <div class="container">
             <h2 align="center">
