@@ -14,8 +14,9 @@ import io.ktor.server.routing.*
 import io.ktor.server.util.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.*
+import java.awt.Color
 import java.util.*
-
+import kotlin.collections.HashMap
 
 fun Application.configureElection() {
 
@@ -27,6 +28,8 @@ fun Application.configureElection() {
     fun getElectionForTemlates(election: Election): ElectionForFremarker {
         return ElectionForFremarker(election.id, election.nameElection, DateFormat().format(election.dateBeginElection))
     }
+
+    data class  CrossingColor(var title: String, var color: Color)
 
 
     routing {
@@ -59,6 +62,112 @@ fun Application.configureElection() {
                 )
             }
 
+            get("/myElections") {
+                val userSession = call.principal<UserSession>()
+                val elections = dao.allElections()
+                var myElection: Election = Election(0,"", LocalDateTime(1,1,1,0,0,0))
+                val myRole = userSession?.email?.let { it1 -> dao.participantRole(it1) }?.idRole
+                for(election in elections){
+                    val roles = dao.rolesForElection(election.id)
+                    for(role in roles){
+                        if (myRole != null) {
+                            if(role.id == myRole){
+                                myElection = election
+                            }
+                        }
+                    }
+                }
+
+                val electionsForFreemarker = listOf<ElectionForFremarker>(ElectionForFremarker(
+                    myElection.id,
+                    myElection.nameElection,
+                    DateFormat().format(myElection.dateBeginElection)
+                ))
+                call.respond(
+                    FreeMarkerContent(
+                        "templates/election/elections.ftl",
+                        mapOf(
+                            "elections" to electionsForFreemarker,
+                            "name" to userSession?.name,
+                            "role" to userSession?.role
+                        )
+                    )
+                )
+            }
+
+            post("/electionForRole") {
+                val userSession = call.principal<UserSession>()
+                val formParameters = call.receiveParameters()
+                val idElection = formParameters["idElection"].toString().toInt()
+                val idRole = formParameters["newRole"]?.toIntOrNull()
+                var nameRole : String? = null
+                if(idRole==null){
+                    if (userSession != null) {
+                        val roles = dao.rolesForElection(idElection)
+                        for(role in roles){
+                            if(userSession.role == role.nameRole){
+                                nameRole = role.nameRole
+                            }
+                        }
+                    }
+                }
+                else{
+                    nameRole = dao.role(idRole)?.nameRole
+                }
+                val election = dao.election(idElection)
+                if (election != null) {
+                    val events = dao.eventsWithSectionAndLows(election)
+                    var eventsForFreeMarker: List<EventsWithSectionsAndLawAndDateInString> = mutableListOf()
+                    if (events != null) {
+                        for (event in events) {
+                            val eventForFreeMarker = EventsWithSectionsAndLawAndDateInString(
+                                event.idEvent,
+                                event.nameSection,
+                                event.description,
+                                DateFormat().format(event.dateBeginEvent),
+                                DateFormat().format(event.dateBeginEvent, event.duration),
+                                event.laws,
+                                event.roles
+                            )
+                            if(eventForFreeMarker.roles?.contains(nameRole) == true){
+                                eventsForFreeMarker += eventForFreeMarker
+                            }
+                        }
+                    }
+                    var roles: List<Role>? = null
+                    if (userSession != null) {
+                        if (userSession.role == "ЦИК") {
+                            roles = dao.rolesForElection(idElection)
+                        }
+                        else{
+                            val newRole = idRole?.let { it1 -> dao.role(it1) }
+                            if(idRole!=null && newRole!=null){
+                                roles = listOf(newRole)
+                            }
+
+                        }
+                    }
+                    val electionForFreemarker = ElectionForFremarker(
+                        election.id,
+                        election.nameElection,
+                        DateFormat().format(election.dateBeginElection)
+                    )
+
+                    call.respond(
+                        FreeMarkerContent(
+                            "templates/election/election.ftl",
+                            mapOf(
+                                "events" to eventsForFreeMarker,
+                                "election" to electionForFreemarker,
+                                "name" to userSession?.name,
+                                "role" to userSession?.role,
+                                "roles" to roles
+                            )
+                        )
+                    )
+                }
+            }
+
             post("/election") {
                 val userSession = call.principal<UserSession>()
                 val formParameters = call.receiveParameters()
@@ -86,6 +195,21 @@ fun Application.configureElection() {
                         election.nameElection,
                         DateFormat().format(election.dateBeginElection)
                     )
+                    var roles: List<Role>? = null
+                    if (userSession != null) {
+                        if(userSession.role =="ЦИК"){
+                            roles = dao.rolesForElection(election.id)
+                        }
+                        else{
+                            val allroles = dao.rolesForElection(election.id)
+                            for(role in allroles!!){
+                                if(role.nameRole==userSession.role){
+                                    roles = listOf(role)
+                                    break
+                                }
+                            }
+                        }
+                    }
                     call.respond(
                         FreeMarkerContent(
                             "templates/election/election.ftl",
@@ -93,7 +217,8 @@ fun Application.configureElection() {
                                 "events" to eventsForFreeMarker,
                                 "election" to electionForFreemarker,
                                 "name" to userSession?.name,
-                                "role" to userSession?.role
+                                "role" to userSession?.role,
+                                "roles" to roles
                             )
                         )
                     )
@@ -123,7 +248,7 @@ fun Application.configureElection() {
 
             get("/editElection") {
                 val userSession = call.principal<UserSession>()
-                if (userSession?.role == "ЦИК" || userSession?.role == "ТИК") {
+                if (userSession?.role == "ЦИК") {
                     val idElection = call.request.queryParameters["idElection"]?.toIntOrNull()
                     if (idElection != null) {
                         val election = dao.election(idElection)
@@ -212,36 +337,74 @@ fun Application.configureElection() {
 
             get("/createElection") {
                 val userSession = call.principal<UserSession>()
-                call.respond(
-                    FreeMarkerContent(
-                        "templates/election/createElection.ftl",
-                        mapOf("name" to userSession?.name, "role" to userSession?.role)
+                if (userSession?.role == "ЦИК") {
+                    call.respond(
+                        FreeMarkerContent(
+                            "templates/election/createElection.ftl",
+                            mapOf(
+                                "name" to userSession?.name,
+                                "role" to userSession?.role,
+                                "elections" to dao.allElections()
+                            )
+                        )
                     )
-                )
+                } else {
+                    call.respond(
+                        FreeMarkerContent(
+                            "index.ftl",
+                            mapOf("name" to userSession?.name, "role" to userSession?.role)
+                        )
+                    )
+                }
             }
 
             post("/createElection") {
                 val userSession = call.principal<UserSession>()
-                if (userSession?.role == "ЦИК" || userSession?.role == "ТИК") {
+                if (userSession?.role == "ЦИК") {
                     val formParameters = call.receiveParameters()
                     val nameElection = formParameters.getOrFail("nameElection")
                     val dateBegin = formParameters.getOrFail("dateBegin").toLocalDateTime()
-                    val election = dao.addNewElection(nameElection, dateBegin)
-                    val dateTime = election?.dateBeginElection
-                    val dateTimeString = DateFormat().format(dateTime)
-                    call.respond(
-                        FreeMarkerContent(
-                            "templates/election/editElection.ftl",
-                            mapOf(
-                                "nameElection" to election?.nameElection,
-                                "dateBeginElection" to dateTimeString,
-                                "idElection" to election?.id,
-                                "name" to userSession.name,
-                                "role" to userSession.role,
-                                "election" to election
+
+                    val checkOnSelectionElection = formParameters["checkOnSelectionElection"]
+                    if(checkOnSelectionElection!=null && checkOnSelectionElection!=""){
+                        val idElection = formParameters.getOrFail("idElection").toIntOrNull()
+                        if (idElection != null) {
+                            val election = dao.addNewElectionWithTemplate(nameElection, dateBegin, idElection)
+                            val dateTime = election?.dateBeginElection
+                            val dateTimeString = DateFormat().format(dateTime)
+                            call.respond(
+                                FreeMarkerContent(
+                                    "templates/election/editElection.ftl",
+                                    mapOf(
+                                        "nameElection" to election?.nameElection,
+                                        "dateBeginElection" to dateTimeString,
+                                        "idElection" to election?.id,
+                                        "name" to userSession.name,
+                                        "role" to userSession.role,
+                                        "election" to election
+                                    )
+                                )
+                            )
+                        }
+                    }
+                    else {
+                        val election = dao.addNewElection(nameElection, dateBegin)
+                        val dateTime = election?.dateBeginElection
+                        val dateTimeString = DateFormat().format(dateTime)
+                        call.respond(
+                            FreeMarkerContent(
+                                "templates/election/editElection.ftl",
+                                mapOf(
+                                    "nameElection" to election?.nameElection,
+                                    "dateBeginElection" to dateTimeString,
+                                    "idElection" to election?.id,
+                                    "name" to userSession.name,
+                                    "role" to userSession.role,
+                                    "election" to election
+                                )
                             )
                         )
-                    )
+                    }
                 } else {
                     call.respond(
                         FreeMarkerContent(
@@ -340,30 +503,41 @@ fun Application.configureElection() {
                 val roles = idElection?.let { it1 -> dao.rolesForElection(it1) }
                 val election = idElection?.let { it1 -> dao.election(it1) }
                 val eventsForRole = election?.let { it1 -> dao.eventsWithSectionAndLows(it1) }
+                val mapTilte = HashMap<String, CrossingColor>()
+                var actionDays : List<Int> = listOf()
                 var listAllDay: List<LocalDate> = listOf<LocalDate>()
                 if (eventsForRole != null) {
-                    for(election in eventsForRole){
+                    for(event in eventsForRole){
                         if (userSession != null) {
-                            if(election.roles?.contains(userSession.role) == true){
-                                val count = election.duration
-                                for(i in 0..count){
-                                    listAllDay += election.dateBeginEvent.plus(i, DateTimeUnit.DAY)
+                            if (event.roles?.contains(userSession.role) == true) {
+                                val count = event.duration
+                                for (i in 0..count) {
+                                    val dateDay = event.dateBeginEvent.plus(i, DateTimeUnit.DAY)
+                                    if (dateDay.month.name == election.dateBeginElection.month.name) {
+                                        actionDays += dateDay.dayOfMonth
+                                        if (mapTilte.containsKey(dateDay.dayOfMonth.toString())) {
+                                            val newCrossingColor = mapTilte[dateDay.dayOfMonth.toString()]
+                                            val del = 40
+                                            if (newCrossingColor != null) {
+                                                val color = newCrossingColor.color
+                                                if(newCrossingColor.color.red.minus(del)<0 ||  newCrossingColor.color.green.minus(del)<0 || newCrossingColor.color.blue.minus(del)<0){
+                                                    newCrossingColor.color = Color(119, 136, 153)
+                                                }
+                                                newCrossingColor.color = Color(newCrossingColor.color.red.minus(del), newCrossingColor.color.green.minus(del), newCrossingColor.color.blue.minus(del))
+                                                newCrossingColor.title += event.description
+                                                mapTilte[dateDay.dayOfMonth.toString()] = newCrossingColor
+                                            }
+                                        } else {
+                                            mapTilte[dateDay.dayOfMonth.toString()] = CrossingColor(event.description ,Color(220,220,220))
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
-                var actionDays : List<Int> = listOf()
-                if (listAllDay != null) {
-                    for (dateDay in listAllDay){
-                        if (election != null) {
-                            if(dateDay.month.name == election.dateBeginElection.month.name){
-                                actionDays += dateDay.dayOfMonth
-                            }
-                        }
-                    }
-                }
+
                 var newRole = Role(-1, "ЦИК", null)
                 if (roles != null) {
                     for(role1 in roles){
@@ -380,6 +554,33 @@ fun Application.configureElection() {
                 val countDay = 1 - (LocalDate(year!!, mouth!!, 1)?.dayOfWeek?.value!!)
 
                 if (mouth != null) {
+
+                    var eventsForRoleInItMouth : List<EventsWithSectionsAndLaw> = listOf()
+                    if (eventsForRole != null) {
+                        for(event in eventsForRole){
+                            if(event.dateBeginEvent.month<=mouth && mouth<=event.dateBeginEvent.plus(event.duration, DateTimeUnit.DAY).month){
+                                eventsForRoleInItMouth += event
+                            }
+                        }
+                    }
+                    var eventsForFreeMarker: List<EventsWithSectionsAndLawAndDateInString> = mutableListOf()
+                    if (eventsForRoleInItMouth != null) {
+                        for (event in eventsForRoleInItMouth) {
+                            val eventForFreeMarker = EventsWithSectionsAndLawAndDateInString(
+                                event.idEvent,
+                                event.nameSection,
+                                event.description,
+                                DateFormat().format(event.dateBeginEvent),
+                                DateFormat().format(event.dateBeginEvent, event.duration),
+                                event.laws,
+                                event.roles,
+
+                            )
+                            if(event.roles?.contains(newRole.nameRole) == true)
+                                eventsForFreeMarker += eventForFreeMarker
+                        }
+                    }
+
                     call.respond(
                         FreeMarkerContent(
                             "templates/calendar/calendar.ftl",
@@ -397,7 +598,9 @@ fun Application.configureElection() {
                                 "actionDays" to actionDays,
                                 "previewMouth" to (mouth.value-1),
                                 "nextMouth" to (mouth.value+1),
-                                "newRole" to newRole
+                                "newRole" to newRole,
+                                "events" to eventsForFreeMarker,
+                                "titles" to mapTilte
                             )
                         )
                     )
@@ -411,6 +614,7 @@ fun Application.configureElection() {
                 val idElection = formParameters["idElection"]?.toIntOrNull()
                 var newMouth = formParameters["mouth"]?.toIntOrNull()
                 var yearS = formParameters["year"]?.toString()
+                val mapTilte = HashMap<String, CrossingColor>()
                 yearS = yearS?.replace(" ", "")
                 var year = yearS?.toIntOrNull()
                 if (newMouth != null) {
@@ -428,22 +632,39 @@ fun Application.configureElection() {
                 val roles = idElection?.let { it1 -> dao.rolesForElection(it1) }
                 val election = idElection?.let { it1 -> dao.election(it1) }
                 val eventsForRole = election?.let { it1 -> dao.eventsWithSectionAndLows(it1) }
-
+                val actionDays : MutableList<Int> = mutableListOf()
                 var listAllDay: List<LocalDate> = listOf<LocalDate>()
                 if (eventsForRole != null) {
-                    for(election in eventsForRole){
+                    for(event in eventsForRole){
                         if (userSession != null) {
-                            if(election.roles?.contains(role.nameRole) == true){
-                                val count = election.duration
-                                for(i in 0..count){
-                                    listAllDay += election.dateBeginEvent.plus(i, DateTimeUnit.DAY)
+                            if(event.roles?.contains(role.nameRole) == true){
+                                val count = event.duration
+                                for (i in 0..count) {
+                                val dateDay = event.dateBeginEvent.plus(i, DateTimeUnit.DAY)
+                                if (dateDay.month.name == newMouth?.let { it1 -> Month(it1).name }) {
+                                    actionDays += dateDay.dayOfMonth
+                                    if (mapTilte.containsKey(dateDay.dayOfMonth.toString())) {
+                                        val newCrossingColor = mapTilte[dateDay.dayOfMonth.toString()]
+                                        val del = 40
+                                        if (newCrossingColor != null) {
+                                            val color = newCrossingColor.color
+                                            if(newCrossingColor.color.red.minus(del)<0 ||  newCrossingColor.color.green.minus(del)<0 || newCrossingColor.color.blue.minus(del)<0){
+                                                newCrossingColor.color = Color(119, 136, 153)
+                                            }
+                                            newCrossingColor.color = Color(newCrossingColor.color.red.minus(del), newCrossingColor.color.green.minus(del), newCrossingColor.color.blue.minus(del))
+                                            newCrossingColor.title += event.description
+                                            mapTilte[dateDay.dayOfMonth.toString()] = newCrossingColor
+                                        }
+                                    } else {
+                                        mapTilte[dateDay.dayOfMonth.toString()] = CrossingColor(event.description ,Color(220,220,220))
+                                    }
                                 }
                             }
                         }
                     }
                 }
 
-                val actionDays : MutableList<Int> = mutableListOf()
+
                 for (dateDay in listAllDay){
                     if (election != null) {
                         if(dateDay.month.name == newMouth?.let { it1 -> Month(it1).name }){
@@ -461,7 +682,33 @@ fun Application.configureElection() {
 
                 val countDay = 1 - (LocalDate(year!!, mouth!!, 1).dayOfWeek.value)
 
+                var eventsForRoleInItMouth : List<EventsWithSectionsAndLaw> = listOf()
+                if (eventsForRole != null) {
+                    for(event in eventsForRole){
+                        if(event.dateBeginEvent.month.value<=mouth.value && mouth.value<=event.dateBeginEvent.plus(event.duration, DateTimeUnit.DAY).month.value){
+                            eventsForRoleInItMouth += event
+                        }
+                    }
+                }
+                var eventsForFreeMarker: List<EventsWithSectionsAndLawAndDateInString> = mutableListOf()
+                if (eventsForRoleInItMouth != null) {
+                    for (event in eventsForRoleInItMouth) {
+                        val eventForFreeMarker = EventsWithSectionsAndLawAndDateInString(
+                            event.idEvent,
+                            event.nameSection,
+                            event.description,
+                            DateFormat().format(event.dateBeginEvent),
+                            DateFormat().format(event.dateBeginEvent, event.duration),
+                            event.laws,
+                            event.roles
+                        )
+                        if(event.roles?.contains(role.nameRole) == true)
+                            eventsForFreeMarker += eventForFreeMarker
+                    }
+                }
+
                 call.respond(
+
                     FreeMarkerContent(
                         "templates/calendar/calendar.ftl",
                         mapOf(
@@ -478,14 +725,16 @@ fun Application.configureElection() {
                             "actionDays" to actionDays,
                             "previewMouth" to (mouth.value-1),
                             "nextMouth" to (mouth.value+1),
-                            "newRole" to role
+                            "newRole" to role,
+                            "events" to eventsForFreeMarker,
+                            "titles" to mapTilte
                         )
                     )
                 )
             }
         }
+
     }
 
+    }
 }
-
-

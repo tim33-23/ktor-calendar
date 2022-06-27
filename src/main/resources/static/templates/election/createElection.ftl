@@ -15,9 +15,31 @@
             </div>
             <div class="form-floating">
                 <input type="datetime-local" class="form-control" id="dateBegin" name="dateBegin" placeholder="">
-                <label for="dateBegin">Дата начала выборов</label>
+                <label for="dateBegin">Дата начала голосования</label>
             </div>
-            <button class="w-100 btn btn-lg btn-primary" type="submit">Создать</button>
+            <#if elections?has_content>
+                <div class="row mt-3"><p>Выбрать шаблон для календарного плана</p></div>
+                <div class="row mt-1">
+                    <div class="col-1"></div>
+                    <div class="form-check form-switch col-3 align-content-center">
+                        <div>
+                            <input class="form-check-input" role="switch" type="checkbox" id="checkOnSelectionElection" name="checkOnSelectionElection">
+                        </div>
+                    </div>
+                    <div class="col-8 container">
+                        <div class="form-floating">
+                            <div class="themed-grid-col">
+                                <select id="idElection" name="idElection" style="max-width: 100%">
+                                    <#list elections as election>
+                                        <option value="${election.id}">${election.nameElection}</option>
+                                    </#list>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </#if>
+            <button class="w-100 mt-2 btn btn-lg btn-primary" type="submit">Создать</button>
             <p class="mt-5 mb-3 text-muted">&copy; 2023</p>
         </form>
     </main>

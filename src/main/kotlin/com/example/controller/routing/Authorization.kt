@@ -81,6 +81,7 @@ fun Application.configureAuthorization() {
 
         get("/logout") {
             call.sessions.clear<UserSession>()
+            call.sessions.clear<UserSession>()
             call.respondRedirect("/")
         }
 
@@ -88,7 +89,7 @@ fun Application.configureAuthorization() {
             get("/") {
                 val userSession = call.principal<UserSession>()
                 var doc: String? = null
-                if(userSession!=null){
+                if(userSession!=null && userSession.role!="ЦИК"){
                     val par = dao.participantRole(email = userSession.email)
                     val role = par?.let { it1 -> dao.role(it1.idRole) }
                     if (role != null) {

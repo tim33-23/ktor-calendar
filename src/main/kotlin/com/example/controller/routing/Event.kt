@@ -15,6 +15,7 @@ import io.ktor.server.util.*
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.*
+import org.jetbrains.exposed.sql.exists
 import kotlin.time.Duration.Companion.days
 
 fun Application.configureRouting() {
@@ -24,13 +25,13 @@ fun Application.configureRouting() {
         runBlocking {}
     }
 
-    suspend fun editeDateNextEvent(nextEvents: List<NextEvent>, dateEndPreviewEvent: LocalDate): Boolean {
-        if (nextEvents.isEmpty()) {
-            return true
-        } else {
+    suspend fun editeDateNextEvent(nextEvents: List<NextEvent>, dateEndPreviewEvent: LocalDate): Unit {
+        var addCheck: Boolean
+        if (nextEvents.isEmpty()) {}
+        else {
             for (nextEvent in nextEvents) {
                 val event = dao.event(nextEvent.id)
-                var addCheck: Boolean
+
                 if (event != null) {
                     addCheck = dao.editEvent(
                         event.id,
@@ -42,13 +43,9 @@ fun Application.configureRouting() {
                     )
                 }
                 val dateEndEvent = event?.let { dateEndPreviewEvent.plus(it.duration, DateTimeUnit.DAY) }
-                addCheck = dateEndEvent?.let { editeDateNextEvent(dao.listNextEvents(nextEvent.id), it) } == true
-                if (!addCheck)
-                    return false
+                dateEndEvent?.let { editeDateNextEvent(dao.listNextEvents(nextEvent.id), it) }
             }
-            return true;
         }
-
     }
 
 
@@ -113,7 +110,7 @@ fun Application.configureRouting() {
                         val part = formParameters["part"]?.toFloatOrNull()
 
                         val scope = formParameters["scope"].toString()
-                        law = article?.let { it1 -> Law(-1, it1, paragraph, part, scope) }
+                        law = Law(-1, article, paragraph, part, scope)
                     }
 
                     val checkOnSelectionRole = formParameters["checkOnSelectionRole"]
@@ -129,25 +126,31 @@ fun Application.configureRouting() {
                     var message: String?
                     if (election != null && section != null && law != null && role != null) {
                         val description = formParameters["descriptionEvent"].toString()
-                        val dataBeginEvent = formParameters["dateBeginEvent"]?.toLocalDate()
+                        var dataBeginEvent: LocalDate?=null
                         val durationEvent = formParameters["durationEvent"].toString().toInt()
                         val checkOnPreviewEvent = formParameters["checkOnPreviewEvent"]
                         var idPreviewEvent: Int? = null
                         if (checkOnPreviewEvent != null) {
                             idPreviewEvent = formParameters["idEvent"].toString().toInt()
+                            dataBeginEvent = idPreviewEvent.let { it1 -> dao.event(it1)?.dateBeginEvent }
                         }
-                        val check = dataBeginEvent?.let { it1 ->
-                            dao.addNewEventWithSectionAndLow(
-                                election,
-                                section,
-                                law!!,
-                                role!!,
-                                description,
-                                it1,
-                                durationEvent,
-                                idPreviewEvent
-                            )
+                        else
+                        {
+                            dataBeginEvent = formParameters["dateBeginEvent"]?.toLocalDate()
                         }
+                        val check =
+                            dataBeginEvent?.let { it1 ->
+                                dao.addNewEventWithSectionAndLow(
+                                    election,
+                                    section,
+                                    law!!,
+                                    role!!,
+                                    description,
+                                    it1,
+                                    durationEvent,
+                                    idPreviewEvent
+                                )
+                            }
                         if (check == true)
                             message = "Событие добавлено"
                     }
@@ -158,7 +161,7 @@ fun Application.configureRouting() {
                     if (election != null) {
                         sections = dao.sectionsForElection(election)
                         roles = dao.rolesForElection(election.id)
-                        laws = dao.allLaws()
+                        laws = dao.lawsForElection(election.id)
                         events = dao.eventsForElection(election.id)
                     }
                     call.respond(
@@ -198,7 +201,7 @@ fun Application.configureRouting() {
                         if (election != null) {
                             sections = dao.sectionsForElection(election)
                             roles = dao.rolesForElection(election.id)
-                            laws = dao.allLaws()
+                            laws = dao.lawsForElection(election.id)
                             events = dao.eventsForElection(election.id)
                         }
                         call.respond(
@@ -540,6 +543,7 @@ fun Application.configureRouting() {
                     val laws = dao.allLaws()
                     val lawsForEvent = dao.lawsForEvent(idEvent)
                     val electionForFremarker = election?.let { it1 -> getElectionForTemlates(it1) }
+
                     call.respond(
                         FreeMarkerContent(
                             "templates/event/editEvent.ftl",
@@ -644,6 +648,11 @@ fun Application.configureRouting() {
                     var addCheck = true
                     var event = dao.event(idEvent)
                     if (event != null) {
+                        val previewEvent = dao.previewEvent(idEvent)
+                        if(previewEvent.isNotEmpty()){
+                            val previewEventt =  dao.event(previewEvent.first().idPreviewEvent)
+                            dateBeginEvent = previewEventt?.dateBeginEvent?.plus(previewEventt.duration, DateTimeUnit.DAY)
+                        }
                         if (dateBeginEvent == null)
                             dateBeginEvent = event.dateBeginEvent
                         if (duration == null)
@@ -657,10 +666,10 @@ fun Application.configureRouting() {
                             duration
                         )
                         var nextEvents = dao.listNextEvents(event.id)
-
                         if (nextEvents.isNotEmpty()) {
-                            val dateEndEvent = event.dateBeginEvent.plus(event.duration, DateTimeUnit.DAY)
-                            addCheck = editeDateNextEvent(nextEvents, dateEndEvent)
+                            val dateEndEvent = event.dateBeginEvent.plus(duration, DateTimeUnit.DAY)
+                            editeDateNextEvent(nextEvents, dateEndEvent)
+                            addCheck=true
                         }
                     }
                     if (addCheck) {

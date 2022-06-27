@@ -2,12 +2,10 @@ package com.example.dao
 
 import com.example.dao.DatabaseFactory.dbQuery
 import com.example.dto.*
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.plus
+import kotlinx.datetime.*
 import org.jetbrains.exposed.sql.*
 import java.lang.Exception
+import javax.swing.text.Document
 
 
 class DAOFacadeImpl : DAOFacade {
@@ -102,6 +100,7 @@ class DAOFacadeImpl : DAOFacade {
         insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToElection)
     }
 
+
     override suspend fun editElection(id: Int, nameElection: String, dataBeginElection: LocalDateTime): Boolean = dbQuery{
         Elections.update({Elections.id eq id }) {
             it[Elections.nameElection] = nameElection
@@ -113,12 +112,122 @@ class DAOFacadeImpl : DAOFacade {
         Elections.deleteWhere { Elections.id eq id } > 0
     }
 
+    override suspend fun addNewElectionWithTemplate(
+        nameElection: String,
+        dataBeginElection: LocalDateTime,
+        idElectionTemplate: Int
+    ): Election? = dbQuery {
+        val templateEvents = eventsForElection(idElection = idElectionTemplate)
+        val newElection = addNewElection(nameElection, dataBeginElection)
+        val templateElection = election(idElectionTemplate)
+        var differentDays: DatePeriod? = null
+        if(newElection!=null && templateElection!=null){
+            val date1 = newElection.dateBeginElection.date
+            val date2 = templateElection.dateBeginElection.date
+            differentDays = date1.minus(date2)
+        }
+
+        var mapOldOnNewEvents = mutableListOf<Pair<Int, Int>>()
+        for(templateEvent in templateEvents){
+            val templateSection = section(templateEvent.idSection)
+            val newSections = newElection?.let { sectionsForElection(it) }
+            var newSection : Section? = null
+            var checkOnSection = false
+            if(newSections!=null && templateSection != null){
+                for(oneNewSection in newSections) {
+                    if (oneNewSection.nameSection == templateSection.nameSection) {
+                        newSection = section(oneNewSection.id)
+                        checkOnSection = true
+
+                    }
+                }
+            }
+            if(!checkOnSection) {
+                newSection = templateSection?.let { addNewSection(it.nameSection) }
+            }
+            if(newSection!=null && newElection!=null){
+                if(differentDays!=null) {
+                    val newEvent = addNewEvent(
+                        newElection.id,
+                        newSection.id,
+                        templateEvent.description,
+                        templateEvent.dateBeginEvent.plus(differentDays),
+                        templateEvent.duration
+                    )
+                    if (newEvent != null) {
+                        mapOldOnNewEvents.add(Pair(templateEvent.id, newEvent.id))
+                        val templateRoles = rolesForEvent(templateEvent.id)
+                        for (templateRole in templateRoles) {
+                            var newRole :Role?
+                            val checkRoles = rolesForElection(newElection.id)
+                            var flagChekRole = false
+                            for(checkRole in checkRoles){
+                                if(checkRole.nameRole == templateRole.nameRole) {
+                                    newRole = checkRole
+                                    addRoleForEvent(newRole.id, newEvent.id)
+                                    flagChekRole = true
+                                }
+
+                            }
+                            if(!flagChekRole) {
+                                addNewRoleForEvent(templateRole.nameRole, templateRole.documents, newEvent.id)
+                            }
+                        }
+                        val templateLaws = lawsForEvent(templateEvent.id)
+                        for (templateLaw in templateLaws) {
+                            val newLaw = Law(templateLaw.id,
+                                templateLaw.article,
+                                templateLaw.paragraph,
+                                templateLaw.part,
+                                templateLaw.scopeLegislation
+                            )
+                            if (newLaw != null) {
+                                var flag = false
+                                val laws = lawsForElection(newElection.id)
+                                for(law in laws){
+                                    if(law.article == newLaw.article && law.paragraph == newLaw.paragraph && law.part == newLaw.part && law.scopeLegislation==newLaw.scopeLegislation){
+                                        addLawForEvent(newLaw.id, newEvent.id)
+                                        flag = true
+                                    }
+                                }
+                                if(!flag){
+                                    var newlaw2 = addNewLaw(templateLaw.paragraph, templateLaw.article, templateLaw.part, templateLaw.scopeLegislation)
+                                    if (newlaw2 != null) {
+                                        addLawForEvent(newlaw2.id, newEvent.id)
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        for(pair in mapOldOnNewEvents){
+            val nextEvent = selectNextEvent(pair.first)
+            if(nextEvent!=null){
+                for(pair2 in mapOldOnNewEvents){
+                    if(pair2.first == nextEvent.idPreviewEvent){
+                        addInNewEventTable(pair.second, pair2.second)
+                    }
+                }
+            }
+        }
+        newElection
+    }
+
     override suspend fun allEvents(): List<Event> = dbQuery{
         Elections.selectAll().map(::resultRowToEvent)
     }
 
     override suspend fun eventsForElection(idElection: Int): List<Event> = dbQuery{
-        Events.select{Events.idElection eq idElection }.map(:: resultRowToEvent)
+        Events.select{Events.idElection eq idElection }.orderBy(Events.id).map(:: resultRowToEvent)
+    }
+
+    override suspend fun selectNextEvent(idNextEvent: Int): NextEvent? = dbQuery{
+        NextEvents.select{NextEvents.id eq idNextEvent }.map(:: resultRowToNextEvent).singleOrNull()
     }
 
     override suspend fun event(id: Int): Event? = dbQuery {
@@ -132,10 +241,17 @@ class DAOFacadeImpl : DAOFacade {
         idElection: Int,
         idSection: Int,
         description: String,
-        dataBeginEvent: LocalDateTime,
+        dataBeginEvent: LocalDate,
         duration: Int
-    ): Event? {
-        TODO("Not yet implemented")
+    ): Event? = dbQuery{
+        val insertStatement = Events.insert {
+            it[Events.idElection] = idElection
+            it[Events.idSection] = idSection
+            it[Events.description] = description
+            it[Events.duration] = duration
+            it[Events.dateBeginEvent] = dataBeginEvent
+        }
+        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToEvent)
     }
 
     override suspend fun editEvent(
@@ -190,6 +306,13 @@ class DAOFacadeImpl : DAOFacade {
             NextEvents.idPreviewEvent eq idEvent
         }.map(::resultRowToNextEvent)
         return@dbQuery nextEvents
+    }
+
+    override suspend fun previewEvent(idNextEvent: Int): List<NextEvent> = dbQuery{
+        val previewEvents = NextEvents.select{
+            NextEvents.id eq idNextEvent
+        }.map(::resultRowToNextEvent)
+        return@dbQuery previewEvents
     }
 
     override suspend fun participant(email: String, password: String): Participant = dbQuery{
@@ -285,6 +408,23 @@ class DAOFacadeImpl : DAOFacade {
 
         val role = Roles.insert {
             it[Roles.nameRole] = nameRole
+        }.resultedValues?.singleOrNull()?.let(::resultRowToRole)
+
+        if(role!=null) {
+            val insertStatement = Responsibles.insert {
+                it[Responsibles.idRole] = role.id
+                it[Responsibles.idEvent] = idEvent
+            }.resultedValues?.singleOrNull()
+            insertStatement!= null
+        }
+        false
+    }
+
+    override suspend fun addNewRoleForEvent(nameRole: String, documents: String?, idEvent: Int): Boolean = dbQuery{
+
+        val role = Roles.insert {
+            it[Roles.nameRole] = nameRole
+            it[Roles.documents] = documents
         }.resultedValues?.singleOrNull()?.let(::resultRowToRole)
 
         if(role!=null) {
@@ -419,6 +559,13 @@ class DAOFacadeImpl : DAOFacade {
         return@dbQuery "Разделы для выборов не найдены"
     }
 
+    override suspend fun addNewSection(nameSection: String): Section? = dbQuery{
+        var insertStatement = Sections.insert {
+            it[Sections.nameSection] = nameSection
+        }
+        insertStatement.resultedValues?.map(::resultRowSection)?.singleOrNull()
+    }
+
     override suspend fun law(id: Int): Law? = dbQuery{
         Laws
             .select {Laws.id eq id}
@@ -450,6 +597,29 @@ class DAOFacadeImpl : DAOFacade {
         catch (ex: Exception){
             return@dbQuery "Ошибка при добавление закона"
         }
+    }
+
+    override suspend fun addNewLaw(paragraph: Float?, article: Int?, part: Float?, scopeLegislation: String): Law? = dbQuery{
+            Laws.insert {
+                it[Laws.paragraph] = paragraph
+                it[Laws.article] = article
+                it[Laws.scopeLegislation] = scopeLegislation
+                it[Laws.part] = part
+            }.resultedValues?.singleOrNull()?.let(::resultRowToLaw)
+    }
+
+    override suspend fun lawsForElection(idElection: Int): List<Law> = dbQuery{
+        val events = eventsForElection(idElection)
+        Laws.join(Describeds, JoinType.INNER, Describeds.idLaw, Laws.id)
+            .join(Events, JoinType.INNER, Describeds.idEvent, Events.id )
+            .select {Events.idElection eq idElection}.map(::resultRowToLaw).toSet().toList()
+    }
+
+    override suspend fun addInNewEventTable(idNextEvent: Int, idPreviewEvent: Int): NextEvent? = dbQuery{
+        NextEvents.insert {
+            it[NextEvents.id] = idNextEvent
+            it[NextEvents.idPreviewEvent] = idPreviewEvent
+        }.resultedValues?.singleOrNull()?.let(::resultRowToNextEvent)
     }
 
     override suspend fun addNewLawForEvent(law: Law, idEvent: Int): String? = dbQuery{
