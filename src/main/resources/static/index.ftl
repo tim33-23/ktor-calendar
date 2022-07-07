@@ -17,7 +17,7 @@
             <button class="btn btn-secondary registration" type="submit">Регистрация</button>
         </form>
     </nav>
-    <div class="row" align="center" style="margin-top: 150px">
+    <div class="row" align="center" style="margin-top: 250px">
         <div class="col-3">
         </div>
         <div class="col-3" align="right">
