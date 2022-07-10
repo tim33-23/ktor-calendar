@@ -1,31 +1,45 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <#include "../head-config.ftl"/>
-</head>
-<body>
-<#include "../header.ftl"/>
-<div align="center" style="padding-top: 250px">
-    <main class="form-signin w-100" >
-        <form style="max-width: 25%;" action="/login" method="Post">
-            <img class="mb-4" src="/static/flag.jpg" alt="" width="72" height="57">
-            <h1 class="h3 mb-3 fw-normal">Вход</h1>
-
-            <div class="form-floating">
-                <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com">
-                <label for="email">email</label>
-            </div>
-            <div class="form-floating">
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-                <label for="password">password</label>
-            </div>
-            <button class="w-100 btn btn-lg btn-primary" type="submit">Войти</button>
-            <p class="mt-5 mb-3 text-muted">&copy; 2017–2022</p>
+<#include "../head-config.ftl"/>
+<body >
+<div class="container" style="background-image: linear-gradient(to right, rgba(255,255,255,0.4) 0 100%), url('static/fon3.jpg'); height: 100%">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" style="margin-left: 5px" href="/">
+                Мой малыш
+            </a>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <form class="d-flex" role="search">
+            <button class="btn btn-secondary login" type="submit" style="margin-right: 5px" href="/login">Вход</button>
+            <button class="btn btn-secondary registration" type="submit" href="/registration">Регистрация</button>
         </form>
-    </main>
+    </nav>
+
+    <div align="center" style="padding-top: 150px">
+        <main class="form-signin w-100" >
+            <form style="max-width: 25%;">
+                <img class="mb-4" src="/static/baby2.png" alt="" width="310" height="220">
+
+                <div class="form-floating">
+                    <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
+                    <label for="floatingInput">E-mail</label>
+                </div>
+                <div class="form-floating" style="margin-top: 10px">
+                    <input type="password" class="form-control" id="Password" placeholder="Password">
+                    <label for="floatingPassword">Пароль</label>
+                </div>
+                <button class="w-100 btn btn-lg btn-secondary" type="submit" style="margin-top: 20px">Войти</button>
+                <div class="container" style="margin-top: 270px">
+                    <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
+                </div>
+            </form>
+        </main>
+
+    </div>
 </div>
-
-
-
+</div>
 </body>
 </html>

@@ -1,4 +1,4 @@
-package com.example.plugins.routing
+package com.example.controller.routing
 
 import com.example.dto.UserSession
 import com.example.services.checkAccount
@@ -25,7 +25,7 @@ fun Application.configureAuthorization() {
     install(Authentication) {
         session<UserSession>("auth-session") {
             validate { session ->
-                if(session.role == "ЦИК") {
+                if(session.email != "") {
                     session
                 } else {
                     null
@@ -49,19 +49,22 @@ fun Application.configureAuthorization() {
             val email = formParameters.getOrFail("email")
             val password = formParameters.getOrFail("password")
             if (checkAccount(email, password)) {
-                val role = getRole(email)
-                val name = getProfile(email)
-                call.sessions.set(UserSession(email = email,role = getRole(email),name = name))
-                call.respond(FreeMarkerContent("index.ftl", mapOf("name" to name, "role" to role)))
+                call.sessions.set(UserSession(email = email))
+                call.respond(FreeMarkerContent("index.ftl", null))
             } else {
                 call.respondRedirect("/")
             }
         }
 
+        get("/"){
+            val userSession = call.principal<UserSession>()
+            call.respond(FreeMarkerContent("index.ftl", null))
+        }
+
         authenticate("auth-session") {
             get("/") {
                 val userSession = call.principal<UserSession>()
-                call.respond(FreeMarkerContent("index.ftl", mapOf("name" to userSession?.name, "role" to userSession?.role)))
+                call.respond(FreeMarkerContent("main/main.ftl", null))
             }
         }
 

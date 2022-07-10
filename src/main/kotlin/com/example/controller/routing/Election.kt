@@ -37,7 +37,7 @@ fun Application.configureRouting() {
                 call.respond(
                     FreeMarkerContent(
                         "templates/election/elections.ftl",
-                        mapOf("elections" to ElectionsService().getAllElections(), "name" to userSession?.name, "role" to userSession?.role)
+                        null
                     )
                 )
             }
@@ -47,7 +47,7 @@ fun Application.configureRouting() {
                 call.respond(
                     FreeMarkerContent(
                         "templates/election/elections.ftl",
-                        mapOf("elections" to dao.allElections(), "name" to userSession?.name, "role" to userSession?.role)
+                        null
                     )
                 )
             }
@@ -57,51 +57,7 @@ fun Application.configureRouting() {
                 call.respond(
                     FreeMarkerContent(
                         "templates/election/createElection.ftl",
-                        mapOf("name" to userSession?.name, "role" to userSession?.role),
-                        ""
-                    )
-                )
-            }
-
-
-
-            post("/createElection") {
-                val userSession = call.principal<UserSession>()
-                if(userSession?.role == "ЦИК" || userSession?.role == "ТИК"){
-                    val formParameters = call.receiveParameters()
-                    val nameElection = formParameters.getOrFail("nameElection")
-                    val dateBegin = formParameters.getOrFail("dateBegin").toLocalDateTime()
-                    val election = dao.addNewElection(nameElection, dateBegin)
-                    call.respondRedirect("/election/${election?.id}/editElection")
-                }
-                call.respond(
-                    FreeMarkerContent(
-                        "templates/election/createElection.ftl",
-                        mapOf("elections" to ElectionsService().getAllElections(), "name" to userSession?.name, "role" to userSession?.role),
-                        ""
-                    )
-                )
-            }
-
-            get("/election/{id}"){
-                val id = call.parameters.getOrFail<Int>("id").toInt()
-                call.respond(FreeMarkerContent("templates/election/election.ftl", mapOf("election" to dao.election(id))))
-            }
-
-            get ("/election/{id}/editElection"){
-                val id = call.parameters.getOrFail<Int>("id").toInt()
-                call.respond(FreeMarkerContent("templates/election/editElection.ftl", mapOf("election" to dao.election(id))))
-            }
-
-            post("/election") {
-                val userSession = call.principal<UserSession>()
-                val formParameters = call.receiveParameters()
-                val election = formParameters["election"].toString()
-                val events = ElectionsService().getEvents(election)
-                call.respond(
-                    FreeMarkerContent(
-                        "templates/election/election.ftl",
-                        mapOf("events" to events, "election" to election, "name" to userSession?.name, "role" to userSession?.role)
+                       null
                     )
                 )
             }

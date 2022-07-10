@@ -1,42 +1,49 @@
 <!doctype html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
-    <meta name="generator" content="Hugo 0.98.0">
-    <title>Signin Template · Bootstrap v5.2</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-</head>
-<body class="text-center">
-<div align="center" style="padding-top: 250px">
-    <main class="form-signin w-100" >
-        <form style="max-width: 25%;">
-            <img class="mb-4" src="/static/flag.jpg" alt="" width="72" height="57">
-            <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-
-            <div class="form-floating">
-                <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
-                <label for="floatingInput">Email address</label>
-            </div>
-            <div class="form-floating">
-                <input type="password" class="form-control" id="Password" placeholder="Password">
-                <label for="floatingPassword">Password</label>
-            </div>
-            <div class="form-floating">
-                <input type="confirmationPassword" class="form-control" id="confirmationPassword" placeholder="СonfirmationPassword">
-                <label for="confirmationPassword">Confirmation password</label>
-            </div>
-            <button class="w-100 btn btn-lg btn-primary" type="submit"></button>
-            <p class="mt-5 mb-3 text-muted">&copy; 2023</p>
+<#include "../head-config.ftl"/>
+<body >
+<div class="container" style="background-image: linear-gradient(to right, rgba(255,255,255,0.4) 0 100%), url('static/fon3.jpg'); height: 100%">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" style="margin-left: 5px" href="/login">
+                Мой малыш
+            </a>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <form class="d-flex" role="search">
+            <button class="btn btn-secondary login" type="submit" style="margin-right: 5px" href="/login">Вход</button>
+            <button class="btn btn-secondary registration" type="submit" href="/registration">Регистрация</button>
         </form>
-    </main>
+    </nav>
 
+    <div align="center" style="padding-top: 150px">
+        <main class="form-signin w-100" >
+            <form style="max-width: 25%;" method="post" action="/registration">
+                <img class="mb-4" src="/static/baby2.png" alt="" width="310" height="220">
+
+                <div class="form-floating">
+                    <input type="email" class="form-control" id="floatingInput" name="email" placeholder="name@example.com">
+                    <label for="floatingInput">E-mail</label>
+                </div>
+                <div class="form-floating" style="margin-top: 10px">
+                    <input type="password" class="form-control" id="Password" name="password" placeholder="Password">
+                    <label for="floatingPassword">Пароль</label>
+                </div>
+                <div class="form-floating" style="margin-top: 10px">
+                    <input type="confirmationPassword" class="form-control" id="confirmationPassword" name="confirmationPassword" placeholder="СonfirmationPassword">
+                    <label for="confirmationPassword">Подтвердите пароль</label>
+                </div>
+                <button class="w-100 btn btn-lg btn-secondary" type="submit" style="margin-top: 20px">Регистрация</button>
+                <div class="container" style="margin-top: 210px">
+                    <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
+                </div>
+            </form>
+        </main>
+
+    </div>
 </div>
-
-
-
+</div>
 </body>
 </html>
