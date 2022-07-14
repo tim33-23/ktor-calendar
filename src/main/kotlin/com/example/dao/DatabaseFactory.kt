@@ -1,6 +1,8 @@
 package com.example.dao
 
+import com.example.dto.Childs
 import com.example.dto.Elections
+import com.example.dto.Parents
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -12,12 +14,13 @@ import org.jetbrains.exposed.sql.transactions.transaction
 object DatabaseFactory {
     fun init() {
         val driverClassName = "com.mysql.cj.jdbc.Driver"
-        val jdbcURL = "jdbc:mysql://localhost:3306/swpool"
+        val jdbcURL = "jdbc:mysql://localhost:3306/child"
         val user = "root"
         val password = "175293"
         val database = Database.connect(jdbcURL, driverClassName, user, password)
         transaction(database) {
-            SchemaUtils.create(Elections)
+            SchemaUtils.create(Parents)
+            SchemaUtils.create(Childs)
         }
     }
 

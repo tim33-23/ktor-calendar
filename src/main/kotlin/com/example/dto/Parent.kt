@@ -6,7 +6,7 @@ import org.jetbrains.exposed.sql.Table
 
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
-data class Parent(val id: Int, val nameElection: String, val dataBeginElection: LocalDateTime)
+data class Parent(val id: Int, val email: String, val password: String)
 
 object Parents : Table() {
     val id = integer("id_parents").autoIncrement()

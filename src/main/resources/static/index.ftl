@@ -12,8 +12,10 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <form class="d-flex" role="search">
+        <form class="d-flex" role="search" method="get" action="/login">
             <button class="btn btn-secondary login" type="submit" style="margin-right: 5px" href="/login">Вход</button>
+        </form>
+        <form class="d-flex" role="search" method="get" action="/registration">
             <button class="btn btn-secondary registration" type="submit" href="/registration">Регистрация</button>
         </form>
     </nav>
@@ -118,7 +120,6 @@ margin: auto">
     </table>
 
 
-</div>
 </div>
 </body>
 </html>

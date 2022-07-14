@@ -1,47 +1,73 @@
 package com.example.dao
 
 import com.example.dao.DatabaseFactory.dbQuery
-import com.example.dto.Election
-import com.example.dto.Elections
-import kotlinx.coroutines.runBlocking
+import com.example.dto.*
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.sql.*
 
 class DAOFacadeImpl : DAOFacade {
-    private fun resultRowToElection(row: ResultRow) = Election(
-        id = row[Elections.id],
-        nameElection = row[Elections.nameElection],
-        dataBeginElection = row[Elections.dataBeginElection],
+
+    private fun resultRowToParent(row: ResultRow) = Parent(
+        id = row[Parents.id],
+        email = row[Parents.email],
+        password = row[Parents.password],
     )
 
-    override suspend fun allElections(): List<Election> = dbQuery {
-        Elections.selectAll().map(::resultRowToElection)
-    }
+    private fun resultRowToChild(row: ResultRow) = Child(
+        idChild = row[Childs.idChild],
+        idParents = row[Childs.idParents],
+        name = row[Childs.name],
+        dateOfBirth = row[Childs.dateOfBirth],
+        gender = row[Childs.gender],
+    )
 
-    override suspend fun election(id: Int): Election? = dbQuery {
-        Elections
-            .select {Elections.id eq id }
-            .map(:: resultRowToElection)
+    override suspend fun parent(email: String): Parent? = dbQuery{
+        Parents
+            .select {Parents.email eq email }
+            .map(:: resultRowToParent)
             .singleOrNull()
     }
 
-    override suspend fun addNewElection(nameElection: String, dataBeginElection: LocalDateTime): Election? = dbQuery{
-        val insertStatement = Elections.insert {
-            it[Elections.nameElection] = nameElection
-            it[Elections.dataBeginElection] = dataBeginElection
+
+    override suspend fun parent(id: Int): Parent? = dbQuery{
+        Parents
+            .select {Parents.id eq id }
+            .map(:: resultRowToParent)
+            .singleOrNull()
+    }
+
+    override suspend fun addParent(email: String, password: String): Parent? = dbQuery{
+        val insertStatement = Parents.insert {
+            it[Parents.email] = email
+            it[Parents.password] = password
         }
-        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToElection)
+        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToParent)
     }
 
-    override suspend fun editElection(id: Int, nameElection: String, dataBeginElection: LocalDateTime): Boolean = dbQuery{
-        Elections.update({Elections.id eq id }) {
-            it[Elections.nameElection] = nameElection
-            it[Elections.dataBeginElection] = dataBeginElection
-        } > 0
+    override suspend fun addChild(idParent: Int, name: String, dateOfBirth: LocalDate, gender: Boolean): Child? = dbQuery{
+        val insertStatement = Childs.insert {
+            it[Childs.name] = name
+            it[Childs.idParents] = idParent
+            it[Childs.name] = name
+            it[Childs.dateOfBirth] = dateOfBirth
+            it[Childs.gender] = gender
+        }
+        insertStatement.resultedValues?.singleOrNull()?.let(::resultRowToChild)
     }
 
-    override suspend fun deleteElection(id: Int): Boolean = dbQuery{
-        Elections.deleteWhere { Elections.id eq id } > 0
+    override suspend fun child(id: Int): Child? = dbQuery{
+        Childs
+            .select { Childs.idChild eq id }
+            .map(:: resultRowToChild)
+            .singleOrNull()
+    }
+
+    override suspend fun children(idParent: Int): List<Child>? = dbQuery{
+        val children = Childs
+            .select { Childs.idParents eq idParent }
+            .map(::resultRowToChild)
+        children
     }
 
 

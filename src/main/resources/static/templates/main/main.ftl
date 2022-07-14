@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<#include "templates/head-config.ftl"/>
+<#include "../head-config.ftl"/>
 <body >
 <div class="container" style="background-image: linear-gradient(to right, rgba(255,255,255,0.4) 0 100%), url('static/fon3.jpg'); height: 100%">
     <nav class="navbar navbar-expand-lg">
@@ -12,25 +12,28 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" aria-current="page" href="#">Малыши</a>
+                        <form method="post" action="/children">
+                            <input name="idChild" type="number" value="1" style="display: none">
+                            <button class="btn btn-link nav-link active" type="submit">Малыши</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="#">Рост</a>
+                        <a class="nav-link active" href="/height">Рост</a>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="#">Вес</a>
+                        <a class="nav-link active" href="/weight">Вес</a>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="#">Сон</a>
+                        <a class="nav-link active" href="/sleep">Сон</a>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="#">Зубы</a>
+                        <a class="nav-link active" href="/tooth">Зубы</a>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="#">Прививки</a>
+                        <a class="nav-link active" href="/vaccination">Прививки</a>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="#">Прикорм</a>
+                        <a class="nav-link active" href="/recipe">Прикорм</a>
                     </li>
                 </ul>
             </div>
@@ -40,6 +43,7 @@
             <form class="d-flex" role="search">
                 <button class="btn btn-secondary logout" type="submit" style="margin-right: 5px">Выход</button>
             </form>
+        </div>
     </nav>
 
     <div align="center" style="padding-top: 100px">
@@ -52,14 +56,15 @@
                         Рост</button>
                 </div>
                 <div class="col-2">
-                    <p class="text-center" style="font-size: 17px;font-family: 'Arial',SansSerif; width: 100px;height: 100px;">
-                        <b> Лиза<br>19.03.2021<br>15 месяцев</b>
+                    <p class="text-center" style="font-size: 17px; font-family: 'Arial',SansSerif; height: 100px;">
+                        <b> Лиза<br>19.03.2021<br>1&nbsp;год&nbsp;3&nbsp;месяца&nbsp;2&nbsp;дня</b>
                     </p>
                 </div>
                 <div class="col-5 mt-2" align="left">
                     <button type="button" class="btn btn-secondary btn-lg">
                         <img src="/static/weight.png" alt="" width="50" height="50">
-                        Вес</button>
+                        Вес
+                    </button>
                 </div>
             </div>
             <div class="row" align="center">
@@ -95,8 +100,6 @@
             <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
         </div>
     </div>
-
-</div>
 </div>
 </div>
 </body>

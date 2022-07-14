@@ -5,16 +5,18 @@
 <div class="container" style="background-image: linear-gradient(to right, rgba(255,255,255,0.4) 0 100%), url('static/fon3.jpg'); height: 100%">
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" style="margin-left: 5px" href="#">
+            <a class="navbar-brand" style="margin-left: 5px" href="/">
                 Мой малыш
             </a>
         </div>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <form class="d-flex" role="search">
-            <button class="btn btn-secondary login" type="submit" style="margin-right: 5px">Вход</button>
-            <button class="btn btn-secondary registration" type="submit">Регистрация</button>
+        <form class="d-flex" role="search" method="get" action="/login">
+            <button class="btn btn-secondary login" type="submit" style="margin-right: 5px" href="/login">Вход</button>
+        </form>
+        <form class="d-flex" role="search" method="get" action="/registration">
+            <button class="btn btn-secondary registration" type="submit" href="/registration">Регистрация</button>
         </form>
     </nav>
     <div class="container" style="margin-top: 130px">
@@ -118,7 +120,6 @@ margin: auto">
     </table>
 
 
-</div>
 </div>
 </body>
 </html>
