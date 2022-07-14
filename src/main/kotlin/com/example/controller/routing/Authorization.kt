@@ -3,9 +3,6 @@ package com.example.controller.routing
 import com.example.dao.DAOFacade
 import com.example.dao.DAOFacadeImpl
 import com.example.dto.UserSession
-import com.example.services.checkAccount
-import com.example.services.getProfile
-import com.example.services.getRole
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.freemarker.*
@@ -15,11 +12,9 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.util.*
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toJavaLocalDate
 import java.time.Period
-
+import com.example.controller.routing.Services.DateFormat
 
 fun Application.configureAuthorization() {
     install(Sessions) {
@@ -50,6 +45,10 @@ fun Application.configureAuthorization() {
 
     routing {
 
+        get("/"){
+            call.respond(FreeMarkerContent("index.ftl", null))
+        }
+
         get("/login") {
             call.respond(FreeMarkerContent("templates/authorization/login.ftl", null))
         }
@@ -63,18 +62,24 @@ fun Application.configureAuthorization() {
             if((parent != null) && (parent.password == password)){
                 call.sessions.set(UserSession(email = email))
                 val children = dao.children(idParent = parent.id)
-                if((children != null) && children.isNotEmpty())
-                    call.respond(FreeMarkerContent("templates/main/main.ftl", mapOf("child" to children.first())))
-                else
+                if((children != null) && children.isNotEmpty()){
+                    val child = children.first()
+                    val nowDate = java.time.LocalDate.now()
+                    val birthDate = child?.dateOfBirth
+                    val period = Period.between(birthDate?.toJavaLocalDate(), nowDate)
+                    val dateBirthString = DateFormat().format(birthDate)
+                    period.months
+                    call.respond(FreeMarkerContent("templates/main/main.ftl",
+                        mapOf("child" to child, "period" to period, "birth" to dateBirthString)))
+                }
+                else{
                     call.respond(FreeMarkerContent("templates/child/createFirstChild.ftl", null))
+                }
+
             }
             else{
                 call.respond(FreeMarkerContent("index.ftl", mapOf("message" to "Проверьте правильность заполненых полей")))
             }
-        }
-
-        get("/"){
-            call.respond(FreeMarkerContent("index.ftl", null))
         }
 
         authenticate("auth-session") {
@@ -89,8 +94,10 @@ fun Application.configureAuthorization() {
                             val nowDate = java.time.LocalDate.now()
                             val birthDate = child?.dateOfBirth
                             val period = Period.between(birthDate?.toJavaLocalDate(), nowDate)
-
-                            call.respond(FreeMarkerContent("templates/main/main.ftl", mapOf("child" to child, "period" to period)))
+                            val dateBirthString = DateFormat().format(birthDate)
+                            period.months
+                            call.respond(FreeMarkerContent("templates/main/main.ftl",
+                                mapOf("child" to child, "period" to period, "birth" to dateBirthString)))
                         }
                         else{
                             call.respond(FreeMarkerContent("templates/child/createFirstChild.ftl", null))
@@ -101,7 +108,7 @@ fun Application.configureAuthorization() {
                     }
                 }
                 else{
-                    call.respond(FreeMarkerContent("templates/authorization/login.ftl", null))
+                    call.respond(FreeMarkerContent("templates/authorization/index.ftl", null))
                 }
             }
 

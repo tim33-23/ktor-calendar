@@ -56,8 +56,8 @@
                         Рост</button>
                 </div>
                 <div class="col-2">
-                    <p class="text-center" style="font-size: 17px;font-family: 'Arial',SansSerif;height: 100px;">
-                        <b> Лиза<br>19.03.2021<br>1&nbsp;год&nbsp;3&nbsp;месяца&nbsp;2&nbsp;дня</b>
+                    <p class="text-center" style="font-size: 17px; font-family: 'Arial',SansSerif; height: 100px;">
+                        <b>${child.name}<br>${birth}<br>${period.years}&nbsp;год&nbsp;${period.months}&nbsp;месяца&nbsp;${period.days}&nbsp;дня</b>
                     </p>
                 </div>
                 <div class="col-5 mt-2" align="left">
