@@ -1,20 +1,19 @@
 package com.example.dto
 
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalDate
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.kotlin.datetime.date
 
-import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 import java.util.*
 
-data class ParametersBody(val idBody: Int, val idChild: Int, val childHeightFact: Float,val childWeightFact: Float,val dateofAffixingCh: Date)
+data class ParametersBody(val idBody: Int, val idChild: Int, val childHeightFact: Float?, val childWeightFact: Float?, val dateofAffixingCh: LocalDate)
 
-object ParametersBodys: Table() {
+object ParametersBodys: Table("parameters_bodys") {
     val idBody = integer("id_body").autoIncrement()
     val idChild = integer("id_child")
-    val childHeightFact = float("height_child_fuct")
-    val childWeightFact = float("weight_child_fuct")
-    val dateofAffixingCh = date("date_of_affixing_of_the_child")
+    val childHeightFact = float("height_childer_fuct").nullable()
+    val childWeightFact = float("weight_childer_fuct").nullable()
+    val dateOfAffixingCh = date("date_of_affixing_of_the_child")
 
     override val primaryKey = PrimaryKey(idBody)
 

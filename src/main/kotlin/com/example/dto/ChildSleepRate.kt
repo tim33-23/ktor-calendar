@@ -1,12 +1,13 @@
 package com.example.dto
 
 
+import kotlinx.datetime.LocalDateTime
 import org.jetbrains.exposed.sql.Table
 
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 import java.sql.Time
 
-data class ChildSleepRate(val idSlNorm: Int, val slDuration: Time, val numberSl: Int,val oldBaby: Int,val daytimeSl: Int)
+data class ChildSleepRate(val idSlNorm: Int, val slDuration: LocalDateTime, val numberSl: Int,val oldBaby: Int,val daytimeSl: Int)
 
 object ChildSleepRates : Table() {
     val idSlNorm = integer("id_sleep_norms").autoIncrement()
