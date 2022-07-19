@@ -37,7 +37,7 @@ fun Application.configureRegistration() {
                             null
                         }
                     if(parent!=null){
-                        call.sessions.set(UserSession(email = email))
+                        call.sessions.set(UserSession(email = email, null))
                         val children = dao.children(idParent = parent.id)
                         if((children != null) && children.isNotEmpty())
                             call.respond(FreeMarkerContent("templates/main/main.ftl", mapOf("child" to children.first())))
@@ -83,6 +83,4 @@ fun Application.configureRegistration() {
             }
         }
     }
-
-
 }

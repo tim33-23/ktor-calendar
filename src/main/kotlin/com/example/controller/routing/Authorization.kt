@@ -12,9 +12,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.sessions.*
 import io.ktor.server.util.*
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.toJavaLocalDate
-import java.time.Period
-import com.example.controller.routing.Services.DateFormat
+import com.example.controller.routing.Services.MainPage
 
 fun Application.configureAuthorization() {
     install(Sessions) {
@@ -30,7 +28,7 @@ fun Application.configureAuthorization() {
                 if(session.email != "") {
                     session
                 } else {
-                    null
+                    session
                 }
             }
             challenge {
@@ -45,14 +43,6 @@ fun Application.configureAuthorization() {
 
     routing {
 
-        get("/"){
-            call.respond(FreeMarkerContent("index.ftl", null))
-        }
-
-        get("/login") {
-            call.respond(FreeMarkerContent("templates/authorization/login.ftl", null))
-        }
-
 
         post("/login") {
             val formParameters = call.receiveParameters()
@@ -60,22 +50,15 @@ fun Application.configureAuthorization() {
             val password = formParameters.getOrFail("password")
             val parent = dao.parent(email)
             if((parent != null) && (parent.password == password)){
-                call.sessions.set(UserSession(email = email))
-                val children = dao.children(idParent = parent.id)
-                if((children != null) && children.isNotEmpty()){
-                    val child = children.first()
-                    val nowDate = java.time.LocalDate.now()
-                    val birthDate = child?.dateOfBirth
-                    val period = Period.between(birthDate?.toJavaLocalDate(), nowDate)
-                    val dateBirthString = DateFormat().format(birthDate)
-                    period.months
-                    call.respond(FreeMarkerContent("templates/main/main.ftl",
-                        mapOf("child" to child, "period" to period, "birth" to dateBirthString)))
+                val model = MainPage().getModelForMainPage(parent)
+                call.sessions.set(UserSession(email = email, model?.get("idChild") as Int?))
+                model?.minus("idChild")
+                if(model!=null){
+                    call.respond(FreeMarkerContent("templates/main/main.ftl", model))
                 }
                 else{
                     call.respond(FreeMarkerContent("templates/child/createFirstChild.ftl", null))
                 }
-
             }
             else{
                 call.respond(FreeMarkerContent("index.ftl", mapOf("message" to "Проверьте правильность заполненых полей")))
@@ -88,16 +71,11 @@ fun Application.configureAuthorization() {
                 if(userSession!=null) {
                     val parent = dao.parent(userSession.email)
                     if(parent!=null){
-                        val children = dao.children(idParent = parent.id)
-                        if ((children != null) && children.isNotEmpty()){
-                            val child = children.first()
-                            val nowDate = java.time.LocalDate.now()
-                            val birthDate = child?.dateOfBirth
-                            val period = Period.between(birthDate?.toJavaLocalDate(), nowDate)
-                            val dateBirthString = DateFormat().format(birthDate)
-                            period.months
-                            call.respond(FreeMarkerContent("templates/main/main.ftl",
-                                mapOf("child" to child, "period" to period, "birth" to dateBirthString)))
+                        val model = MainPage().getModelForMainPage(parent)
+                        call.sessions.set(UserSession(userSession.email, model?.get("idChild") as Int?))
+                        model?.minus("idChild")
+                        if(model!=null){
+                            call.respond(FreeMarkerContent("templates/main/main.ftl", model))
                         }
                         else{
                             call.respond(FreeMarkerContent("templates/child/createFirstChild.ftl", null))
@@ -108,7 +86,7 @@ fun Application.configureAuthorization() {
                     }
                 }
                 else{
-                    call.respond(FreeMarkerContent("templates/authorization/index.ftl", null))
+                    call.respond(FreeMarkerContent("index.ftl", null))
                 }
             }
 
@@ -117,11 +95,15 @@ fun Application.configureAuthorization() {
                 if(userSession!=null) {
                     val parent = dao.parent(userSession.email)
                     if(parent!=null){
-                        val children = dao.children(idParent = parent.id)
-                        if ((children != null) && children.isNotEmpty())
-                            call.respond(FreeMarkerContent("templates/main/main.ftl", mapOf("child" to children.first())))
-                        else
+                        val model = MainPage().getModelForMainPage(parent)
+                        call.sessions.set(UserSession(userSession.email, model?.get("idChild") as Int?))
+                        model?.minus("idChild")
+                        if(model!=null){
+                            call.respond(FreeMarkerContent("templates/main/main.ftl", model))
+                        }
+                        else{
                             call.respond(FreeMarkerContent("templates/child/createFirstChild.ftl", null))
+                        }
                     }
                     else{
                         call.respond(FreeMarkerContent("templates/authorization/login.ftl", null))

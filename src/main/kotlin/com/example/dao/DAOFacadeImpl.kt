@@ -22,6 +22,14 @@ class DAOFacadeImpl : DAOFacade {
         gender = row[Childs.gender],
     )
 
+    private fun resultRowToBody(row: ResultRow) = ParametersBody(
+        idBody = row[ParametersBodys.idBody],
+        idChild = row[ParametersBodys.idChild],
+        childHeightFact = row[ParametersBodys.childHeightFact],
+        childWeightFact = row[ParametersBodys.childWeightFact],
+        dateofAffixingCh = row[ParametersBodys.dateOfAffixingCh],
+    )
+
     override suspend fun parent(email: String): Parent? = dbQuery{
         Parents
             .select {Parents.email eq email }
@@ -49,7 +57,6 @@ class DAOFacadeImpl : DAOFacade {
         val insertStatement = Childs.insert {
             it[Childs.name] = name
             it[Childs.idParents] = idParent
-            it[Childs.name] = name
             it[Childs.dateOfBirth] = dateOfBirth
             it[Childs.gender] = gender
         }
@@ -70,5 +77,57 @@ class DAOFacadeImpl : DAOFacade {
         children
     }
 
+    override suspend fun updateChild(idChild: Int, name: String, dateOfBirth: LocalDate, gender: Boolean): Child? =
+        dbQuery{
+        Childs.update({Childs.idChild eq idChild}) {
+            it[Childs.name] = name
+            it[Childs.dateOfBirth] = dateOfBirth
+            it[Childs.gender] = gender
+        }
+        child(idChild)
+    }
+
+    override suspend fun deletedChild(idChild: Int) :Boolean = dbQuery{
+        Childs.deleteWhere { Childs.idChild eq idChild }>0
+    }
+
+    override suspend fun parametersBody(idBody: Int): ParametersBody? = dbQuery{
+        ParametersBodys
+            .select { ParametersBodys.idBody eq idBody }
+            .map(:: resultRowToBody)
+            .singleOrNull()
+    }
+
+    override suspend fun parametersBody(idChild: Int, dateParameters: LocalDate): ParametersBody? = dbQuery{
+        ParametersBodys
+            .select { (ParametersBodys.idChild eq idChild) and (ParametersBodys.dateOfAffixingCh eq dateParameters) }
+            .map(:: resultRowToBody)
+            .singleOrNull()
+    }
+
+    override suspend fun insertParametersBody(idChild: Int, height: Float?, weight: Float?, date: LocalDate): ParametersBody? = dbQuery{
+        val insertStatement = ParametersBodys.insert {
+            it[ParametersBodys.idChild] = idChild
+            it[ParametersBodys.childHeightFact] = height
+            it[ParametersBodys.childWeightFact] = weight
+            it[ParametersBodys.dateOfAffixingCh] = date
+        }
+        insertStatement.resultedValues?.singleOrNull()?.let(:: resultRowToBody)
+    }
+
+    override suspend fun updateParametersBody(
+        idBody: Int,
+        idChild: Int,
+        height: Float?,
+        weight: Float?,
+        date: LocalDate
+    ): Boolean = dbQuery{
+        ParametersBodys.update({ParametersBodys.idBody eq idBody}) {
+            it[ParametersBodys.idChild] = idChild
+            it[ParametersBodys.childHeightFact] = height
+            it[ParametersBodys.childWeightFact] = weight
+            it[ParametersBodys.dateOfAffixingCh] = date
+        }>0
+    }
 
 }

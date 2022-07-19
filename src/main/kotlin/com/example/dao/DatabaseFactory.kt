@@ -2,6 +2,7 @@ package com.example.dao
 
 import com.example.dto.Childs
 import com.example.dto.Elections
+import com.example.dto.ParametersBodys
 import com.example.dto.Parents
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.Database
@@ -21,6 +22,7 @@ object DatabaseFactory {
         transaction(database) {
             SchemaUtils.create(Parents)
             SchemaUtils.create(Childs)
+            SchemaUtils.create(ParametersBodys)
         }
     }
 

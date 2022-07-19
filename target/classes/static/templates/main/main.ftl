@@ -5,7 +5,7 @@
 <div class="container" style="background-image: linear-gradient(to right, rgba(255,255,255,0.4) 0 100%), url('static/fon3.jpg'); height: 100%">
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Мой малыш</a>
+            <a class="navbar-brand" href="/">Мой малыш</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -18,16 +18,24 @@
                         </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="/height">Рост</a>
+                        <form method="get" action="/height">
+                            <button class="btn btn-link nav-link active" type="submit">Рост</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="/weight">Вес</a>
+                        <form method="get" action="/weight">
+                            <button class="btn btn-link nav-link active" type="submit">Вес</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="/sleep">Сон</a>
+                        <form method="get" action="/sleep">
+                            <button class="btn btn-link nav-link active" type="submit">Сон</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="/tooth">Зубы</a>
+                        <form method="get" action="/tooth">
+                            <button class="btn btn-link nav-link active" type="submit">Зубы</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
                         <a class="nav-link active" href="/vaccination">Прививки</a>
