@@ -5,16 +5,57 @@
 <div class="container" style="background-image: linear-gradient(to right, rgba(255,255,255,0.4) 0 100%), url('static/fon3.jpg'); height: 100%">
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" style="margin-left: 5px" href="/">
-                Мой малыш
-            </a>
+            <a class="navbar-brand" href="/">Мой малыш</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item" style="font-size: 20px">
+                        <form method="post" action="/children">
+                            <input name="idChild" type="number" value="1" style="display: none">
+                            <button class="btn btn-link nav-link active" type="submit">Малыши</button>
+                        </form>
+                    </li>
+                    <li class="nav-item" style="font-size: 20px">
+                        <form method="get" action="/height">
+                            <button class="btn btn-link nav-link active" type="submit">Рост</button>
+                        </form>
+                    </li>
+                    <li class="nav-item" style="font-size: 20px">
+                        <form method="get" action="/weight">
+                            <button class="btn btn-link nav-link active" type="submit">Вес</button>
+                        </form>
+                    </li>
+                    <li class="nav-item" style="font-size: 20px">
+                        <form method="get" action="/sleep">
+                            <button class="btn btn-link nav-link active" type="submit">Сон</button>
+                        </form>
+                    </li>
+                    <li class="nav-item" style="font-size: 20px">
+                        <form method="get" action="/tooth">
+                            <button class="btn btn-link nav-link active" type="submit">Зубы</button>
+                        </form>
+                    </li>
+                    <li class="nav-item" style="font-size: 20px">
+                        <form method="get" action="/vaccination">
+                            <button class="btn btn-link nav-link active" type="submit">Прививки</button>
+                        </form>
+                    </li>
+                    <li class="nav-item" style="font-size: 20px">
+                        <form method="get" action="/food">
+                            <button class="btn btn-link nav-link active" type="submit">Прикорм</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <form class="d-flex" role="search" method="get" action="/logout">
+                <button class="btn btn-secondary logout" type="submit" style="margin-right: 5px">Выход</button>
+            </form>
         </div>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <form class="d-flex" role="search">
-            <button class="btn btn-secondary logout" type="submit" style="margin-right: 5px">Выход</button>
-        </form>
     </nav>
     <div class="container" style="margin-top: 80px">
         <div class="col-12 mt-5" >

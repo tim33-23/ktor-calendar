@@ -18,29 +18,41 @@
                         </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="/height">Рост</a>
+                        <form method="get" action="/height">
+                            <button class="btn btn-link nav-link active" type="submit">Рост</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="/weight">Вес</a>
+                        <form method="get" action="/weight">
+                            <button class="btn btn-link nav-link active" type="submit">Вес</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="/sleep">Сон</a>
+                        <form method="get" action="/sleep">
+                            <button class="btn btn-link nav-link active" type="submit">Сон</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="/tooth">Зубы</a>
+                        <form method="get" action="/tooth">
+                            <button class="btn btn-link nav-link active" type="submit">Зубы</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="/vaccination">Прививки</a>
+                        <form method="get" action="/vaccination">
+                            <button class="btn btn-link nav-link active" type="submit">Прививки</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="/recipe">Прикорм</a>
+                        <form method="get" action="/food">
+                            <button class="btn btn-link nav-link active" type="submit">Прикорм</button>
+                        </form>
                     </li>
                 </ul>
             </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <form class="d-flex" role="search">
+            <form class="d-flex" role="search" method="get" action="/logout">
                 <button class="btn btn-secondary logout" type="submit" style="margin-right: 5px">Выход</button>
             </form>
         </div>

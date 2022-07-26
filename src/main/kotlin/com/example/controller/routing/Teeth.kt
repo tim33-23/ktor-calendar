@@ -76,6 +76,31 @@ fun Application.configureTeeth() {
                     call.respond(FreeMarkerContent("templates/authorization/login.ftl", null))
                 }
             }
+
+            post("/changeTooth"){
+                val userSession = call.principal<UserSession>()
+                if(userSession!=null){
+                    val email = userSession.email
+                    val idChild = userSession.idChild
+                    val child = idChild?.let { it1 -> dao.child(it1) }
+                    if(child != null){
+                        call.respond(FreeMarkerContent("templates/tooth/tooth2.ftl", null))
+                    }
+                    else{
+                        val parent = dao.parent(email)
+                        if(parent!=null){
+                            val model = idChild?.let { it1 -> MainPage().getModelForMainPage(parent, it1) }
+                            call.respond(FreeMarkerContent("templates/main/main.ftl", model))
+                        }
+                        else{
+                            call.respond(FreeMarkerContent("templates/authorization/login.ftl", null))
+                        }
+                    }
+                }
+                else{
+                    call.respond(FreeMarkerContent("templates/authorization/login.ftl", null))
+                }
+            }
         }
     }
 }

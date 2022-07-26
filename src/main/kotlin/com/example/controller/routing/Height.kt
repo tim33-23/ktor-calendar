@@ -69,7 +69,7 @@ fun Application.configureHeight() {
                     val dateParameters = formParameters["dateParametrs"]?.toLocalDate()
                     var newBody: ParametersBody? = null
                     if(idChild != null && height != null && dateParameters != null){
-                        val body = dao.parametersBody(idChild, dateParameters)
+/*                        val body = dao.parametersBody(idChild, dateParameters)
                         if(body==null){
                             newBody = dao.insertParametersBody(idChild, height, null, dateParameters)
                         }
@@ -80,8 +80,8 @@ fun Application.configureHeight() {
                             else{
                                 newBody = null
                             }
-                        }
-                        call.respond(FreeMarkerContent("templates/parametrs/height.ftl", null))
+                        }*/
+                        call.respond(FreeMarkerContent("templates/parametrs/height2.ftl", null))
                     }
                     else{
                         call.respond(FreeMarkerContent("templates/parametrs/addHeight.ftl", null))

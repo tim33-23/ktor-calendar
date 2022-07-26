@@ -58,70 +58,54 @@
         </div>
     </nav>
 
-    <div class="container" style="padding-top: 90px">
-        <div class="form-floating" style="margin-top: 15px">
-            <div class="container">
-                <#if children?has_content>
-                    <#list children as child>
-                        <div class="row" align="left">
-                            <div class="col-3">
-                                <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                                    <b>
-                                        ${child.name}
-                                    </b>
-                                </p>
-                                <p style="font-size: 20px;font-family: 'Arial',SansSerif;">
-                                    ${child.period.years}год, ${child.period.months} месяца, ${child.period.days} дня
-                                </p>
-                                <p style="font-size: 20px;font-family: 'Arial',SansSerif; ">
-                                    <#if child.gender==true>
-                                        Мальчик
-                                        <#else>
-                                        Девочка
-                                    </#if>
-                                </p>
+    <div align="center" style="padding-top: 120px">
+        <main class="form-signin w-100" >
+            <form style="max-width: 25%;" method="post" action="/vaccination">
+                <img src="/static/insertvaccine.png" alt="" width="300" height="300" >
+
+                <div align="center" >
+                    <main class="form-signin w-100" >
+                        <form style="max-width: 25%;">
+                            <div class="form-floating">
+                                <select class="form-select" aria-label="Default select example">
+                                    <option value="1">
+                                        Вирусный гепатит B,
+                                        первая прививка
+                                    </option>
+                                    <option value="2">БЦЖ (прививка
+                                        от туберкулеза)
+                                    </option>
+                                    <option value="3">
+                                        Вирусный гепатит B,
+                                        вторая прививка
+                                    </option>
+                                    <option value="3">
+                                        Пневмококковая инфекция,
+                                        первая прививка
+                                    </option>
+                                    <option value="3">
+                                        АКДС: Первая прививка против
+                                        дифтерии,коклюша,столбняка,
+                                        полиомиелита
+                                    </option>
+                                    <option value="3">
+                                        Гемофильная инфекция типа
+                                        b, первая прививка
+                                    </option>
+                                </select>
                             </div>
-                            <div class="col-4 mt-5" >
-                                <div class="row">
-                                    <div class="col-4">
-                                        <form method="post" action="/editChild">
-                                            <button type="submit" class="btn btn-secondary btn-lg" name="idChild" value="${child.idChild}">
-                                                Изменить</button>
-                                        </form>
-                                    </div>
-                                    <div  class="col-4 ui-corner-left" >
-                                        <form method="post" action="/deleteChild">
-                                            <button type="submit" class="btn btn-secondary btn-lg" name="idChild" value="${child.idChild}">
-                                                Удалить</button>
-                                        </form>
-                                    </div>
-                                    <div  class="col-4 ui-corner-left" >
-                                        <form method="post" action="/child">
-                                            <button type="submit" class="btn btn-secondary btn-lg" style="background-color: #20c997" name="idChild" value="${child.idChild}">
-                                                Выбрать</button>
-                                        </form>
-                                    </div>
-                                </div>
+                            <div class="form-floating" style="margin-top: 10px">
+                                <input type="date" class="form-control" id="dateofVaccine" placeholder="dateofVaccine">
                             </div>
-                            <div class="col-5" align="left"></div>
-                        </div>
-                    </#list>
-                </#if>
-                <div class="row" align="left">
-                    <div class="col-3">
-                        <form method="get" action="/addChild">
-                            <button type="submit" class="btn btn-secondary btn-lg">
-                                Добавить ребенка</button>
+                            <button class="w-100 btn btn-lg btn-secondary" type="submit" style="margin-top: 20px">Добавить</button>
                         </form>
-                    </div>
-                    <div class="col-4 mt-5"></div>
-                    <div class="col-5" align="left"></div>
+                    </main>
                 </div>
-                <div class="container" style="margin-top: 350px">
-                    <p align="center" class="mt-5 mb-3 text-muted">&copy; 2022</p>
+                <div class="container" style="margin-top: 260px">
+                    <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
                 </div>
-            </div>
-        </div>
+            </form>
+        </main>
     </div>
 </div>
 </body>

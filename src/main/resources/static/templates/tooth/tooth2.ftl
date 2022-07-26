@@ -96,42 +96,40 @@
         <tr style="height: 150px">
             <td colspan="12"></td>
         </tr>
-            <tr>
-                <td width="320px"></td>
-                <td>
-                    <div style="width: 60px;height: 60px;margin-bottom: 80px"><input type="image" src="/static/1down.png" alt="Кнопка «1нзуб»" style="width: 60px;height: 60px;"><p align="center"><b></b></p></div>
-                </td>
-                <td>
-                    <div style="width: 60px;height: 60px;;margin-bottom: 60px"><input type="image" src="/static/2down.png" alt="Кнопка «2нзуб»" style="width: 60px;height: 60px"><p align="center"><b></b></p></div>
-                </td>
-                <td>
-                    <div style="width: 60px;height: 60px;margin-bottom: 30px"><input type="image" src="/static/3down.png" alt="Кнопка «3нзуб»" style="width: 60px;height: 60px"><p align="center"><b></b></p></div>
-                </td>
-                <td>
-                    <div style="width: 60px;height: 60px;margin-bottom: 5px"><input type="image" src="/static/4down.png" alt="Кнопка «4нзуб»" style="width: 60px;height: 60px"><p align="center"><b></b></p></div>
-                </td>
-                <td style="margin-top: 0px">
-                    <div style="width: 60px;height: 60px;margin-bottom: 0px"><input type="image" src="/static/5down.png" alt="Кнопка «5нзуб»" style="width: 60px;height: 60px"><p align="center"><b>10м</b></p></div>
-                </td>
-                <td style="margin-top: 0px">
-                    <div style="width: 60px;height: 60px;margin-bottom: 0px"> <input type="image" src="/static/6down.png" alt="Кнопка «6нзуб»" style="width: 60px;height: 60px"><p align="center"><b>10м</b></p></div>
-                </td>
-                <td>
-                    <form method="get" action="/changeTooth">
-                        <button type="submit" class="btn btn-link nav-link active" style="width: 60px;height: 60px;"><img src="/static/7down.png" style="width: 60px;height: 60px;"><p align="center"><b><br></b></p></button>
-                    </form>
-                </td>
-                <td>
-                    <div style="width: 60px;height: 30px;margin-bottom: 70px"> <input type="image" src="/static/8down.png" alt="Кнопка «8нзуб»" style="width: 60px;height: 60px"><p align="center"><b></b></p></div>
-                </td>
-                <td>
-                    <div style="width: 60px;height: 65px;margin-bottom: 70px"> <input type="image" src="/static/9down.png" alt="Кнопка «9нзуб»" style="width: 60px;height: 60px"><p align="center"><b></b></p></div>
-                </td>
-                <td>
-                    <div style="width: 60px;height: 60px;margin-bottom: 105px"><input type="image" src="/static/10down.png" alt="Кнопка «10нзуб»" style="width: 60px;height: 60px"><p align="center"><b></b></p></div>
-                </td>
-                <td></td>
-            </tr>
+        <tr>
+            <td width="320px"></td>
+            <td>
+                <div style="width: 60px;height: 60px;margin-bottom: 80px"><input type="image" src="/static/1down.png" alt="Кнопка «1нзуб»" style="width: 60px;height: 60px;"><p align="center"><b></b></p></div>
+            </td>
+            <td>
+                <div style="width: 60px;height: 60px;;margin-bottom: 60px"><input type="image" src="/static/2down.png" alt="Кнопка «2нзуб»" style="width: 60px;height: 60px"><p align="center"><b></b></p></div>
+            </td>
+            <td>
+                <div style="width: 60px;height: 60px;margin-bottom: 30px"><input type="image" src="/static/3down.png" alt="Кнопка «3нзуб»" style="width: 60px;height: 60px"><p align="center"><b></b></p></div>
+            </td>
+            <td>
+                <div style="width: 60px;height: 60px;margin-bottom: 5px"><input type="image" src="/static/4down.png" alt="Кнопка «4нзуб»" style="width: 60px;height: 60px"><p align="center"><b></b></p></div>
+            </td>
+            <td style="margin-top: 0px">
+                <div style="width: 60px;height: 60px;margin-bottom: 0px"><input type="image" src="/static/5down.png" alt="Кнопка «5нзуб»" style="width: 60px;height: 60px"><p align="center"><b>10м</b></p></div>
+            </td>
+            <td style="margin-top: 0px">
+                <div style="width: 60px;height: 60px;margin-bottom: 0px"> <input type="image" src="/static/6down.png" alt="Кнопка «6нзуб»" style="width: 60px;height: 60px"><p align="center"><b>10м</b></p></div>
+            </td>
+            <td>
+                <div style="width: 60px;height: 5px;margin-bottom: 70px"><input type="image" src="/static/7down.png" alt="Кнопка «7нзуб»" style="width: 60px;height: 60px"><p align="center"><b>15м</b></p></div>
+            </td>
+            <td>
+                <div style="width: 60px;height: 30px;margin-bottom: 70px"> <input type="image" src="/static/8down.png" alt="Кнопка «8нзуб»" style="width: 60px;height: 60px"><p align="center"><b></b></p></div>
+            </td>
+            <td>
+                <div style="width: 60px;height: 65px;margin-bottom: 70px"> <input type="image" src="/static/9down.png" alt="Кнопка «9нзуб»" style="width: 60px;height: 60px"><p align="center"><b></b></p></div>
+            </td>
+            <td>
+                <div style="width: 60px;height: 60px;margin-bottom: 105px"><input type="image" src="/static/10down.png" alt="Кнопка «10нзуб»" style="width: 60px;height: 60px"><p align="center"><b></b></p></div>
+            </td>
+            <td></td>
+        </tr>
     </table>
 
     <table style="margin-top: 60px">
@@ -254,6 +252,33 @@
                 <div>
                     <p style="font-size: 25px;font-family: 'Arial',SansSerif">
                         19.02.2022
+                    </p>
+                </div>
+            </td>
+            <td width="200px">
+                <div>
+                    <button type="button" class="btn btn-lg" style="vertical-align: center" >
+                        <img src="/static/pen.png" alt="" width="30" height="30">
+                    </button>
+                    <button type="button" class="btn btn-lg" style="vertical-align: center" >
+                        <img src="/static/trash.png" alt="" width="30" height="30">
+                    </button>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td width="150px"></td>
+            <td width="450px">
+                <div>
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif">
+                        Нижний левый боковой резец
+                    </p>
+                </div>
+            </td>
+            <td width="300px">
+                <div>
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif">
+                        01.07.2022
                     </p>
                 </div>
             </td>

@@ -1,58 +1,69 @@
 <!doctype html>
 <html lang="en">
 <#include "../head-config.ftl"/>
-<body >
+<script src="https://bootstraptema.ru/plugins/jquery/jquery-1.11.3.min.js"></script>
+<script src="https://bootstraptema.ru/plugins/2016/shieldui/script.js"></script>
+<body>
 <div class="container" style="background-image: linear-gradient(to right, rgba(255,255,255,0.4) 0 100%), url('static/fon3.jpg'); height: 100%">
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Мой малыш</a>
+            <a class="navbar-brand" href="/">Мой малыш</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" aria-current="page" href="#">Малыши</a>
+                        <form method="post" action="/children">
+                            <input name="idChild" type="number" value="1" style="display: none">
+                            <button class="btn btn-link nav-link active" type="submit">Малыши</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="#">Рост</a>
+                        <form method="get" action="/height">
+                            <button class="btn btn-link nav-link active" type="submit">Рост</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="#">Вес</a>
+                        <form method="get" action="/weight">
+                            <button class="btn btn-link nav-link active" type="submit">Вес</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="#">Сон</a>
+                        <form method="get" action="/sleep">
+                            <button class="btn btn-link nav-link active" type="submit">Сон</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="#">Зубы</a>
+                        <form method="get" action="/tooth">
+                            <button class="btn btn-link nav-link active" type="submit">Зубы</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="#">Прививки</a>
+                        <form method="get" action="/vaccination">
+                            <button class="btn btn-link nav-link active" type="submit">Прививки</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="#">Прикорм</a>
+                        <form method="get" action="/food">
+                            <button class="btn btn-link nav-link active" type="submit">Прикорм</button>
+                        </form>
                     </li>
                 </ul>
             </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <form class="d-flex" role="search">
+            <form class="d-flex" role="search" method="get" action="/logout">
                 <button class="btn btn-secondary logout" type="submit" style="margin-right: 5px">Выход</button>
             </form>
         </div>
     </nav>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-    <link type="text/css" rel="StyleSheet" href="https://bootstraptema.ru/plugins/2016/shieldui/style.css" />
-    <script src="https://bootstraptema.ru/plugins/jquery/jquery-1.11.3.min.js"></script>
-    <script src="https://bootstraptema.ru/plugins/2016/shieldui/script.js"></script>
-
-    <br><br><br>
-
-    <div class="container">
+    <div align="center" style="padding-top: 100px">
         <div class="row">
-            <div class="col-md-8 col-md-offset-2">
+            <div class="col-2"></div>
+            <div class="col-8">
 
                 <!-- График --><div id="chart"></div>
 
@@ -68,8 +79,8 @@
                                 print: false
                             },
                             axisY: [{
-                                min:0,
-                                max: 110,
+                                min:45,
+                                max: 80,
                                 title: {
                                     text: 'Рост(см)',
                                     style: {
@@ -84,7 +95,7 @@
                             }, ],
                             axisX: [{
                                 min: 0,
-                                max: 24,
+                                max: 12,
                                 title: {
                                     text: 'Возраст(полных месяцев)',
                                     style: {
@@ -100,24 +111,30 @@
                             dataSeries: [{
                                 seriesType: 'line',
                                 axis: 0,
-                                collectionAlias: "Верхняя норма роста",
-                                data: [40.7, 52.8, 62.1, 70, 75, 79.4, 82]
-                            }, {
+                                collectionAlias: "Фактический рост",
+                                data: [52, 57, 62, 64, 65, [], 68, 69]},
+                                {
                                 seriesType: 'line',
                                 axis: 1,
-                                collectionAlias: "Средняя норма роста",
-                                data: [30.7, 36.8, 42.1, 45, 47, 50, 52]
-                            }, {
+                                collectionAlias: "Верхняя норма роста",
+                                data: [50.4, 55, 58.4, 61.2, 63.5, 65.5, 67.3, 68.8, 70.3, 71.8, 73.1, 74.5, 75.8]},
+                                {
+                                    seriesType: 'line',
+                                    axis: 2,
+                                    collectionAlias: "Тенденция",
+                                    data: [[], [], [], [], [], [], [], [], 69.9, 71.4, 72.7, 73.7, 74.8]},
+                                {
                                 seriesType: 'line',
-                                axis: 2,
+                                axis: 4,
                                 collectionAlias: "Нижняя норма роста",
-                                data: [20, 26, 32, 35, 38, 40, 42]
-                            }]
+                                data: [47.9, 52.5, 55.7, 58.4, 60.6, 62.5, 64.2, 65.7, 67.2, 68.5, 69.8, 71.1, 72.3]
+                                } ]
                         });
                     });
                 </script><!-- /.График -->
 
-            </div><!-- /.col-md-8 col-md-offset-2 -->
+            </div>
+            <div class="col-2"></div>
         </div><!-- /.row -->
     </div><!-- /.container -->
     <div align="center" style="padding-top: 50px">
@@ -149,7 +166,7 @@
                             <div style="padding-top: 10px">
                                 <p style="font-size: 20px;font-family: 'Arial',SansSerif">
                                     <b>
-                                        75.0 см
+                                        52.0 см
                                     </b>
                                 </p>
                             </div>
@@ -179,7 +196,7 @@
                             <div style="padding-top: 10px">
                                 <p style="font-size: 20px;font-family: 'Arial',SansSerif">
                                     <b>
-                                        75.0 см
+                                        57.0 см
                                     </b>
                                 </p>
                             </div>
@@ -188,7 +205,157 @@
                             <div style="padding-top: 10px">
                                 <p style="font-size: 20px;font-family: 'Arial',SansSerif">
                                     <b>
-                                        16.03.2021
+                                        16.04.2021
+                                    </b>
+                                </p>
+                            </div>
+                        </td>
+                        <td>
+                            <form method="get" action="/editHeight">
+                                <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
+                            </form>
+                        </td>
+                        <td align="top">
+                            <form method="get" action="/deletedHeight" >
+                                <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr style="border-top: black solid 2px">
+                        <td width="100px">
+                            <div style="padding-top: 10px">
+                                <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                    <b>
+                                        62.0 см
+                                    </b>
+                                </p>
+                            </div>
+                        </td>
+                        <td width="100px">
+                            <div style="padding-top: 10px">
+                                <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                    <b>
+                                        16.05.2021
+                                    </b>
+                                </p>
+                            </div>
+                        </td>
+                        <td>
+                            <form method="get" action="/editHeight">
+                                <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
+                            </form>
+                        </td>
+                        <td align="top">
+                            <form method="get" action="/deletedHeight" >
+                                <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr style="border-top: black solid 2px">
+                        <td width="100px">
+                            <div style="padding-top: 10px">
+                                <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                    <b>
+                                        64.0 см
+                                    </b>
+                                </p>
+                            </div>
+                        </td>
+                        <td width="100px">
+                            <div style="padding-top: 10px">
+                                <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                    <b>
+                                        16.06.2021
+                                    </b>
+                                </p>
+                            </div>
+                        </td>
+                        <td>
+                            <form method="get" action="/editHeight">
+                                <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
+                            </form>
+                        </td>
+                        <td align="top">
+                            <form method="get" action="/deletedHeight" >
+                                <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr style="border-top: black solid 2px">
+                        <td width="100px">
+                            <div style="padding-top: 10px">
+                                <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                    <b>
+                                        65.0 см
+                                    </b>
+                                </p>
+                            </div>
+                        </td>
+                        <td width="100px">
+                            <div style="padding-top: 10px">
+                                <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                    <b>
+                                        16.07.2021
+                                    </b>
+                                </p>
+                            </div>
+                        </td>
+                        <td>
+                            <form method="get" action="/editHeight">
+                                <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
+                            </form>
+                        </td>
+                        <td align="top">
+                            <form method="get" action="/deletedHeight" >
+                                <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr style="border-top: black solid 2px">
+                        <td width="100px">
+                            <div style="padding-top: 10px">
+                                <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                    <b>
+                                        68.0 см
+                                    </b>
+                                </p>
+                            </div>
+                        </td>
+                        <td width="100px">
+                            <div style="padding-top: 10px">
+                                <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                    <b>
+                                        16.09.2021
+                                    </b>
+                                </p>
+                            </div>
+                        </td>
+                        <td>
+                            <form method="get" action="/editHeight">
+                                <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
+                            </form>
+                        </td>
+                        <td align="top">
+                            <form method="get" action="/deletedHeight" >
+                                <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr style="border-top: black solid 2px">
+                        <td width="100px">
+                            <div style="padding-top: 10px">
+                                <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                    <b>
+                                        69.0 см
+                                    </b>
+                                </p>
+                            </div>
+                        </td>
+                        <td width="100px">
+                            <div style="padding-top: 10px">
+                                <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                    <b>
+                                        16.10.2021
                                     </b>
                                 </p>
                             </div>

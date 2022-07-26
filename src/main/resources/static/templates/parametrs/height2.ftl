@@ -61,7 +61,6 @@
     </nav>
 
     <div align="center" style="padding-top: 100px">
-    <div class="container" align="center">
         <div class="row">
             <div class="col-2"></div>
             <div class="col-8">
@@ -73,17 +72,17 @@
                         $("#chart").shieldChart({
                             theme: "light",
                             primaryHeader: {
-                                text: "Вес"
+                                text: "Рост"
                             },
                             exportOptions: {
                                 image: false,
                                 print: false
                             },
                             axisY: [{
-                                min:2900,
-                                max: 10000,
+                                min:45,
+                                max: 80,
                                 title: {
-                                    text: 'Вес(г)',
+                                    text: 'Рост(см)',
                                     style: {
                                         color: '#4DB0F5'
                                     }
@@ -96,9 +95,9 @@
                             }, ],
                             axisX: [{
                                 min: 0,
-                                max: 12,
+                                max: 13,
                                 title: {
-                                    text: 'Вес(полных месяцев)',
+                                    text: 'Возраст(полных месяцев)',
                                     style: {
                                         color: '#4DB0F5'
                                     }
@@ -112,35 +111,35 @@
                             dataSeries: [{
                                 seriesType: 'line',
                                 axis: 0,
-                                collectionAlias: "Верхняя норма веса",
-                                data: [3600, 4600, 5690, 6460, 7000, 7500, 7900, 8300, 8600, 8900, 9200, 9500, 9700]
-                            }, {
-                                seriesType: 'line',
-                                axis: 1,
-                                collectionAlias: "Фактический вес",
-                                data: [3460, 4300, 5300, 5900, 6500, [], 7300, 7700]
-                            }, {
-                                seriesType: 'line',
-                                axis: 1,
-                                collectionAlias: "Фактический вес",
-                                data: [[], [], [], [], [], [], [], [], 7900, 8300, 8500, 8800]
-                            },{
-                                seriesType: 'line',
-                                axis: 2,
-                                collectionAlias: "Нижняя норма веса",
-                                data: [2900, 3800, 4700, 5400, 5900, 6400, 6700, 7000, 7300, 7600, 7810, 8000, 8200]
-                            }]
+                                collectionAlias: "Фактический рост",
+                                data: [52, 57, 62, 64, 65, [], 68, 69, 70]},
+                                {
+                                    seriesType: 'line',
+                                    axis: 1,
+                                    collectionAlias: "Верхняя норма роста",
+                                    data: [50.4, 55, 58.4, 61.2, 63.5, 65.5, 67.3, 68.8, 70.3, 71.8, 73.1, 74.5, 75.8, 77]},
+                                {
+                                    seriesType: 'line',
+                                    axis: 2,
+                                    collectionAlias: "Тенденция",
+                                    data: [[], [], [], [], [], [], [], [], [], 71.9, 72.9, 73.8, 74.6, 75,3]},
+                                {
+                                    seriesType: 'line',
+                                    axis: 4,
+                                    collectionAlias: "Нижняя норма роста",
+                                    data: [47.9, 52.5, 55.7, 58.4, 60.6, 62.5, 64.2, 65.7, 67.2, 68.5, 69.8, 71.1, 72.3, 73.8]
+                                } ]
                         });
                     });
                 </script><!-- /.График -->
 
-            </div><!-- /.col-md-8 col-md-offset-2 -->
+            </div>
             <div class="col-2"></div>
         </div><!-- /.row -->
     </div><!-- /.container -->
     <div align="center" style="padding-top: 50px">
         <main class="form-signin w-100" >
-            <form style="max-width: 40%;" method="get" action="/addWeight">
+            <form style="max-width: 40%;" method="get" action="/addHeight">
                 <button class="w-100 btn btn-lg btn-secondary" type="submit" style="margin-top: 20px">Добавить новое значение роста</button>
             </form>
             <table class="container" style="margin-top: 10px; max-width: 800px;">
@@ -148,7 +147,7 @@
                     <td width="200px">
                         <p style="font-size: 20px;font-family: 'Arial',SansSerif">
                             <b>
-                                Вес
+                                Рост
                             </b>
                         </p>
                     </td>
@@ -167,7 +166,7 @@
                         <div style="padding-top: 10px">
                             <p style="font-size: 20px;font-family: 'Arial',SansSerif">
                                 <b>
-                                    3460 г
+                                    52.0 см
                                 </b>
                             </p>
                         </div>
@@ -182,12 +181,12 @@
                         </div>
                     </td>
                     <td>
-                        <form method="get" action="/editWeight">
+                        <form method="get" action="/editHeight">
                             <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
                         </form>
                     </td>
                     <td align="top">
-                        <form method="get" action="/deletedWeight" >
+                        <form method="get" action="/deletedHeight" >
                             <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
                         </form>
                     </td>
@@ -197,7 +196,7 @@
                         <div style="padding-top: 10px">
                             <p style="font-size: 20px;font-family: 'Arial',SansSerif">
                                 <b>
-                                    4300 г
+                                    57.0 см
                                 </b>
                             </p>
                         </div>
@@ -212,12 +211,12 @@
                         </div>
                     </td>
                     <td>
-                        <form method="get" action="/editWeight">
+                        <form method="get" action="/editHeight">
                             <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
                         </form>
                     </td>
                     <td align="top">
-                        <form method="get" action="/deletedWeight" >
+                        <form method="get" action="/deletedHeight" >
                             <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
                         </form>
                     </td>
@@ -227,7 +226,7 @@
                         <div style="padding-top: 10px">
                             <p style="font-size: 20px;font-family: 'Arial',SansSerif">
                                 <b>
-                                    5300 г
+                                    62.0 см
                                 </b>
                             </p>
                         </div>
@@ -242,12 +241,12 @@
                         </div>
                     </td>
                     <td>
-                        <form method="get" action="/editWeight">
+                        <form method="get" action="/editHeight">
                             <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
                         </form>
                     </td>
                     <td align="top">
-                        <form method="get" action="/deletedWeight" >
+                        <form method="get" action="/deletedHeight" >
                             <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
                         </form>
                     </td>
@@ -257,7 +256,7 @@
                         <div style="padding-top: 10px">
                             <p style="font-size: 20px;font-family: 'Arial',SansSerif">
                                 <b>
-                                    5900 г
+                                    64.0 см
                                 </b>
                             </p>
                         </div>
@@ -272,12 +271,12 @@
                         </div>
                     </td>
                     <td>
-                        <form method="get" action="/editWeight">
+                        <form method="get" action="/editHeight">
                             <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
                         </form>
                     </td>
                     <td align="top">
-                        <form method="get" action="/deletedWeight" >
+                        <form method="get" action="/deletedHeight" >
                             <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
                         </form>
                     </td>
@@ -287,7 +286,7 @@
                         <div style="padding-top: 10px">
                             <p style="font-size: 20px;font-family: 'Arial',SansSerif">
                                 <b>
-                                    6500 г
+                                    65.0 см
                                 </b>
                             </p>
                         </div>
@@ -302,12 +301,12 @@
                         </div>
                     </td>
                     <td>
-                        <form method="get" action="/editWeight">
+                        <form method="get" action="/editHeight">
                             <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
                         </form>
                     </td>
                     <td align="top">
-                        <form method="get" action="/deletedWeight" >
+                        <form method="get" action="/deletedHeight" >
                             <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
                         </form>
                     </td>
@@ -317,7 +316,7 @@
                         <div style="padding-top: 10px">
                             <p style="font-size: 20px;font-family: 'Arial',SansSerif">
                                 <b>
-                                    7300 г
+                                    68.0 см
                                 </b>
                             </p>
                         </div>
@@ -332,12 +331,12 @@
                         </div>
                     </td>
                     <td>
-                        <form method="get" action="/editWeight">
+                        <form method="get" action="/editHeight">
                             <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
                         </form>
                     </td>
                     <td align="top">
-                        <form method="get" action="/deletedWeight" >
+                        <form method="get" action="/deletedHeight" >
                             <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
                         </form>
                     </td>
@@ -347,7 +346,7 @@
                         <div style="padding-top: 10px">
                             <p style="font-size: 20px;font-family: 'Arial',SansSerif">
                                 <b>
-                                    7700 г
+                                    69.0 см
                                 </b>
                             </p>
                         </div>
@@ -362,12 +361,42 @@
                         </div>
                     </td>
                     <td>
-                        <form method="get" action="/editWeight">
+                        <form method="get" action="/editHeight">
                             <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
                         </form>
                     </td>
                     <td align="top">
-                        <form method="get" action="/deletedWeight" >
+                        <form method="get" action="/deletedHeight" >
+                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr style="border-top: black solid 2px">
+                    <td width="100px">
+                        <div style="padding-top: 10px">
+                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                <b>
+                                    70.0 см
+                                </b>
+                            </p>
+                        </div>
+                    </td>
+                    <td width="100px">
+                        <div style="padding-top: 10px">
+                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                <b>
+                                    16.11.2021
+                                </b>
+                            </p>
+                        </div>
+                    </td>
+                    <td>
+                        <form method="get" action="/editHeight">
+                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
+                        </form>
+                    </td>
+                    <td align="top">
+                        <form method="get" action="/deletedHeight" >
                             <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
                         </form>
                     </td>
@@ -377,7 +406,6 @@
                 <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
             </div>
         </main>
-    </div>
     </div>
 </div>
 </body>

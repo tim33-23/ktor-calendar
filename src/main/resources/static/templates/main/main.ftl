@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <#include "../head-config.ftl"/>
-<body >
+<body>
 <div class="container" style="background-image: linear-gradient(to right, rgba(255,255,255,0.4) 0 100%), url('static/fon3.jpg'); height: 100%">
     <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
@@ -38,17 +38,21 @@
                         </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="/vaccination">Прививки</a>
+                        <form method="get" action="/vaccination">
+                            <button class="btn btn-link nav-link active" type="submit">Прививки</button>
+                        </form>
                     </li>
                     <li class="nav-item" style="font-size: 20px">
-                        <a class="nav-link active" href="/recipe">Прикорм</a>
+                        <form method="get" action="/food">
+                            <button class="btn btn-link nav-link active" type="submit">Прикорм</button>
+                        </form>
                     </li>
                 </ul>
             </div>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <form class="d-flex" role="search">
+            <form class="d-flex" role="search" method="get" action="/logout">
                 <button class="btn btn-secondary logout" type="submit" style="margin-right: 5px">Выход</button>
             </form>
         </div>
@@ -108,7 +112,6 @@
             <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
         </div>
     </div>
-</div>
 </div>
 </body>
 </html>

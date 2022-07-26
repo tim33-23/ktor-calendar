@@ -115,7 +115,6 @@ fun Application.configureAuthorization() {
             }
         }
 
-
         get("/logout") {
             call.sessions.clear<UserSession>()
             call.respondRedirect("/")

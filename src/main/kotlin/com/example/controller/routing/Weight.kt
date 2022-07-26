@@ -67,7 +67,7 @@ fun Application.configureWeight() {
                     val dateParameters = formParameters["dateParametrs"]?.toLocalDate()
                     var newBody: ParametersBody? = null
                     if(idChild != null && weight != null && dateParameters != null){
-                        val body = dao.parametersBody(idChild, dateParameters)
+/*                        val body = dao.parametersBody(idChild, dateParameters)
                         if(body==null){
                             newBody = dao.insertParametersBody(idChild, null, weight, dateParameters)
                         }
@@ -78,8 +78,8 @@ fun Application.configureWeight() {
                             else{
                                 newBody = null
                             }
-                        }
-                        call.respond(FreeMarkerContent("templates/parametrs/weight.ftl", null))
+                        }*/
+                        call.respond(FreeMarkerContent("templates/parametrs/weight2.ftl", null))
                     }
                     else{
                         call.respond(FreeMarkerContent("templates/parametrs/addWeight.ftl", null))

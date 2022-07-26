@@ -14,4 +14,6 @@ fun Application.applyAllConfigurations() {
     configureWeight()
     configureSleep()
     configureTeeth()
+    configurePricorm()
+    configureVacination()
 }
