@@ -84,24 +84,26 @@
                     </div>
                 </form>
             </main>
-            <div class="row" align="center" style="margin-top: 20px">
-                <div class="col-2"></div>
-                <div class="col-2" align="right" style="background-color: #e5c7ca;border-left: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
-                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
-                        <b>
-                            12:43
-                        </b>
-                    </p>
-                </div>
-                <div class="col-4" align="center" style="background-color: #e5c7ca;border-bottom:black 2px solid; border-top: black 2px solid">
-                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                        <b> Дневной сон</b>
-                    </p>
-                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;" >
-                        1 час 15 минут
-                    </p>
-                </div>
-                <div class="col-2" align="left" style="background-color: #e5c7ca;border-bottom:black 2px solid; border-top: black 2px solid;border-right: black 2px solid">
+        </div>
+
+        <div class="row" align="center" style="margin-top: 20px">
+            <div class="col-2"></div>
+            <div class="col-2" align="right" style="background-color: #e5c7ca;border-left: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
+                    <b>
+                        12:43
+                    </b>
+                </p>
+            </div>
+            <div class="col-4" align="center" style="background-color: #e5c7ca;border-bottom:black 2px solid; border-top: black 2px solid">
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                    <b> Дневной сон</b>
+                </p>
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;" >
+                    1 час 15 минут
+                </p>
+            </div>
+            <div class="col-2" align="left" style="background-color: #e5c7ca;border-bottom:black 2px solid; border-top: black 2px solid;border-right: black 2px solid">
                 <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px;" >
                     <b>
                         --:--
@@ -117,152 +119,151 @@
                 </button>
             </div>
         </div>
-    </div>
+        <div class="row" >
+            <div class="col-2"></div>
+            <div class="col-2" style="background-color: #e5c7ca;border-left:black 2px solid" ></div>
+            <div class="col-4"align="center" style="background-color:#e5c7ca">
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                    <b>Бодрствование:</b>
+                </p>
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                    3 часа 7 минут
+                </p>
+            </div>
+            <div class="col-2" style="background-color: #e5c7ca;border-right:black 2px solid;"></div>
+            <div class="col-2"></div>
+        </div>
 
-    <div class="row" >
-        <div class="col-2"></div>
-        <div class="col-2" style="background-color: #e5c7ca;border-left:black 2px solid" ></div>
-        <div class="col-4"align="center" style="background-color:#e5c7ca">
-            <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                <b>Бодрствование:</b>
-            </p>
-            <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                3 часа 7 минут
-            </p>
+        <div class="row" >
+            <div class="col-2"></div>
+            <div class="col-2" align="right" style="background-color: #e5c7ca;border-left: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
+                    <b>
+                        22:20
+                    </b>
+                </p>
+            </div>
+            <div class="col-4" align="center" style="background-color: #e5c7ca;border-bottom:black 2px solid; border-top: black 2px solid">
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                    <b> Ночной сон</b>
+                </p>
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                    11 часов 10 минут
+                </p>
+            </div>
+            <div class="col-2" align="left" style="background-color: #e5c7ca;border-right: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
+                    <b>
+                        09:30
+                    </b>
+                </p>
+            </div>
+            <div class="col-2">
+                <button type="button" class="btn btn-lg" style="vertical-align: center;margin-top: 30px" >
+                    <img src="/static/pen.png" alt="" width="30" height="30">
+                </button>
+                <button type="button" class="btn btn-lg" style="vertical-align: center;margin-top: 30px" >
+                    <img src="/static/trash.png" alt="" width="30" height="30">
+                </button>
+            </div>
         </div>
-        <div class="col-2" style="background-color: #e5c7ca;border-right:black 2px solid;"></div>
-        <div class="col-2"></div>
-    </div>
-
-    <div class="row" >
-        <div class="col-2"></div>
-        <div class="col-2" align="right" style="background-color: #e5c7ca;border-left: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
-            <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
-                <b>
-                    22:20
-                </b>
-            </p>
-        </div>
-        <div class="col-4" align="center" style="background-color: #e5c7ca;border-bottom:black 2px solid; border-top: black 2px solid">
-            <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                <b> Ночной сон</b>
-            </p>
-            <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                11 часов 10 минут
-            </p>
-        </div>
-        <div class="col-2" align="left" style="background-color: #e5c7ca;border-right: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
-            <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
-                <b>
-                    09:30
-                </b>
-            </p>
-        </div>
-        <div class="col-2">
-            <button type="button" class="btn btn-lg" style="vertical-align: center;margin-top: 30px" >
-                <img src="/static/pen.png" alt="" width="30" height="30">
-            </button>
-            <button type="button" class="btn btn-lg" style="vertical-align: center;margin-top: 30px" >
-                <img src="/static/trash.png" alt="" width="30" height="30">
-            </button>
-        </div>
-    </div>
 
 
 
-    <div class="row">
-        <div class="col-2"></div>
-        <div class="col-3" align="left">
-            <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 60px">
-                <b>
-                    Статистика
-                </b>
-            </p>
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-3" align="left">
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 60px">
+                    <b>
+                        Статистика
+                    </b>
+                </p>
+            </div>
+            <div class="col-8"></div>
         </div>
-        <div class="col-8"></div>
-    </div>
 
 
-    <div class="row">
-        <div class="col-2"></div>
-        <div class="col-3" align="left">
-            <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 10px">
-                <b>
-                    Ночной сон
-                </b>
-            </p>
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-3" align="left">
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 10px">
+                    <b>
+                        Ночной сон
+                    </b>
+                </p>
+            </div>
+            <div class="col-3" align="center"></div>
+            <div class="col-2" align="left">
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 10px">
+                    <b>
+                        11:10
+                    </b>
+                </p>
+            </div>
+            <div class="col-2"></div>
         </div>
-        <div class="col-3" align="center"></div>
-        <div class="col-2" align="left">
-            <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 10px">
-                <b>
-                    11:10
-                </b>
-            </p>
+        <div class="row">
+            <div class="col-2">
+            </div>
+            <div class="col-3" align="left">
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 10px">
+                    <b>
+                        Дневной сон
+                    </b>
+                </p>
+            </div>
+            <div class="col-3"></div>
+            <div class="col-2" align="left">
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 10px">
+                    <b>
+                        1:15
+                    </b>
+                </p>
+            </div>
+            <div class="col-2"></div>
         </div>
-        <div class="col-2"></div>
-    </div>
-    <div class="row">
-        <div class="col-2">
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-3" align="left">
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 10px">
+                    <b>
+                        Бодрствование
+                    </b>
+                </p>
+            </div>
+            <div class="col-3"></div>
+            <div class="col-2" align="left">
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 10px">
+                    <b>
+                        3:07
+                    </b>
+                </p>
+            </div>
+            <div class="col-2"></div>
         </div>
-        <div class="col-3" align="left">
-            <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 10px">
-                <b>
-                    Дневной сон
-                </b>
-            </p>
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-3" align="left">
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 10px">
+                    <b>
+                        Общее время сна
+                    </b>
+                </p>
+            </div>
+            <div class="col-3"></div>
+            <div class="col-2" align="left">
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 10px">
+                    <b>
+                        12:25
+                    </b>
+                </p>
+            </div>
+            <div class="col-2"></div>
         </div>
-        <div class="col-3"></div>
-        <div class="col-2" align="left">
-            <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 10px">
-                <b>
-                    1:15
-                </b>
-            </p>
-        </div>
-        <div class="col-2"></div>
-    </div>
-    <div class="row">
-        <div class="col-2"></div>
-        <div class="col-3" align="left">
-            <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 10px">
-                <b>
-                    Бодрствование
-                </b>
-            </p>
-        </div>
-        <div class="col-3"></div>
-        <div class="col-2" align="left">
-            <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 10px">
-                <b>
-                    3:07
-                </b>
-            </p>
-        </div>
-        <div class="col-2"></div>
-    </div>
-    <div class="row">
-        <div class="col-2"></div>
-        <div class="col-3" align="left">
-            <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 10px">
-                <b>
-                    Общее время сна
-                </b>
-            </p>
-        </div>
-        <div class="col-3"></div>
-        <div class="col-2" align="left">
-            <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 10px">
-                <b>
-                    12:25
-                </b>
-            </p>
-        </div>
-        <div class="col-2"></div>
-    </div>
 
-    <div class="container" align="center" style="margin-top: 100px">
-        <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
+        <div class="container" align="center" style="margin-top: 100px">
+            <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
+        </div>
     </div>
 </div>
 </body>

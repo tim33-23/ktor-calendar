@@ -78,7 +78,7 @@
                                 <button type="submit" class="btn btn-secondary btn-lg" style="vertical-align: center" >
                                     Начать сон</button>
                             </form>
-                            
+
                         </div>
                         <div class="col-4" align="center">
                             <button type="button" class="btn btn-secondary btn-lg" style="vertical-align: center" >
@@ -88,6 +88,54 @@
                 </form>
             </main>
 
+            <div class="row" style="border-top: black 2px solid">
+                <div class="col-2"></div>
+                <div class="col-2" style="background-color: #e5c7ca;border-left:black 2px solid;" ></div>
+                <div class="col-4"align="center" style="background-color:#e5c7ca">
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                        <b>Бодрствование:</b>
+                    </p>
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                        3 часа 7 минут
+                    </p>
+                </div>
+                <div class="col-2" style="background-color: #e5c7ca;border-right:black 2px solid;"></div>
+                <div class="col-2"></div>
+            </div>
+
+            <div class="row" >
+                <div class="col-2"></div>
+                <div class="col-2" align="right" style="background-color: #e5c7ca;border-left: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
+                        <b>
+                            22:20
+                        </b>
+                    </p>
+                </div>
+                <div class="col-4" align="center" style="background-color: #e5c7ca;border-bottom:black 2px solid; border-top: black 2px solid">
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                        <b> Ночной сон</b>
+                    </p>
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                        11 часов 10 минут
+                    </p>
+                </div>
+                <div class="col-2" align="left" style="background-color: #e5c7ca;border-right: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
+                        <b>
+                            09:30
+                        </b>
+                    </p>
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-lg" style="vertical-align: center;margin-top: 30px" >
+                        <img src="/static/pen.png" alt="" width="30" height="30">
+                    </button>
+                    <button type="button" class="btn btn-lg" style="vertical-align: center;margin-top: 30px" >
+                        <img src="/static/trash.png" alt="" width="30" height="30">
+                    </button>
+                </div>
+            </div>
 
             <div class="container" style="margin-top: 650px">
                 <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
