@@ -20,6 +20,7 @@ interface DAOFacade {
     suspend fun deletedChild(idChild: Int): Boolean
 
     suspend fun parametersBody(idBody: Int): ParametersBody?
+    suspend fun allParametersBody(idBody: Int): List<ParametersBody>?
     suspend fun parametersBody(idChild: Int, dateParameters: LocalDate): ParametersBody?
     suspend fun insertParametersBody(idChild: Int, height: Float?, weight: Float?, date: LocalDate): ParametersBody?
     suspend fun updateParametersBody(idBody: Int, idChild: Int, height: Float?, weight: Float?, date: LocalDate): Boolean

@@ -88,7 +88,7 @@
                 </form>
             </main>
 
-            <div class="row" style="border-top: black 2px solid">
+            <div class="row" style="">
                 <div class="col-2"></div>
                 <div class="col-2" style="background-color: #e5c7ca;border-left:black 2px solid;" ></div>
                 <div class="col-4"align="center" style="background-color:#e5c7ca">

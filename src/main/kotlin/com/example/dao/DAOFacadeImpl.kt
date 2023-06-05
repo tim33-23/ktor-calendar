@@ -98,6 +98,12 @@ class DAOFacadeImpl : DAOFacade {
             .singleOrNull()
     }
 
+    override suspend fun allParametersBody(idBody: Int): List<ParametersBody>? = dbQuery{
+        ParametersBodys
+            .select { ParametersBodys.idBody eq idBody }
+            .map(:: resultRowToBody)
+    }
+
     override suspend fun parametersBody(idChild: Int, dateParameters: LocalDate): ParametersBody? = dbQuery{
         ParametersBodys
             .select { (ParametersBodys.idChild eq idChild) and (ParametersBodys.dateOfAffixingCh eq dateParameters) }

@@ -53,6 +53,8 @@ fun Application.configureHeight() {
             get("/addHeight"){
                 val userSession = call.principal<UserSession>()
                 if(userSession!=null){
+                    val idChild = userSession.idChild
+
                     call.respond(FreeMarkerContent("templates/parametrs/addHeight.ftl", null))
                 }
                 else{
@@ -69,18 +71,19 @@ fun Application.configureHeight() {
                     val dateParameters = formParameters["dateParametrs"]?.toLocalDate()
                     var newBody: ParametersBody? = null
                     if(idChild != null && height != null && dateParameters != null){
-/*                        val body = dao.parametersBody(idChild, dateParameters)
+                        val body = dao.parametersBody(idChild, dateParameters)
                         if(body==null){
                             newBody = dao.insertParametersBody(idChild, height, null, dateParameters)
                         }
                         else{
-                            if(dao.updateParametersBody(body.idBody, idChild, height, body.childWeightFact, dateParameters)){
+                            val heightAdd = dao.updateParametersBody(body.idBody, idChild, height, body.childWeightFact, dateParameters)
+                            if(heightAdd){
                                 newBody = dao.parametersBody(idChild, dateParameters)
                             }
                             else{
                                 newBody = null
                             }
-                        }*/
+                        }
                         call.respond(FreeMarkerContent("templates/parametrs/height2.ftl", null))
                     }
                     else{

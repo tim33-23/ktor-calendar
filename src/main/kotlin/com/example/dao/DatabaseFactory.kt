@@ -1,7 +1,6 @@
 package com.example.dao
 
 import com.example.dto.Childs
-import com.example.dto.Elections
 import com.example.dto.ParametersBodys
 import com.example.dto.Parents
 import kotlinx.coroutines.Dispatchers

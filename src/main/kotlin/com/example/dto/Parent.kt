@@ -1,10 +1,10 @@
 package com.example.dto
 
 
-import kotlinx.datetime.LocalDateTime
+
 import org.jetbrains.exposed.sql.Table
 
-import org.jetbrains.exposed.sql.kotlin.datetime.datetime
+
 
 data class Parent(val id: Int, val email: String, val password: String)
 
