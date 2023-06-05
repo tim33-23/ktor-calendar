@@ -30,15 +30,6 @@ class HeightPage {
         }
     }
 
-    suspend fun getHeights(idChild: Int): Map<Any, Any?>?{
-        val child = dao.child(idChild)
-        val parametrs = dao.allParametersBody(idChild)
-        val date = ArrayList<Period>()
-        parametrs?.forEach { parametr ->
-            date.add( Period.between(child?.dateOfBirth?.toJavaLocalDate(), parametr?.dateofAffixingCh?.toJavaLocalDate()))
 
-        }
-
-    }
 
 }
