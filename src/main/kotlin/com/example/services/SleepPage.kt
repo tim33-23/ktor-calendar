@@ -18,6 +18,23 @@ class SleepPage {
         runBlocking {}
     }
 
+    suspend fun getModelForSleepPagePreview(children: Child, count: Int): Map<Any, Any?>?{
+        var nowDate= java.time.LocalDate.now()
+        if(count > 0){
+
+            nowDate = nowDate.plusDays(count.toLong()-1)
+        }
+        else{
+            nowDate = nowDate.minusDays(Math.abs(count.toLong()-1))
+        }
+
+        val years = nowDate.year
+        val month = nowDate.month.value
+        val day = nowDate.dayOfMonth
+        val currentDate = DateFormat().format(LocalDate(years,month,day))
+        return mapOf("model" to SleepForTemplate(currentDate, count-1, true))
+    }
+
     suspend fun getModelForSleepPage(children: Child, count: Int): Map<Any, Any?>?{
         var nowDate= java.time.LocalDate.now()
         if(count >= 0){
@@ -31,7 +48,23 @@ class SleepPage {
         val month = nowDate.month.value
         val day = nowDate.dayOfMonth
         val currentDate = DateFormat().format(LocalDate(years,month,day))
-        return mapOf("model" to SleepForTemplate(currentDate, count))
+        return mapOf("model" to SleepForTemplate(currentDate, count,true))
+    }
+
+    suspend fun getModelForSleepPageNext(children: Child, count: Int): Map<Any, Any?>?{
+        var nowDate= java.time.LocalDate.now()
+        if(count > -1){
+            nowDate = nowDate.plusDays(count.toLong()+1)
+        }
+        else{
+            nowDate = nowDate.minusDays(Math.abs(count.toLong()+1))
+        }
+
+        val years = nowDate.year
+        val month = nowDate.month.value
+        val day = nowDate.dayOfMonth
+        val currentDate = DateFormat().format(LocalDate(years,month,day))
+        return mapOf("model" to SleepForTemplate(currentDate, count+1, true))
     }
 
 }

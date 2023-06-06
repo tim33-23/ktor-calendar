@@ -72,40 +72,41 @@
             <p style="font-size: 20px;font-family: 'Arial',SansSerif;">
                 ${model.currentDate}</p>
         </div>
-        <div align="center" style="padding-top: 20px">
+        <div align="center" style="">
             <main class="form-signin w-100" >
-                <form style="max-width: 100%;">
                     <div class="row">
-                        <div class="col-4" align="center">
-                            <form method="post" action="/sleep">
-                                <input name="Count" type="number" value="${model.count?number-1}" style="display: none">
+                        <div class="col-2 mt-2" align="right"></div>
+                        <div class="col-2" align="center">
+                            <form method="post" action="/sleepPreview">
+                                <input name="CountPreview" type="number" value="${model.count?number}" style="display: none">
                                 <button type="submit" class="btn btn-secondary btn-lg" style="vertical-align: center;" >
                                     Предыдущий
                                 </button>
                             </form>
                         </div>
                         <div class="col-4" align="center">
-                            <form method="get" action="sleepOn.ftl">
+                            <form method="post" action="sleepOn">
                                 <button type="submit" class="btn btn-secondary btn-lg" style="vertical-align: center" >
-                                    Начать сон</button>
+                                    Начать сон
+                                </button>
                             </form>
                         </div>
-                        <div class="col-4" align="center">
-                            <form method="post" action="/sleep">
-                                <input name="Count" type="number" value="${model.count?number+1}" style="display: none">
+                        <div class="col-2" align="center">
+                            <form method="post" action="/sleepNext">
+                                <input name="CountNext" type="number" value="${model.count?number}" style="display: none">
                                 <button type="submit" class="btn btn-secondary btn-lg" style="vertical-align: center" >
                                     Следующий
                                 </button>
                             </form>
                         </div>
+                        <div class="col-2 mt-2" align="right"></div>
                     </div>
-                </form>
             </main>
 
-            <div class="row" style="">
+            <div class="row" style="padding-top: 20px;">
                 <div class="col-2"></div>
-                <div class="col-2" style="background-color: #e5c7ca;border-left:black 2px solid;" ></div>
-                <div class="col-4"align="center" style="background-color:#e5c7ca">
+                <div class="col-2" style="background-color: #e5c7ca;border-left:black 2px solid;border-top:black 2px solid" ></div>
+                <div class="col-4"align="center" style="background-color:#e5c7ca; border-top:black 2px solid">
                     <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
                         <b>Бодрствование:</b>
                     </p>
@@ -113,7 +114,7 @@
                         3 часа 7 минут
                     </p>
                 </div>
-                <div class="col-2" style="background-color: #e5c7ca;border-right:black 2px solid;"></div>
+                <div class="col-2" style="background-color: #e5c7ca;border-right:black 2px solid;border-top:black 2px solid"></div>
                 <div class="col-2"></div>
             </div>
 

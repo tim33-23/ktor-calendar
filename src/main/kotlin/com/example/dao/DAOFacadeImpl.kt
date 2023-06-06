@@ -2,9 +2,12 @@ package com.example.dao
 
 import com.example.dao.DatabaseFactory.dbQuery
 import com.example.dto.*
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
+import io.ktor.util.reflect.*
+import kotlinx.coroutines.selects.select
+import kotlinx.datetime.*
 import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.kotlin.datetime.date
+import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 class DAOFacadeImpl : DAOFacade {
 
@@ -28,6 +31,13 @@ class DAOFacadeImpl : DAOFacade {
         childHeightFact = row[ParametersBodys.childHeightFact],
         childWeightFact = row[ParametersBodys.childWeightFact],
         dateofAffixingCh = row[ParametersBodys.dateOfAffixingCh],
+    )
+
+    private fun resultRowToSleep(row: ResultRow) = Dream(
+        idSleep = row[Sleep.idSleep],
+        idChild = row[Sleep.idChild],
+        dateTimeSlStarted = row[Sleep.dateTimeSlStarted],
+        dateTimeSlEnded = row[Sleep.dateTimeSlEnded]
     )
 
     override suspend fun parent(email: String): Parent? = dbQuery{
@@ -134,6 +144,28 @@ class DAOFacadeImpl : DAOFacade {
             it[ParametersBodys.childWeightFact] = weight
             it[ParametersBodys.dateOfAffixingCh] = date
         }>0
+    }
+
+    override suspend fun addBeginSleep(idChild: Int): Boolean = dbQuery{
+        var nowDate= java.time.LocalDateTime.now()
+        val insertStatment = Sleep.insert {
+            it[Sleep.idChild] = idChild
+            it[Sleep.dateTimeSlStarted] = nowDate.toKotlinLocalDateTime()
+        }
+        !insertStatment.resultedValues.isNullOrEmpty()
+    }
+
+    override suspend fun endSleep(idChild: Int): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun dreams(idChild: Int, date: LocalDate): List<Dream> = dbQuery{
+        val previewDate = date.toJavaLocalDate().minusDays(1).toKotlinLocalDate()
+        Sleep
+            .select{(Sleep.idChild eq idChild) and (Sleep.dateTimeSlStarted.date() eq date)
+            }
+            .map(:: resultRowToSleep)
+
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.dao
 
 import com.example.dto.Child
+import com.example.dto.Dream
 import com.example.dto.ParametersBody
 import com.example.dto.Parent
 import kotlinx.datetime.LocalDate
@@ -24,4 +25,9 @@ interface DAOFacade {
     suspend fun parametersBody(idChild: Int, dateParameters: LocalDate): ParametersBody?
     suspend fun insertParametersBody(idChild: Int, height: Float?, weight: Float?, date: LocalDate): ParametersBody?
     suspend fun updateParametersBody(idBody: Int, idChild: Int, height: Float?, weight: Float?, date: LocalDate): Boolean
+
+    suspend fun addBeginSleep(idChild: Int): Boolean
+    suspend fun endSleep(idChild: Int): Boolean
+    suspend fun dreams(idChild: Int, date: LocalDate): List<Dream>
+
 }
