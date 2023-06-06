@@ -59,30 +59,45 @@
     </nav>
     <div class="container" style="padding-top: 40px">
         <div align="center">
-            <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                <b> Сегодня </b>
-            </p>
+            <#if model.count?number==0>
+                <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                    <b> Сегодня </b>
+                </p>
+                <#else>
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                        <b> Просматриваемая дата </b>
+                    </p>
+            </#if>
+
             <p style="font-size: 20px;font-family: 'Arial',SansSerif;">
-                22 июня </p>
+                ${model.currentDate}</p>
         </div>
         <div align="center" style="padding-top: 20px">
             <main class="form-signin w-100" >
                 <form style="max-width: 100%;">
                     <div class="row">
                         <div class="col-4" align="center">
-                            <button type="button" class="btn btn-secondary btn-lg" style="vertical-align: center;" >
-                                Предыдущий</button>
-                        </div>
-                        <div class="col-4"align="center">
-                            <form method="get" action="sleepOn.ftl">
-                                <button type="submit" class="btn btn-secondary btn-lg" style="vertical-align: center" >
-                                    Начать сон</button>
+                            <form method="post" action="/sleep">
+                                <input name="Count" type="number" value="${model.count?number-1}" style="display: none">
+                                <button type="submit" class="btn btn-secondary btn-lg" style="vertical-align: center;" >
+                                    Предыдущий
+                                </button>
                             </form>
-
                         </div>
                         <div class="col-4" align="center">
-                            <button type="button" class="btn btn-secondary btn-lg" style="vertical-align: center" >
-                                Следующий</button>
+                            <form method="get" action="sleepOn.ftl">
+                                <button type="submit" class="btn btn-secondary btn-lg" style="vertical-align: center" >
+                                    Начать сон
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col-4" align="center">
+                            <form method="post" action="/sleep">
+                                <input name="Count" type="number" value="${model.count?number+1}" style="display: none">
+                                <button type="submit" class="btn btn-secondary btn-lg" style="vertical-align: center" >
+                                    Следующий
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </form>

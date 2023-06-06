@@ -5,6 +5,7 @@ import com.example.dao.DAOFacade
 import com.example.dao.DAOFacadeImpl
 import com.example.dto.ParametersBody
 import com.example.dto.UserSession
+import com.example.services.SleepPage
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.freemarker.*
@@ -30,7 +31,39 @@ fun Application.configureSleep() {
                     val idChild = userSession.idChild
                     val child = idChild?.let { it1 -> dao.child(it1) }
                     if(child != null){
-                        call.respond(FreeMarkerContent("templates/sleep/sleeping.ftl", null))
+                        val model = child.let{it1 -> SleepPage().getModelForSleepPage(it1, 0)}
+                        call.respond(FreeMarkerContent("templates/sleep/sleeping.ftl", model))
+                    }
+                    else{
+                        val parent = dao.parent(email)
+                        if(parent!=null){
+                            val model = idChild?.let { it1 -> MainPage().getModelForMainPage(parent, it1) }
+                            call.respond(FreeMarkerContent("templates/main/main.ftl", model))
+                        }
+                        else{
+                            call.respond(FreeMarkerContent("templates/authorization/login.ftl", null))
+                        }
+                    }
+                }
+                else{
+                    call.respond(FreeMarkerContent("templates/authorization/login.ftl", null))
+                }
+            }
+
+            post("/sleep"){
+                val userSession = call.principal<UserSession>()
+
+                if(userSession!=null){
+                    val email = userSession.email
+                    val idChild = userSession.idChild
+                    val child = idChild?.let { it1 -> dao.child(it1) }
+                    val formParameters = call.receiveParameters()
+                    var count = formParameters["Count"]?.toInt()
+                    if(count==null)
+                        count = 0;
+                    if(child != null){
+                        val model = child.let{it1 -> SleepPage().getModelForSleepPage(it1, count)}
+                        call.respond(FreeMarkerContent("templates/sleep/sleeping.ftl", model))
                     }
                     else{
                         val parent = dao.parent(email)

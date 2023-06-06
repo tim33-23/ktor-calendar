@@ -124,6 +124,7 @@
                             Прикорм
                         </button>
                     </form>
+
                 <div class="col-4 mt-2" align="left">
                 </div>
             </div>
