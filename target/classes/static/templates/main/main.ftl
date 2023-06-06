@@ -63,48 +63,68 @@
         <div class="container">
             <div class="row" align="center">
                 <div class="col-5 mt-2" align="right">
-                    <button type="button" class="btn btn-secondary btn-lg" style="vertical-align: center" >
-                        <img src="/static/line.png" alt="" width="50" height="50">
-                        Рост</button>
+                    <form method="get" action="/height">
+                        <button type="submit"  class="btn btn-secondary btn-lg" style="vertical-align: center" >
+                            <img src="/static/line.png" alt="" width="50" height="50">
+                            Рост
+                        </button>
+                    </form>
+
                 </div>
                 <div class="col-2">
-                    <p class="text-center" style="font-size: 17px; font-family: 'Arial',SansSerif; height: 100px;">
+                    <p class="text-center" style="font-size: 17px; font-family: 'Arial',SansSerif; height: 100px; padding-top: 50px;">
                         <b>${child.name}<br>${birth}<br>${period.years}&nbsp;год&nbsp;${period.months}&nbsp;месяца&nbsp;${period.days}&nbsp;дня</b>
                     </p>
                 </div>
                 <div class="col-5 mt-2" align="left">
-                    <button type="button" class="btn btn-secondary btn-lg">
-                        <img src="/static/weight.png" alt="" width="50" height="50">
-                        Вес
-                    </button>
+                    <form method="get" action="/weight">
+                        <button type="submit"  class="btn btn-secondary btn-lg">
+                            <img src="/static/weight.png" alt="" width="50" height="50">
+                            Вес
+                        </button>
+                    </form>
                 </div>
+
             </div>
             <div class="row" align="center">
-                <div class="col-2 mt-2" align="right">
+                <div class="col-1 mt-2" align="right"></div>
+                <div class="col-10" width="10px" height="10px">
+                    <div class="row" align="center">
+                        <div class="col-2 mt-2" align="right"></div>
+                        <form class="col-4" method="get" action="/sleep">
+                            <button type="submit" class="btn btn-secondary btn-lg" style="vertical-align: center;" width="300" height="300" >
+                                <img src="/static/sleep.png" alt="" width="55" height="50">
+                                Сон
+                            </button>
+                        </form>
+                        <form class="col-4" method="get" action="/tooth">
+                            <button type="submit" class="btn btn-secondary btn-lg">
+                                <img src="/static/tooth.png" alt="" width="50" height="50">
+                                Зубы
+                            </button>
+                        </form>
+                        <div class="col-2 mt-2" align="right"></div>
+                    </div>
                 </div>
-                <div class="col-8" width="10px" height="10px">
-                    <button type="button" class="btn btn-secondary btn-lg" style="vertical-align: center;margin-right: 20px" width="300" height="300" >
-                        <img src="/static/sleep.png" alt="" width="55" height="50">
-                        Сон</button>
-                    <button type="button" class="btn btn-secondary btn-lg">
-                        <img src="/static/tooth.png" alt="" width="50" height="50">
-                        Зубы</button>
-                </div>
-                <div class="col-2 mt-2" align="left">
+                <div class="col-1 mt-2" align="left">
                 </div>
             </div>
             <div class="row" align="center" style="margin-top: 20px">
-                <div class="col-2 mt-2" align="right">
+                <div class="col-4 mt-2" align="right">
                 </div>
-                <div class="col-8" width="10px" height="10px">
-                    <button type="button" class="btn btn-secondary btn-lg" style="vertical-align: center;margin-right: 20px" width="300" height="300" >
-                        <img src="/static/vaccine.png" alt="" width="50" height="50">
-                        Прививки</button>
-                    <button type="button" class="btn btn-secondary btn-lg">
-                        <img src="/static/meal.png" alt="" width="50" height="50">
-                        Прикорм</button>
-                </div>
-                <div class="col-2 mt-2" align="left">
+                    <form class="col-2" method="get" action="/vaccination">
+                        <button type="submit" class="btn btn-secondary btn-lg" style="vertical-align: center; " width="300" height="300" >
+                            <img src="/static/vaccine.png" alt="" width="50" height="50">
+                            Прививки
+                        </button>
+                    </form>
+                    <form class="col-2" method="get" action="/food">
+                        <button type="submit" class="btn btn-secondary btn-lg">
+                            <img src="/static/meal.png" alt="" width="50" height="50">
+                            Прикорм
+                        </button>
+                    </form>
+                <div class="col-4 mt-2" align="left">
                 </div>
             </div>
         </div>
