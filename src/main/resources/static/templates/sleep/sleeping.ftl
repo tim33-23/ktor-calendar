@@ -84,13 +84,24 @@
                                 </button>
                             </form>
                         </div>
-                        <div class="col-4" align="center">
-                            <form method="post" action="sleepOn">
-                                <button type="submit" class="btn btn-secondary btn-lg" style="vertical-align: center" >
-                                    Начать сон
-                                </button>
-                            </form>
-                        </div>
+                        <#if model.checkOnDream?boolean>
+                            <div class="col-4" align="center">
+                                <form method="post" action="sleepOn">
+                                    <button type="submit" class="btn btn-secondary btn-lg" style="vertical-align: center" >
+                                        Начать сон
+                                    </button>
+                                </form>
+                            </div>
+                            <#else>
+                                <div class="col-4" align="center">
+                                    <form method="post" action="sleepOf">
+                                        <button type="submit" class="btn btn-secondary btn-lg" style="vertical-align: center" >
+                                            Закончить сон
+                                        </button>
+                                    </form>
+                                </div>
+                        </#if>
+
                         <div class="col-2" align="center">
                             <form method="post" action="/sleepNext">
                                 <input name="CountNext" type="number" value="${model.count?number}" style="display: none">
@@ -103,54 +114,103 @@
                     </div>
             </main>
 
-            <div class="row" style="padding-top: 20px;">
-                <div class="col-2"></div>
-                <div class="col-2" style="background-color: #e5c7ca;border-left:black 2px solid;border-top:black 2px solid" ></div>
-                <div class="col-4"align="center" style="background-color:#e5c7ca; border-top:black 2px solid">
-                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                        <b>Бодрствование:</b>
-                    </p>
-                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                        3 часа 7 минут
-                    </p>
-                </div>
-                <div class="col-2" style="background-color: #e5c7ca;border-right:black 2px solid;border-top:black 2px solid"></div>
-                <div class="col-2"></div>
-            </div>
 
-            <div class="row" >
-                <div class="col-2"></div>
-                <div class="col-2" align="right" style="background-color: #e5c7ca;border-left: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
-                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
-                        <b>
-                            22:20
-                        </b>
-                    </p>
+
+                <#assign previewDream=""/>
+                <#list model.dreams as dream>
+                    <#if previewDream?has_content>
+                        <div class="row" style="padding-top: 20px;">
+                            <div class="col-2"></div>
+                            <div class="col-2" style="background-color: #e5c7ca;border-left:black 2px solid;border-top:black 2px solid" ></div>
+                            <div class="col-4"align="center" style="background-color:#e5c7ca; border-top:black 2px solid">
+                                <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                                    <b>Бодрствование:</b>
+                                </p>
+                                <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                                    ${(dream.dateTimeSlStarted - previewDream)?time}
+                                </p>
+                            </div>
+                            <div class="col-2" style="background-color: #e5c7ca;border-right:black 2px solid;border-top:black 2px solid"></div>
+                            <div class="col-2"></div>
+                        </div>
+                        <#assign previewDream = dream.dateTimeSlEnded/>
+                    </#if>
+                    <div class="row" >
+                        <div class="col-2"></div>
+                        <div class="col-2" align="right" style="background-color: #e5c7ca;border-left: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
+                            <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
+                                <b>
+                                    22:20
+                                </b>
+                            </p>
+                        </div>
+                        <div class="col-4" align="center" style="background-color: #e5c7ca;border-bottom:black 2px solid; border-top: black 2px solid">
+                            <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                                <b>
+                                    <#if dream.dateTimeSlEnded??>
+                                        <#if dream.dateTimeSlStarted?date!=dream.dateTimeSlEnded?date>
+                                            Ночной сон
+                                            <#else>
+                                            Дневной сон
+                                        </#if>
+                                    <#else>
+                                        <#if dream.dateTimeSlStarted?date!=.now?date>
+                                            Ночной сон
+                                        <#else>
+                                            Дневной сон
+                                        </#if>
+                                    </#if>
+                                </b>
+                            </p>
+                            <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                                <#if dream.dateTimeSlEnded??>
+                                    ${(dream.dateTimeSlEnded?datetime - dream.dateTimeSlStarted?datetime)?time}
+                                    <#else >
+                                        ${(dream.dateTimeSlEnded?datetime - .now?datetime)?time}
+                                </#if>
+                            </p>
+                        </div>
+                        <div class="col-2" align="left" style="background-color: #e5c7ca;border-right: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
+                            <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
+                                <b>
+                                    <#if dream.dateTimeSlEnded??>
+                                        ${dream.dateTimeSlEnded?time}
+                                    <#else>
+                                        -
+                                    </#if>
+                                </b>
+                            </p>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-lg" style="vertical-align: center;margin-top: 30px" >
+                                <img src="/static/pen.png" alt="" width="30" height="30">
+                            </button>
+                            <button type="button" class="btn btn-lg" style="vertical-align: center;margin-top: 30px" >
+                                <img src="/static/trash.png" alt="" width="30" height="30">
+                            </button>
+                        </div>
+                    </div>
+                </#list>
+            <#if previewDream?has_content>
+                <div class="row" style="padding-top: 20px;">
+                    <div class="col-2"></div>
+                    <div class="col-2" style="background-color: #e5c7ca;border-left:black 2px solid;border-top:black 2px solid" ></div>
+                    <div class="col-4"align="center" style="background-color:#e5c7ca; border-top:black 2px solid">
+                        <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                            <b>Бодрствование:</b>
+                        </p>
+                        <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                            ${(previewDream - .now)?time}
+                        </p>
+                    </div>
+                    <div class="col-2" style="background-color: #e5c7ca;border-right:black 2px solid;border-top:black 2px solid"></div>
+                    <div class="col-2"></div>
                 </div>
-                <div class="col-4" align="center" style="background-color: #e5c7ca;border-bottom:black 2px solid; border-top: black 2px solid">
-                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                        <b> Ночной сон</b>
-                    </p>
-                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                        11 часов 10 минут
-                    </p>
-                </div>
-                <div class="col-2" align="left" style="background-color: #e5c7ca;border-right: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
-                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
-                        <b>
-                            09:30
-                        </b>
-                    </p>
-                </div>
-                <div class="col-2">
-                    <button type="button" class="btn btn-lg" style="vertical-align: center;margin-top: 30px" >
-                        <img src="/static/pen.png" alt="" width="30" height="30">
-                    </button>
-                    <button type="button" class="btn btn-lg" style="vertical-align: center;margin-top: 30px" >
-                        <img src="/static/trash.png" alt="" width="30" height="30">
-                    </button>
-                </div>
-            </div>
+            </#if>
+
+
+
+
 
             <div class="container" style="margin-top: 650px">
                 <p class="mt-5 mb-3 text-muted">&copy; 2022</p>

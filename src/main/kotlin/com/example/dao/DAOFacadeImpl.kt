@@ -1,12 +1,15 @@
 package com.example.dao
 
+import com.example.controller.routing.Services.DateFormat
 import com.example.dao.DatabaseFactory.dbQuery
 import com.example.dto.*
+import com.typesafe.config.ConfigException.Null
 import io.ktor.util.reflect.*
 import kotlinx.coroutines.selects.select
 import kotlinx.datetime.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.kotlin.datetime.date
+import org.jetbrains.exposed.sql.kotlin.datetime.dateParam
 import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 class DAOFacadeImpl : DAOFacade {
@@ -160,12 +163,15 @@ class DAOFacadeImpl : DAOFacade {
     }
 
     override suspend fun dreams(idChild: Int, date: LocalDate): List<Dream> = dbQuery{
-        val previewDate = date.toJavaLocalDate().minusDays(1).toKotlinLocalDate()
+
+        val previewDateJava =  date.toJavaLocalDate().minusDays(1)
+        val previewDate = LocalDate(previewDateJava.year, previewDateJava.month, previewDateJava.dayOfMonth)
         Sleep
-            .select{(Sleep.idChild eq idChild) and (Sleep.dateTimeSlStarted.date() eq date)
+            .select{
+                (Sleep.idChild eq idChild) and ((Sleep.dateTimeSlStarted.date() eq date) or (Sleep.dateTimeSlEnded.date() eq date)) or
+                        ((Sleep.idChild eq idChild) and (Sleep.dateTimeSlStarted.date() eq previewDate) and (Sleep.dateTimeSlEnded.isNull()))
             }
+            .groupBy(Sleep.dateTimeSlStarted)
             .map(:: resultRowToSleep)
-
     }
-
 }

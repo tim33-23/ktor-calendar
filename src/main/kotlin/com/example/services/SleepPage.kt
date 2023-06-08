@@ -4,12 +4,14 @@ import com.example.controller.routing.Services.DateFormat
 import com.example.dao.DAOFacade
 import com.example.dao.DAOFacadeImpl
 import com.example.dto.Child
+import com.example.dto.Dream
 import com.example.dto.Parent
 import com.example.model.ChildForTemplate
 import com.example.model.SleepForTemplate
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toLocalDate
 import java.time.Period
 
 class SleepPage {
@@ -32,7 +34,12 @@ class SleepPage {
         val month = nowDate.month.value
         val day = nowDate.dayOfMonth
         val currentDate = DateFormat().format(LocalDate(years,month,day))
-        return mapOf("model" to SleepForTemplate(currentDate, count-1, true))
+        val dreams = dao.dreams(children.idChild, currentDate.toLocalDate())
+        var checkOnDream = false;
+        if(dreams.last().dateTimeSlEnded == null){
+            checkOnDream = true;
+        }
+        return mapOf("model" to SleepForTemplate(currentDate, count-1, checkOnDream, dreams))
     }
 
     suspend fun getModelForSleepPage(children: Child, count: Int): Map<Any, Any?>?{
@@ -48,7 +55,12 @@ class SleepPage {
         val month = nowDate.month.value
         val day = nowDate.dayOfMonth
         val currentDate = DateFormat().format(LocalDate(years,month,day))
-        return mapOf("model" to SleepForTemplate(currentDate, count,true))
+        val dreams = dao.dreams(children.idChild, currentDate.toLocalDate())
+        var checkOnDream = false;
+        if(dreams.last().dateTimeSlEnded == null){
+            checkOnDream = true;
+        }
+        return mapOf("model" to SleepForTemplate(currentDate, count,checkOnDream, dreams))
     }
 
     suspend fun getModelForSleepPageNext(children: Child, count: Int): Map<Any, Any?>?{
@@ -64,7 +76,12 @@ class SleepPage {
         val month = nowDate.month.value
         val day = nowDate.dayOfMonth
         val currentDate = DateFormat().format(LocalDate(years,month,day))
-        return mapOf("model" to SleepForTemplate(currentDate, count+1, true))
+        val dreams = dao.dreams(children.idChild, currentDate.toLocalDate())
+        var checkOnDream = false;
+        if(dreams.last().dateTimeSlEnded == null){
+            checkOnDream = true;
+        }
+        return mapOf("model" to SleepForTemplate(currentDate, count+1, checkOnDream, dreams))
     }
 
 }
