@@ -84,7 +84,7 @@
                                 </button>
                             </form>
                         </div>
-                        <#if model.checkOnDream?boolean>
+                        <#if model.checkOnDreams==false>
                             <div class="col-4" align="center">
                                 <form method="post" action="sleepOn">
                                     <button type="submit" class="btn btn-secondary btn-lg" style="vertical-align: center" >
@@ -94,7 +94,7 @@
                             </div>
                             <#else>
                                 <div class="col-4" align="center">
-                                    <form method="post" action="sleepOf">
+                                    <form method="post" action="sleepOff">
                                         <button type="submit" class="btn btn-secondary btn-lg" style="vertical-align: center" >
                                             Закончить сон
                                         </button>
@@ -117,9 +117,10 @@
 
 
                 <#assign previewDream=""/>
+            <div class="row" style="padding-top: 20px; min-height: 20px; min-width: 200px">
                 <#list model.dreams as dream>
                     <#if previewDream?has_content>
-                        <div class="row" style="padding-top: 20px;">
+                <div class="row" >
                             <div class="col-2"></div>
                             <div class="col-2" style="background-color: #e5c7ca;border-left:black 2px solid;border-top:black 2px solid" ></div>
                             <div class="col-4"align="center" style="background-color:#e5c7ca; border-top:black 2px solid">
@@ -127,46 +128,47 @@
                                     <b>Бодрствование:</b>
                                 </p>
                                 <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                                    ${(dream.dateTimeSlStarted - previewDream)?time}
+
+                                    ${(dream.dateTimeSlStarted?datetime("dd.mm.yyyy hh:mm")?long - previewDream?datetime("dd.mm.yyyy hh:mm")?long)?number_to_time}
                                 </p>
                             </div>
                             <div class="col-2" style="background-color: #e5c7ca;border-right:black 2px solid;border-top:black 2px solid"></div>
                             <div class="col-2"></div>
-                        </div>
-                        <#assign previewDream = dream.dateTimeSlEnded/>
+                    </div>
                     </#if>
+                    <#assign previewDream = dream.dateTimeSlEnded/>
                     <div class="row" >
                         <div class="col-2"></div>
                         <div class="col-2" align="right" style="background-color: #e5c7ca;border-left: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
                             <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
                                 <b>
-                                    22:20
+                                    ${dream.dateTimeSlStarted?datetime("dd.mm.yyyy hh:mm")?time}
                                 </b>
                             </p>
                         </div>
                         <div class="col-4" align="center" style="background-color: #e5c7ca;border-bottom:black 2px solid; border-top: black 2px solid">
                             <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
                                 <b>
-                                    <#if dream.dateTimeSlEnded??>
-                                        <#if dream.dateTimeSlStarted?date!=dream.dateTimeSlEnded?date>
-                                            Ночной сон
-                                            <#else>
+                                    <#if  !dream.dateTimeSlEnded?? && dream.dateTimeSlEnded?has_content>
+                                        <#if dream.dateTimeSlStarted?datetime("dd.mm.yyyy hh:mm") == dream.dateTimeSlEnded?datetime("dd.mm.yyyy hh:mm")>
                                             Дневной сон
+                                            <#else>
+                                                Ночной сон
                                         </#if>
                                     <#else>
-                                        <#if dream.dateTimeSlStarted?date!=.now?date>
-                                            Ночной сон
-                                        <#else>
+                                        <#if dream.dateTimeSlStarted?datetime("dd.mm.yyyy hh:mm")?date==model.now?datetime("dd.mm.yyyy hh:mm")?date>
                                             Дневной сон
+                                        <#else>
+                                            Ночной сон
                                         </#if>
                                     </#if>
                                 </b>
                             </p>
                             <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                                <#if dream.dateTimeSlEnded??>
-                                    ${(dream.dateTimeSlEnded?datetime - dream.dateTimeSlStarted?datetime)?time}
+                                <#if !dream.dateTimeSlEnded?? && dream.dateTimeSlEnded?has_content >
+                                    ${(dream.dateTimeSlEnded?datetime("dd.mm.yyyy hh:mm")?long - dream.dateTimeSlStarted?datetime("dd.mm.yyyy hh:mm")?long)?number_to_time}
                                     <#else >
-                                        ${(dream.dateTimeSlEnded?datetime - .now?datetime)?time}
+                                        ${(model.now?datetime("dd.mm.yyyy hh:mm")?long - dream.dateTimeSlStarted?datetime("dd.mm.yyyy hh:mm")?long)?number_to_time}
                                 </#if>
                             </p>
                         </div>
@@ -174,9 +176,9 @@
                             <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
                                 <b>
                                     <#if dream.dateTimeSlEnded??>
-                                        ${dream.dateTimeSlEnded?time}
-                                    <#else>
                                         -
+                                    <#else>
+                                        ${dream.dateTimeSlEnded?datetime("dd.mm.yyyy hh:mm")}
                                     </#if>
                                 </b>
                             </p>
@@ -191,7 +193,7 @@
                         </div>
                     </div>
                 </#list>
-            <#if previewDream?has_content>
+            <#if !previewDream?? && previewDream?has_content>
                 <div class="row" style="padding-top: 20px;">
                     <div class="col-2"></div>
                     <div class="col-2" style="background-color: #e5c7ca;border-left:black 2px solid;border-top:black 2px solid" ></div>
@@ -200,13 +202,14 @@
                             <b>Бодрствование:</b>
                         </p>
                         <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                            ${(previewDream - .now)?time}
+                            ${(previewDream?datetime("dd.mm.yyyy hh:mm")?long - model.now?datetime("dd.mm.yyyy hh:mm")?long)?number_to_time}
                         </p>
                     </div>
                     <div class="col-2" style="background-color: #e5c7ca;border-right:black 2px solid;border-top:black 2px solid"></div>
                     <div class="col-2"></div>
                 </div>
             </#if>
+            </div>
 
 
 

@@ -158,8 +158,11 @@ class DAOFacadeImpl : DAOFacade {
         !insertStatment.resultedValues.isNullOrEmpty()
     }
 
-    override suspend fun endSleep(idChild: Int): Boolean {
-        TODO("Not yet implemented")
+    override suspend fun endSleep(idChild: Int): Boolean = dbQuery{
+        var nowDate= java.time.LocalDateTime.now()
+        Sleep.update({(Sleep.idChild eq idChild) and (Sleep.dateTimeSlEnded.isNull())}){
+            it[Sleep.dateTimeSlEnded] = nowDate.toKotlinLocalDateTime()
+        }>0
     }
 
     override suspend fun dreams(idChild: Int, date: LocalDate): List<Dream> = dbQuery{

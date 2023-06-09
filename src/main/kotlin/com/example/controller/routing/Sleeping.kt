@@ -121,7 +121,7 @@ fun Application.configureSleep() {
                     val child = idChild?.let { it1 -> dao.child(it1) }
                     if(child != null){
                         dao.addBeginSleep(idChild)
-                        val model = child.let{it1 -> SleepPage().getModelForSleepPageNext(it1, 0)}
+                        val model = child.let{it1 -> SleepPage().getModelForSleepPage(it1, 0)}
                         call.respond(FreeMarkerContent("templates/sleep/sleeping.ftl", model))
                     }
                     else{
@@ -141,18 +141,32 @@ fun Application.configureSleep() {
             }
 
 
-            get("/sleepOff"){
+            post("/sleepOff"){
                 val userSession = call.principal<UserSession>()
                 if(userSession!=null){
                     val email = userSession.email
                     val idChild = userSession.idChild
                     val child = idChild?.let { it1 -> dao.child(it1) }
                     if(child != null){
-                        call.respond(FreeMarkerContent("templates/sleep/sleepingOff.ftl", null))
+                        val checkUpdate = dao.endSleep(idChild)
+                        if(checkUpdate){
+                            val model = child.let{it1 -> SleepPage().getModelForSleepPage(it1, 0)}
+                            call.respond(FreeMarkerContent("templates/sleep/sleeping.ftl", model))
+                        }
+                        else {
+                            val parent = dao.parent(email)
+                            if (parent != null) {
+                                val model = idChild.let { it1 -> MainPage().getModelForMainPage(parent, it1) }
+                                call.respond(FreeMarkerContent("templates/main/main.ftl", model))
+                            } else {
+                                call.respond(FreeMarkerContent("templates/authorization/login.ftl", null))
+                            }
+                        }
                     }
                     else{
                         val parent = dao.parent(email)
                         if(parent!=null){
+
                             val model = idChild?.let { it1 -> MainPage().getModelForMainPage(parent, it1) }
                             call.respond(FreeMarkerContent("templates/main/main.ftl", model))
                         }
@@ -166,15 +180,6 @@ fun Application.configureSleep() {
                 }
             }
 
-            get("/addSleep"){
-                val userSession = call.principal<UserSession>()
-                if(userSession!=null){
-                    call.respond(FreeMarkerContent("templates/parametrs/addSleep.ftl", null))
-                }
-                else{
-                    call.respond(FreeMarkerContent("templates/authorization/login.ftl", null))
-                }
-            }
 
             post("/deleteSleep") {
                 val userSession = call.principal<UserSession>()

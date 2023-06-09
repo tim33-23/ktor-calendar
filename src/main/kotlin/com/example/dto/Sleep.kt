@@ -16,5 +16,7 @@ object Sleep : Table() {
 
 
     override val primaryKey = PrimaryKey(idSleep)
-
 }
+
+data class DreamForTemplate(val idSleep: Int,val idChild: Int,val dateTimeSlStarted:  String, val dateTimeSlEnded: String?)
+
