@@ -65,7 +65,7 @@ class HeightPage {
         val month = FloatArray(24)
         for(i in 0..23)
             month[i] = -1F
-        var count = 0;
+        var count = 0
         var value = "["
         var last : Int = 0
         for (body in parametersBody){
@@ -75,15 +75,15 @@ class HeightPage {
             if(body.childHeightFact!=null){
                 if(month[m] == -1F){
                     count++
+                    month[m] = body.childHeightFact
                 }
-                month[m] = body.childHeightFact
+
 
             }
-
             last = m
         }
         var valueTeor = "["
-        for(i in 0..last-1){
+        for(i in 0..last){
             if(month[i]==-1F){
                 if(i==0){
                     value = value+"[]"
@@ -100,13 +100,13 @@ class HeightPage {
                     valueTeor = valueTeor + "[]"
                 }
                 else{
-                    value = value+","+month[i].toString()
+                    value = value+","+ month[i].toString()
                     valueTeor = valueTeor + ",[]"
                 }
             }
         }
         var vpred = month[last]
-        for(i in last..11)
+        for(i in last+1..11)
         {
             val v = (vpred + (1.2F * exp(i/23F)))
             valueTeor = valueTeor + "," + String.format("%.1f", v)
@@ -119,7 +119,7 @@ class HeightPage {
         if(count<3){
             valueTeor = "[]"
         }
-        if(last<1)
+        if(count == 0)
             value = "[]"
         return HeightString(value, valueTeor)
     }

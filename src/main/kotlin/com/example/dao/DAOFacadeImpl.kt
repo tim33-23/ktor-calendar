@@ -195,7 +195,7 @@ class DAOFacadeImpl : DAOFacade {
                 (Sleep.idChild eq idChild) and ((Sleep.dateTimeSlStarted.date() eq date) or (Sleep.dateTimeSlEnded.date() eq date)) or
                         ((Sleep.idChild eq idChild) and (Sleep.dateTimeSlStarted.date() eq previewDate) and (Sleep.dateTimeSlEnded.isNull()))
             }
-            .groupBy(Sleep.dateTimeSlStarted)
+            //.groupBy(Sleep.dateTimeSlStarted)
             .map(:: resultRowToSleep)
     }
 
