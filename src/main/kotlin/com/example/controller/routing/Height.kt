@@ -5,6 +5,7 @@ import com.example.dao.DAOFacade
 import com.example.dao.DAOFacadeImpl
 import com.example.dto.ParametersBody
 import com.example.dto.UserSession
+import com.example.services.HeightPage
 import io.ktor.http.cio.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -32,7 +33,10 @@ fun Application.configureHeight() {
                     val idChild = userSession.idChild
                     val child = idChild?.let { it1 -> dao.child(it1) }
                     if(child != null){
-                        call.respond(FreeMarkerContent("templates/parametrs/height.ftl", null))
+
+                        val model = HeightPage().getModelForHeightPage(idChild)
+
+                        call.respond(FreeMarkerContent("templates/parametrs/height.ftl", model))
                     }
                     else{
                         val parent = dao.parent(email)
@@ -84,7 +88,48 @@ fun Application.configureHeight() {
                                 newBody = null
                             }
                         }
-                        call.respond(FreeMarkerContent("templates/parametrs/height2.ftl", null))
+                        val model = HeightPage().getModelForHeightPage(idChild)
+                        call.respond(FreeMarkerContent("templates/parametrs/height.ftl", model))
+                    }
+                    else{
+                        call.respond(FreeMarkerContent("templates/parametrs/addHeight.ftl", null))
+                    }
+                }
+                else{
+                    call.respond(FreeMarkerContent("templates/authorization/login.ftl", null))
+                }
+            }
+
+            post("/deletedHeight") {
+                val userSession = call.principal<UserSession>()
+                val formParameters = call.receiveParameters()
+                if(userSession!=null){
+                    val idChild = userSession.idChild
+                    val idBody = formParameters["idBodyDe"]?.toInt()
+                    if(idChild != null && idBody != null){
+                        val del = dao.deleteHeight(idBody)
+                        val model = HeightPage().getModelForHeightPage(idChild)
+                        call.respond(FreeMarkerContent("templates/parametrs/height.ftl", model))
+                    }
+                    else{
+                        call.respond(FreeMarkerContent("templates/parametrs/addHeight.ftl", null))
+                    }
+                }
+                else{
+                    call.respond(FreeMarkerContent("templates/authorization/login.ftl", null))
+                }
+            }
+
+            get("/editedHeight") {
+                val userSession = call.principal<UserSession>()
+                val formParameters = call.receiveParameters()
+                if(userSession!=null){
+                    val idChild = userSession.idChild
+                    val idBody = formParameters["idBodyEd"]?.toInt()
+                    if(idChild != null && idBody != null){
+                        val del = dao.deleteHeight(idBody)
+                        val model = HeightPage().getModelForHeightPage(idChild)
+                        call.respond(FreeMarkerContent("templates/parametrs/height.ftl", model))
                     }
                     else{
                         call.respond(FreeMarkerContent("templates/parametrs/addHeight.ftl", null))

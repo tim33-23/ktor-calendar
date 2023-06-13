@@ -18,3 +18,5 @@ object ParametersBodys: Table("parameters_bodys") {
     override val primaryKey = PrimaryKey(idBody)
 
 }
+
+data class ParametersBodyForTemplates(val idBody: Int, val idChild: Int, val childHeightFact: Float?, val childWeightFact: Float?, val dateofAffixingCh: String)

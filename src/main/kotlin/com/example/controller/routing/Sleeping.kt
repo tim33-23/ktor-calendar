@@ -183,26 +183,15 @@ fun Application.configureSleep() {
 
             post("/deleteSleep") {
                 val userSession = call.principal<UserSession>()
-                val formParameters = call.receiveParameters()
                 if(userSession!=null){
                     val idChild = userSession.idChild
-                    val weight = formParameters["weight"]?.toFloat()
-                    val dateParameters = formParameters["dateParametrs"]?.toLocalDate()
-                    var newBody: ParametersBody? = null
-                    if(idChild != null && weight != null && dateParameters != null){
-                        val body = dao.parametersBody(idChild, dateParameters)
-                        if(body==null){
-                            newBody = dao.insertParametersBody(idChild, null, weight, dateParameters)
-                        }
-                        else{
-                            if(dao.updateParametersBody(body.idBody, idChild, body.childHeightFact, weight, dateParameters)){
-                                newBody = dao.parametersBody(idChild, dateParameters)
-                            }
-                            else{
-                                newBody = null
-                            }
-                        }
-                        call.respond(FreeMarkerContent("templates/parametrs/weight.ftl", null))
+                    val formParameters = call.receiveParameters()
+                    var idSleep = formParameters["idSleepDe"]?.toInt()
+                    val child = idChild?.let { it1 -> dao.child(it1) }
+                    if(child!=null){
+                        val checkUpdate = idSleep?.let { it1 -> dao.deletedSleep(it1) }
+                        val model = child.let{it1 -> SleepPage().getModelForSleepPage(it1, 0)}
+                        call.respond(FreeMarkerContent("templates/sleep/sleeping.ftl", model))
                     }
                     else{
                         call.respond(FreeMarkerContent("templates/parametrs/addWeight.ftl", null))

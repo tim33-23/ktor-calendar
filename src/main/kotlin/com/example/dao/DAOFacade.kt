@@ -20,8 +20,9 @@ interface DAOFacade {
     suspend fun updateChild(idChild: Int, name: String, dateOfBirth: LocalDate, gender: Boolean): Child?
     suspend fun deletedChild(idChild: Int): Boolean
 
-    suspend fun parametersBody(idBody: Int): ParametersBody?
-    suspend fun allParametersBody(idBody: Int): List<ParametersBody>?
+    suspend fun parametersBody(idChild: Int): ParametersBody?
+    suspend fun deleteHeight(idBody: Int): Boolean?
+    suspend fun allParametersBody(idChild: Int): List<ParametersBody>?
     suspend fun parametersBody(idChild: Int, dateParameters: LocalDate): ParametersBody?
     suspend fun insertParametersBody(idChild: Int, height: Float?, weight: Float?, date: LocalDate): ParametersBody?
     suspend fun updateParametersBody(idBody: Int, idChild: Int, height: Float?, weight: Float?, date: LocalDate): Boolean
@@ -29,5 +30,6 @@ interface DAOFacade {
     suspend fun addBeginSleep(idChild: Int): Boolean
     suspend fun endSleep(idChild: Int): Boolean
     suspend fun dreams(idChild: Int, date: LocalDate): List<Dream>
+    suspend fun deletedSleep(idSleep: Int): Boolean
 
 }

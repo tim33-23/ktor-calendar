@@ -115,100 +115,83 @@
             </main>
 
 
-
-                <#assign previewDream=""/>
             <div class="row" style="padding-top: 20px; min-height: 20px; min-width: 200px">
                 <#list model.dreams as dream>
-                    <#if previewDream?has_content>
-                <div class="row" >
+                    <#if dream.idSleep==-1>
+                        <div class="row" style="">
                             <div class="col-2"></div>
-                            <div class="col-2" style="background-color: #e5c7ca;border-left:black 2px solid;border-top:black 2px solid" ></div>
-                            <div class="col-4"align="center" style="background-color:#e5c7ca; border-top:black 2px solid">
+                            <div class="col-2" style="background-color: #e5c7ca;border-left:black 2px solid;border-top:black 2px solid;border-bottom:black 2px solid;" ></div>
+                            <div class="col-4"align="center" style="background-color:#e5c7ca; border-top:black 2px solid;border-bottom:black 2px solid;">
                                 <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
                                     <b>Бодрствование:</b>
                                 </p>
                                 <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-
-                                    ${(dream.dateTimeSlStarted?datetime("dd.mm.yyyy hh:mm")?long - previewDream?datetime("dd.mm.yyyy hh:mm")?long)?number_to_time}
+                                    ${dream.betwineTime}
                                 </p>
                             </div>
-                            <div class="col-2" style="background-color: #e5c7ca;border-right:black 2px solid;border-top:black 2px solid"></div>
+                            <div class="col-2" style="background-color: #e5c7ca;border-right:black 2px solid;border-top:black 2px solid;border-bottom:black 2px solid;"></div>
                             <div class="col-2"></div>
                     </div>
+                    <#else>
+                        <div class="row" >
+                            <div class="col-2"></div>
+                            <div class="col-2" align="right" style="background-color: #e5c7ca;border-left: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
+                                <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
+                                      <b>
+                                          ${dream.dateTimeSlStarted?datetime("dd.mm.yyyy hh:mm")?time}
+                                      </b>
+                                  </p>
+                              </div>
+                              <div class="col-4" align="center" style="background-color: #e5c7ca;border-bottom:black 2px solid; border-top: black 2px solid">
+                                  <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                                      <b>
+                                          <#if dream.dateTimeSlEnded?string=="0">
+                                              Cон
+                                              <#else >
+                                              <#if dream.day?string=="true">
+                                                  Дневной сон
+                                                  <#else>
+                                                  Ночной сон
+                                              </#if>
+                                          </#if>
+
+                                      </b>
+                                  </p>
+                                  <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                                      ${dream.betwineTime}
+                                  </p>
+                              </div>
+                              <div class="col-2" align="left" style="background-color: #e5c7ca;border-right: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
+                                  <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
+                                      <b>
+                                          <#if dream.dateTimeSlEnded?string=="0">
+                                              -
+                                          <#else>
+                                              ${dream.dateTimeSlEnded?datetime("dd.mm.yyyy hh:mm")?time}
+                                          </#if>
+                                      </b>
+                                  </p>
+                              </div>
+                              <div class="col-2">
+                                      <div class="row">
+                                          <form class="col-6" align="center" method="post" action="/editeSleep">
+                                              <input name="idSleepEd" type="number" value=${dream.idSleep} style="display: none">
+                                              <button type="submit" align="center" class="btn btn-lg" style="vertical-align: center;margin-top: 30px" >
+                                                  <img src="/static/pen.png" alt="" width="30" height="30">
+                                              </button>
+                                          </form>
+                                          <form class="col-6" align="center" method="post" action="/deleteSleep">
+                                              <input name="idSleepDe" type="number" value=${dream.idSleep} style="display: none">
+                                              <button type="submit" align="center" class="btn btn-lg" style="vertical-align: center;margin-top: 30px" >
+                                                  <img src="/static/trash.png" alt="" width="30" height="30">
+                                              </button>
+                                          </form>
+                                      </div>
+                              </div>
+                          </div>
                     </#if>
-                    <#assign previewDream = dream.dateTimeSlEnded/>
-                    <div class="row" >
-                        <div class="col-2"></div>
-                        <div class="col-2" align="right" style="background-color: #e5c7ca;border-left: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
-                            <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
-                                <b>
-                                    ${dream.dateTimeSlStarted?datetime("dd.mm.yyyy hh:mm")?time}
-                                </b>
-                            </p>
-                        </div>
-                        <div class="col-4" align="center" style="background-color: #e5c7ca;border-bottom:black 2px solid; border-top: black 2px solid">
-                            <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                                <b>
-                                    <#if  !dream.dateTimeSlEnded?? && dream.dateTimeSlEnded?has_content>
-                                        <#if dream.dateTimeSlStarted?datetime("dd.mm.yyyy hh:mm") == dream.dateTimeSlEnded?datetime("dd.mm.yyyy hh:mm")>
-                                            Дневной сон
-                                            <#else>
-                                                Ночной сон
-                                        </#if>
-                                    <#else>
-                                        <#if dream.dateTimeSlStarted?datetime("dd.mm.yyyy hh:mm")?date==model.now?datetime("dd.mm.yyyy hh:mm")?date>
-                                            Дневной сон
-                                        <#else>
-                                            Ночной сон
-                                        </#if>
-                                    </#if>
-                                </b>
-                            </p>
-                            <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                                <#if !dream.dateTimeSlEnded?? && dream.dateTimeSlEnded?has_content >
-                                    ${(dream.dateTimeSlEnded?datetime("dd.mm.yyyy hh:mm")?long - dream.dateTimeSlStarted?datetime("dd.mm.yyyy hh:mm")?long)?number_to_time}
-                                    <#else >
-                                        ${(model.now?datetime("dd.mm.yyyy hh:mm")?long - dream.dateTimeSlStarted?datetime("dd.mm.yyyy hh:mm")?long)?number_to_time}
-                                </#if>
-                            </p>
-                        </div>
-                        <div class="col-2" align="left" style="background-color: #e5c7ca;border-right: black 2px solid;border-bottom:black 2px solid; border-top: black 2px solid">
-                            <p style="font-size: 25px;font-family: 'Arial',SansSerif;margin-top: 30px">
-                                <b>
-                                    <#if dream.dateTimeSlEnded??>
-                                        -
-                                    <#else>
-                                        ${dream.dateTimeSlEnded?datetime("dd.mm.yyyy hh:mm")}
-                                    </#if>
-                                </b>
-                            </p>
-                        </div>
-                        <div class="col-2">
-                            <button type="button" class="btn btn-lg" style="vertical-align: center;margin-top: 30px" >
-                                <img src="/static/pen.png" alt="" width="30" height="30">
-                            </button>
-                            <button type="button" class="btn btn-lg" style="vertical-align: center;margin-top: 30px" >
-                                <img src="/static/trash.png" alt="" width="30" height="30">
-                            </button>
-                        </div>
-                    </div>
+
                 </#list>
-            <#if !previewDream?? && previewDream?has_content>
-                <div class="row" style="padding-top: 20px;">
-                    <div class="col-2"></div>
-                    <div class="col-2" style="background-color: #e5c7ca;border-left:black 2px solid;border-top:black 2px solid" ></div>
-                    <div class="col-4"align="center" style="background-color:#e5c7ca; border-top:black 2px solid">
-                        <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                            <b>Бодрствование:</b>
-                        </p>
-                        <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
-                            ${(previewDream?datetime("dd.mm.yyyy hh:mm")?long - model.now?datetime("dd.mm.yyyy hh:mm")?long)?number_to_time}
-                        </p>
-                    </div>
-                    <div class="col-2" style="background-color: #e5c7ca;border-right:black 2px solid;border-top:black 2px solid"></div>
-                    <div class="col-2"></div>
-                </div>
-            </#if>
             </div>
 
 

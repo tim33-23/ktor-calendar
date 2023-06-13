@@ -104,16 +104,16 @@ class DAOFacadeImpl : DAOFacade {
         Childs.deleteWhere { Childs.idChild eq idChild }>0
     }
 
-    override suspend fun parametersBody(idBody: Int): ParametersBody? = dbQuery{
+    override suspend fun parametersBody(idChild: Int): ParametersBody? = dbQuery{
         ParametersBodys
-            .select { ParametersBodys.idBody eq idBody }
+            .select { ParametersBodys.idChild eq idChild }
             .map(:: resultRowToBody)
             .singleOrNull()
     }
 
-    override suspend fun allParametersBody(idBody: Int): List<ParametersBody>? = dbQuery{
+    override suspend fun allParametersBody(idChild: Int): List<ParametersBody>? = dbQuery{
         ParametersBodys
-            .select { ParametersBodys.idBody eq idBody }
+            .select { ParametersBodys.idChild eq idChild }
             .map(:: resultRowToBody)
     }
 
@@ -122,6 +122,27 @@ class DAOFacadeImpl : DAOFacade {
             .select { (ParametersBodys.idChild eq idChild) and (ParametersBodys.dateOfAffixingCh eq dateParameters) }
             .map(:: resultRowToBody)
             .singleOrNull()
+    }
+
+    override suspend fun deleteHeight(idBody: Int): Boolean? = dbQuery{
+        val body = ParametersBodys
+            .select{ParametersBodys.idBody eq idBody}
+            .map(::resultRowToBody)
+            .singleOrNull()
+        if(body?.childWeightFact == null){
+            return@dbQuery ParametersBodys.deleteWhere { (ParametersBodys.idBody eq idBody) }>0
+        }
+        else{
+            ParametersBodys.update({ParametersBodys.idBody eq idBody}){
+                it[ParametersBodys.idBody] = idBody
+                it[ParametersBodys.idChild] = idChild
+                it[ParametersBodys.childHeightFact] = null
+                it[ParametersBodys.childWeightFact] = childWeightFact
+                it[ParametersBodys.dateOfAffixingCh] = dateOfAffixingCh
+            }
+            return@dbQuery true
+        }
+        return@dbQuery false
     }
 
     override suspend fun insertParametersBody(idChild: Int, height: Float?, weight: Float?, date: LocalDate): ParametersBody? = dbQuery{
@@ -176,5 +197,9 @@ class DAOFacadeImpl : DAOFacade {
             }
             .groupBy(Sleep.dateTimeSlStarted)
             .map(:: resultRowToSleep)
+    }
+
+    override suspend fun deletedSleep(idSleep: Int): Boolean = dbQuery{
+        Sleep.deleteWhere { (Sleep.idSleep eq idSleep) }>0
     }
 }
