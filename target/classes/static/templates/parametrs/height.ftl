@@ -5,6 +5,8 @@
 <script src="https://bootstraptema.ru/plugins/2016/shieldui/script.js"></script>
 <#assign data3 = "[[],[],[],[],[],[],[],[],[],[],[]]"/>
 <#assign data4 = "[[],[],[],[],[],[],[],[],[],[],[]]"/>
+<#assign dataUpNorm = "[50.4, 55, 58.4, 61.2, 63.5, 65.5, 67.3, 68.8, 70.3, 71.8, 73.1, 74.5, 75.8]"/>
+<#assign dataLowNorm = "[47.9, 52.5, 55.7, 58.4, 60.6, 62.5, 64.2, 65.7, 67.2, 68.5, 69.8, 71.1, 72.3]"/>
 <#if height?has_content && height.value?has_content && height.valueTeor?has_content>
     <#assign data3 = height.value/>
     <#assign data4 = height.valueTeor/>
@@ -78,6 +80,8 @@
 
                     var data2 = ${data3};
                     var dataTeor = ${data4};
+                    var upNorma = ${dataUpNorm}
+                    var lowNorm = ${dataLowNorm}
                     $(function () {
                         $("#chart").shieldChart({
                             theme: "light",
@@ -127,7 +131,7 @@
                                 seriesType: 'line',
                                 axis: 1,
                                 collectionAlias: "Верхняя норма роста",
-                                data: [50.4, 55, 58.4, 61.2, 63.5, 65.5, 67.3, 68.8, 70.3, 71.8, 73.1, 74.5, 75.8]},
+                                data: upNorma},
                                 {
                                     seriesType: 'line',
                                     axis: 2,
@@ -137,7 +141,7 @@
                                 seriesType: 'line',
                                 axis: 4,
                                 collectionAlias: "Нижняя норма роста",
-                                data: [47.9, 52.5, 55.7, 58.4, 60.6, 62.5, 64.2, 65.7, 67.2, 68.5, 69.8, 71.1, 72.3]
+                                data: lowNorm
                                 } ]
                         });
                     });
@@ -173,38 +177,41 @@
                     </tr>
                     <#if height?has_content && height.parametersBody?has_content>
                         <#list height.parametersBody as body  >
-                            <tr>
-                                <td width="100px">
-                                    <div style="padding-top: 10px">
-                                        <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                            <b>
-                                                ${body.childHeightFact} см
-                                            </b>
-                                        </p>
-                                    </div>
-                                </td>
-                                <td width="100px">
-                                    <div style="padding-top: 10px">
-                                        <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                            <b>
-                                                ${body.dateofAffixingCh}
-                                            </b>
-                                        </p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <form method="post" action="/editHeight">
-                                        <input name="idBodyEd" type="number" value=${body.idBody} style="display: none">
-                                        <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
-                                    </form>
-                                </td>
-                                <td align="top">
-                                    <form method="post" action="/deletedHeight" >
-                                        <input name="idBodyDe" type="number" value=${body.idBody} style="display: none">
-                                        <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
-                                    </form>
-                                </td>
-                            </tr>
+                            <#if body.childHeightFact?has_content>
+                                <tr>
+                                    <td width="100px">
+                                        <div style="padding-top: 10px">
+                                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                                <b>
+                                                    ${body.childHeightFact} см
+                                                </b>
+                                            </p>
+                                        </div>
+                                    </td>
+                                    <td width="100px">
+                                        <div style="padding-top: 10px">
+                                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                                <b>
+                                                    ${body.dateofAffixingCh}
+                                                </b>
+                                            </p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <form method="post" action="/editHeight">
+                                            <input name="idBodyEd" type="number" value=${body.idBody} style="display: none">
+                                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
+                                        </form>
+                                    </td>
+                                    <td align="top">
+                                        <form method="post" action="/deletedHeight" >
+                                            <input name="idBodyDe" type="number" value=${body.idBody} style="display: none">
+                                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </#if>
+
                         </#list>
 
                     </#if>

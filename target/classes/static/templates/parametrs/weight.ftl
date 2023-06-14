@@ -3,6 +3,13 @@
 <#include "../head-config.ftl"/>
 <script src="https://bootstraptema.ru/plugins/jquery/jquery-1.11.3.min.js"></script>
 <script src="https://bootstraptema.ru/plugins/2016/shieldui/script.js"></script>
+<#assign data3 = "[[],[],[],[],[],[],[],[],[],[],[]]"/>
+<#assign data4 = "[[],[],[],[],[],[],[],[],[],[],[]]"/>
+<#if height?has_content && height.value?has_content && height.valueTeor?has_content>
+    <#assign data3 = height.value/>
+    <#assign data4 = height.valueTeor/>
+</#if>
+
 <body>
 <div class="container" style="background-image: linear-gradient(to right, rgba(255,255,255,0.4) 0 100%), url('static/fon3.jpg'); height: 100%">
     <nav class="navbar navbar-expand-lg">
@@ -69,6 +76,8 @@
                 <!-- График --><div id="chart"></div>
 
                 <script>
+                    var data2 = ${data3};
+                    var dataTeor = ${data4};
                     $(function () {
                         $("#chart").shieldChart({
                             theme: "light",
@@ -118,12 +127,12 @@
                                 seriesType: 'line',
                                 axis: 1,
                                 collectionAlias: "Фактический вес",
-                                data: [3460, 4300, 5300, 5900, 6500, [], 7300, 7700]
+                                data: data2
                             }, {
                                 seriesType: 'line',
                                 axis: 1,
-                                collectionAlias: "Фактический вес",
-                                data: [[], [], [], [], [], [], [], [], 7900, 8300, 8500, 8800]
+                                collectionAlias: "Тенденция",
+                                data: dataTeor
                             },{
                                 seriesType: 'line',
                                 axis: 2,
@@ -162,216 +171,46 @@
                     <td></td>
                     <td></td>
                 </tr>
-                <tr>
-                    <td width="100px">
-                        <div style="padding-top: 10px">
-                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                <b>
-                                    3460 г
-                                </b>
-                            </p>
-                        </div>
-                    </td>
-                    <td width="100px">
-                        <div style="padding-top: 10px">
-                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                <b>
-                                    16.03.2021
-                                </b>
-                            </p>
-                        </div>
-                    </td>
-                    <td>
-                        <form method="get" action="/editWeight">
-                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
-                        </form>
-                    </td>
-                    <td align="top">
-                        <form method="get" action="/deletedWeight" >
-                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
-                        </form>
-                    </td>
-                </tr>
-                <tr style="border-top: black solid 2px">
-                    <td width="100px">
-                        <div style="padding-top: 10px">
-                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                <b>
-                                    4300 г
-                                </b>
-                            </p>
-                        </div>
-                    </td>
-                    <td width="100px">
-                        <div style="padding-top: 10px">
-                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                <b>
-                                    16.04.2021
-                                </b>
-                            </p>
-                        </div>
-                    </td>
-                    <td>
-                        <form method="get" action="/editWeight">
-                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
-                        </form>
-                    </td>
-                    <td align="top">
-                        <form method="get" action="/deletedWeight" >
-                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
-                        </form>
-                    </td>
-                </tr>
-                <tr style="border-top: black solid 2px">
-                    <td width="100px">
-                        <div style="padding-top: 10px">
-                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                <b>
-                                    5300 г
-                                </b>
-                            </p>
-                        </div>
-                    </td>
-                    <td width="100px">
-                        <div style="padding-top: 10px">
-                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                <b>
-                                    16.05.2021
-                                </b>
-                            </p>
-                        </div>
-                    </td>
-                    <td>
-                        <form method="get" action="/editWeight">
-                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
-                        </form>
-                    </td>
-                    <td align="top">
-                        <form method="get" action="/deletedWeight" >
-                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
-                        </form>
-                    </td>
-                </tr>
-                <tr style="border-top: black solid 2px">
-                    <td width="100px">
-                        <div style="padding-top: 10px">
-                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                <b>
-                                    5900 г
-                                </b>
-                            </p>
-                        </div>
-                    </td>
-                    <td width="100px">
-                        <div style="padding-top: 10px">
-                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                <b>
-                                    16.06.2021
-                                </b>
-                            </p>
-                        </div>
-                    </td>
-                    <td>
-                        <form method="get" action="/editWeight">
-                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
-                        </form>
-                    </td>
-                    <td align="top">
-                        <form method="get" action="/deletedWeight" >
-                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
-                        </form>
-                    </td>
-                </tr>
-                <tr style="border-top: black solid 2px">
-                    <td width="100px">
-                        <div style="padding-top: 10px">
-                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                <b>
-                                    6500 г
-                                </b>
-                            </p>
-                        </div>
-                    </td>
-                    <td width="100px">
-                        <div style="padding-top: 10px">
-                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                <b>
-                                    16.07.2021
-                                </b>
-                            </p>
-                        </div>
-                    </td>
-                    <td>
-                        <form method="get" action="/editWeight">
-                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
-                        </form>
-                    </td>
-                    <td align="top">
-                        <form method="get" action="/deletedWeight" >
-                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
-                        </form>
-                    </td>
-                </tr>
-                <tr style="border-top: black solid 2px">
-                    <td width="100px">
-                        <div style="padding-top: 10px">
-                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                <b>
-                                    7300 г
-                                </b>
-                            </p>
-                        </div>
-                    </td>
-                    <td width="100px">
-                        <div style="padding-top: 10px">
-                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                <b>
-                                    16.09.2021
-                                </b>
-                            </p>
-                        </div>
-                    </td>
-                    <td>
-                        <form method="get" action="/editWeight">
-                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
-                        </form>
-                    </td>
-                    <td align="top">
-                        <form method="get" action="/deletedWeight" >
-                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
-                        </form>
-                    </td>
-                </tr>
-                <tr style="border-top: black solid 2px">
-                    <td width="100px">
-                        <div style="padding-top: 10px">
-                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                <b>
-                                    7700 г
-                                </b>
-                            </p>
-                        </div>
-                    </td>
-                    <td width="100px">
-                        <div style="padding-top: 10px">
-                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                <b>
-                                    16.10.2021
-                                </b>
-                            </p>
-                        </div>
-                    </td>
-                    <td>
-                        <form method="get" action="/editWeight">
-                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
-                        </form>
-                    </td>
-                    <td align="top">
-                        <form method="get" action="/deletedWeight" >
-                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
-                        </form>
-                    </td>
-                </tr>
+                <#if height?has_content && height.parametersBody?has_content>
+                    <#list height.parametersBody as body >
+                        <#if body.childWeightFact?has_content>
+                            <tr>
+                                <td width="100px">
+                                    <div style="padding-top: 10px">
+                                        <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                            <b>
+                                                ${body.childWeightFact} г
+                                            </b>
+                                        </p>
+                                    </div>
+                                </td>
+                                <td width="100px">
+                                    <div style="padding-top: 10px">
+                                        <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                            <b>
+                                                ${body.dateofAffixingCh}
+                                            </b>
+                                        </p>
+                                    </div>
+                                </td>
+                                <td>
+                                    <form method="post" action="/editWeight">
+                                        <input name="idBodyEd" type="number" value=${body.idBody} style="display: none">
+                                        <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
+                                    </form>
+                                </td>
+                                <td align="top">
+                                    <form method="post" action="/deletedWeight" >
+                                        <input name="idBodyDe" type="number" value=${body.idBody} style="display: none">
+                                        <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </#if>
+
+                    </#list>
+
+                </#if>
             </table>
             <div class="container" style="margin-top: 160px">
                 <p class="mt-5 mb-3 text-muted">&copy; 2023</p>

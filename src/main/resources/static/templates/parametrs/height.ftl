@@ -5,6 +5,8 @@
 <script src="https://bootstraptema.ru/plugins/2016/shieldui/script.js"></script>
 <#assign data3 = "[[],[],[],[],[],[],[],[],[],[],[]]"/>
 <#assign data4 = "[[],[],[],[],[],[],[],[],[],[],[]]"/>
+<#assign dataUpNorm = "[50.4, 55, 58.4, 61.2, 63.5, 65.5, 67.3, 68.8, 70.3, 71.8, 73.1, 74.5, 75.8]"/>
+<#assign dataLowNorm = "[47.9, 52.5, 55.7, 58.4, 60.6, 62.5, 64.2, 65.7, 67.2, 68.5, 69.8, 71.1, 72.3]"/>
 <#if height?has_content && height.value?has_content && height.valueTeor?has_content>
     <#assign data3 = height.value/>
     <#assign data4 = height.valueTeor/>
@@ -78,6 +80,8 @@
 
                     var data2 = ${data3};
                     var dataTeor = ${data4};
+                    var upNorma = ${dataUpNorm}
+                    var lowNorm = ${dataLowNorm}
                     $(function () {
                         $("#chart").shieldChart({
                             theme: "light",
@@ -127,7 +131,7 @@
                                 seriesType: 'line',
                                 axis: 1,
                                 collectionAlias: "Верхняя норма роста",
-                                data: [50.4, 55, 58.4, 61.2, 63.5, 65.5, 67.3, 68.8, 70.3, 71.8, 73.1, 74.5, 75.8]},
+                                data: upNorma},
                                 {
                                     seriesType: 'line',
                                     axis: 2,
@@ -137,7 +141,7 @@
                                 seriesType: 'line',
                                 axis: 4,
                                 collectionAlias: "Нижняя норма роста",
-                                data: [47.9, 52.5, 55.7, 58.4, 60.6, 62.5, 64.2, 65.7, 67.2, 68.5, 69.8, 71.1, 72.3]
+                                data: lowNorm
                                 } ]
                         });
                     });
