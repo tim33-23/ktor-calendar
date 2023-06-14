@@ -195,11 +195,88 @@
             </div>
 
 
-
-
+            <div class="row" style="padding-top: 20px; min-height: 20px; min-width: 200px">
+                <div class="col-4"></div>
+                <div class="col-4">
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                        <b>Статистика</b>
+                    </p>
+                </div>
+                <div class="col-4"></div>
+            </div>
+            <div class="row" style="padding-top: 5px; min-height: 20px; min-width: 200px">
+                <div class="col-3"></div>
+                <div class="col-3">
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                        <b>Время общего сна:</b>
+                    </p>
+                </div>
+                <div class="col-3">
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                        <b>${model.statistic.allTimeDream}</b>
+                    </p>
+                </div>
+                <div class="col-3"></div>
+            </div>
+            <div class="row" style="padding-top: 5px; min-height: 20px; min-width: 200px">
+                <div class="col-3"></div>
+                <div class="col-3">
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                        <b>Время дневного сна:</b>
+                    </p>
+                </div>
+                <div class="col-3">
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                        <b>${model.statistic.timeDayDream}</b>
+                    </p>
+                </div>
+                <div class="col-3"></div>
+            </div>
+            <div class="row" style="padding-top: 5px; min-height: 20px; min-width: 200px">
+                <div class="col-3"></div>
+                <div class="col-3">
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                        <b>Время ночного сна:</b>
+                    </p>
+                </div>
+                <div class="col-3">
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                        <b>${model.statistic.timeNightDream}</b>
+                    </p>
+                </div>
+                <div class="col-3"></div>
+            </div>
+            <div class="row" style="padding-top: 5px; min-height: 20px; min-width: 200px">
+                <div class="col-3"></div>
+                <div class="col-3">
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                        <b>Бодорствование</b>
+                    </p>
+                </div>
+                <div class="col-3">
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                        <b>${model.statistic.timeNoSleeping}</b>
+                    </p>
+                </div>
+                <div class="col-3"></div>
+            </div>
+            <div class="row" style="min-height: 5px; min-width: 200px">
+                <div class="col-3"></div>
+                <div class="col-3">
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                        <b>Количества сна</b>
+                    </p>
+                </div>
+                <div class="col-3">
+                    <p style="font-size: 25px;font-family: 'Arial',SansSerif;">
+                        <b>${model.statistic.countDream}</b>
+                    </p>
+                </div>
+                <div class="col-3"></div>
+            </div>
 
             <div class="container" style="margin-top: 650px">
-                <p class="mt-5 mb-3 text-muted">&copy; 2022</p>
+                <p class="mt-5 mb-3 text-muted">&copy; 2023</p>
             </div>
         </div>
     </div>

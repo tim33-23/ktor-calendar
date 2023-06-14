@@ -6,12 +6,15 @@ import com.example.dao.DAOFacadeImpl
 import com.example.dto.Child
 import com.example.dto.Dream
 import com.example.dto.DreamForTemplate
+import com.example.model.DreamsWithStatistic
 
 import com.example.model.SleepForTemplate
+import com.example.model.StatisticSleeping
 import io.ktor.util.reflect.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.*
 import kotlinx.datetime.toJavaLocalDateTime
+import java.sql.Time
 import java.time.format.DateTimeFormatter
 
 class SleepPage {
@@ -42,7 +45,7 @@ class SleepPage {
         }
 
         val dreams2 = setDreamListForTemplate(dreams, nowTime)
-        return mapOf("model" to SleepForTemplate(currentDate, count-1, checkOnDream, dreams2, nowTime))
+        return mapOf("model" to SleepForTemplate(currentDate, count-1, checkOnDream, dreams2.dreams, nowTime, dreams2.statistic))
     }
 
 
@@ -67,7 +70,7 @@ class SleepPage {
             checkOnDream = true;
         }
         val dreams2 = setDreamListForTemplate(dreams, nowTime)
-        return mapOf("model" to SleepForTemplate(currentDate, count,checkOnDream, dreams2, nowTime))
+        return mapOf("model" to SleepForTemplate(currentDate, count,checkOnDream, dreams2.dreams, nowTime, dreams2.statistic))
     }
 
     suspend fun getModelForSleepPageNext(children: Child, count: Int): Map<Any, Any?>?{
@@ -91,13 +94,19 @@ class SleepPage {
             checkOnDream = true;
         }
         val dreams2 = setDreamListForTemplate(dreams, nowTime)
-        return mapOf("model" to SleepForTemplate(currentDate, count+1, checkOnDream, dreams2, nowTime))
+        return mapOf("model" to SleepForTemplate(currentDate, count+1, checkOnDream, dreams2.dreams, nowTime, dreams2.statistic))
     }
 
 
-    fun setDreamListForTemplate(dreams: List<Dream>, nowTime: String): List<DreamForTemplate>{
+    fun setDreamListForTemplate(dreams: List<Dream>, nowTime: String): DreamsWithStatistic{
         var dreams2 = mutableListOf<DreamForTemplate>()
+
+        var countDream: Int = 0
+        var timeDream : DateTimePeriod? = null
+        var timeDay : DateTimePeriod? = null
+        var timeNoSleep: DateTimePeriod? = null
         for(dream in dreams){
+            countDream++
             if(dream.dateTimeSlEnded!=null){
                 if(dreams2.isNotEmpty() && dreams2.last().dateTimeSlEnded!="0"){
                     val pattern = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
@@ -106,6 +115,7 @@ class SleepPage {
                     val d2 = dream.dateTimeSlStarted
                     val period = d2.let { d3.toInstant(TimeZone.UTC).periodUntil(it.toInstant(TimeZone.UTC), TimeZone.UTC) }
                     var periodString:String
+
                     if(period.hours!=0){
                         periodString = period.hours.toString()+" часов "+period.minutes.toString()+" минут"
                     }
@@ -113,8 +123,17 @@ class SleepPage {
                         periodString = period.minutes.toString() + " минут"
                     }
                     var day: Boolean = false
-                    if(d3.date.compareTo(d2.date) == 1)
+                    if(d3.date.compareTo(d2.date) == 1){
                         day=true
+                        if(timeNoSleep==null){
+                            timeNoSleep = period
+                        }
+                        else{
+                            timeNoSleep += period
+                        }
+                    }
+
+
                         dreams2.add(DreamForTemplate(-1, -1, DateFormat().format(d3), DateFormat().format(d2), periodString, day))
                 }
                 val d1 = dream.dateTimeSlStarted
@@ -127,9 +146,31 @@ class SleepPage {
                 else{
                     periodString = period.minutes.toString() + " минут"
                 }
+                if(timeDream==null){
+                    timeDream = period
+                }
+                else{
+                    timeDream += period
+                }
                 var day: Boolean = false
-                if(d2.date.compareTo(d1.date) == 0)
+                if(d2.date.compareTo(d1.date) == 0){
                     day=true
+                    if(timeDay==null){
+                        timeDay = period
+                    }
+                    else{
+                        timeDay += period
+                    }
+                }
+                else{
+                    if(timeNoSleep==null){
+                        timeNoSleep = period
+                    }
+                    else{
+                        timeNoSleep += period
+                    }
+                }
+
                 dreams2.add(DreamForTemplate(dream.idSleep, dream.idChild, DateFormat().format(dream.dateTimeSlStarted), DateFormat().format(dream.dateTimeSlEnded), periodString, day))
             }
             else{
@@ -144,9 +185,32 @@ class SleepPage {
                 else{
                     periodString = period.minutes.toString() + " минут"
                 }
+                if(timeDream==null){
+                    timeDream = period
+                }
+                else{
+                    timeDream += period
+                }
                 var day: Boolean = false
-                if(d1.date.compareTo(d2.date) == 0)
+                if(d1.date.compareTo(d2.date) == 0){
                     day=true
+                    if(timeDay==null){
+                        timeDay = period
+                    }
+                    else{
+                        timeDay += period
+                    }
+                }
+                else{
+                    if(timeNoSleep==null){
+                        timeNoSleep = period
+                    }
+                    else{
+                        timeNoSleep += period
+                    }
+
+                }
+
                 dreams2.add(DreamForTemplate(dream.idSleep, dream.idChild, DateFormat().format(d1), "0", periodString, day))
             }
         }
@@ -164,14 +228,59 @@ class SleepPage {
             }
             var day: Boolean = false
             if(d1.date.compareTo(d2.date) == 0)
+            {
                 day=true
+                if(timeNoSleep==null){
+                    timeNoSleep = period
+                }
+                else{
+                    timeNoSleep += period
+                }
+            }
+            else{
+                if(timeNoSleep==null){
+                    timeNoSleep = period
+                }
+                else{
+                    timeNoSleep += period
+                }
+            }
+
             dreams2.add(DreamForTemplate(-1, -1, DateFormat().format(d1), "0", periodString, day))
 
         }
+        var allTimeDream = "-"
+        var timeDayDream = "-"
+        var timeNoSleeping = "-"
+        var timeNight = "-"
+        if(timeDay!=null){
+            timeDayDream = timeDay.hours.toString()+ " часов "+timeDay.minutes.toString()+" минут"
+        }
+        var hours = 0
+        var minute = 0
+        if(timeDream!=null){
+            if(timeDay!=null){
+                if(timeDream.minutes<timeDay.minutes){
+                    hours = timeDream.hours - 1 - timeDay.hours
+                    minute = timeDream.minutes + 60 - timeDay.minutes
+                }else{
+                    hours = timeDream.hours - timeDay.hours
+                    minute = timeDream.minutes - timeDay.minutes
+                }
+                var timePeriod = DateTimePeriod(0,0,0,timeDream.hours -  timeDay.hours )
+                timeNight = hours.toString() + " часов "+minute.toString()+" минут"
+            }
+            else{
+                timeNight = timeDream.hours.toString()+ " часов "+timeDream.minutes.toString()+" минут"
+            }
 
+            allTimeDream = timeDream.hours.toString()+ " часов "+timeDream.minutes.toString()+" минут"
+        }
+        if(timeNoSleep!=null){
+            timeNoSleeping = timeNoSleep.hours.toString()+ " часов "+timeNoSleep.minutes.toString()+" минут"
+        }
 
-
-        return dreams2
+        return DreamsWithStatistic(dreams2, StatisticSleeping(allTimeDream, timeDayDream, timeNoSleeping, countDream, timeNight))
     }
 
 }
