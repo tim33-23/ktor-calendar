@@ -145,6 +145,27 @@ class DAOFacadeImpl : DAOFacade {
         return@dbQuery false
     }
 
+    override suspend fun deleteWeight(idBody: Int): Boolean? = dbQuery{
+        val body = ParametersBodys
+            .select{ParametersBodys.idBody eq idBody}
+            .map(::resultRowToBody)
+            .singleOrNull()
+        if(body?.childHeightFact == null){
+            return@dbQuery ParametersBodys.deleteWhere { (ParametersBodys.idBody eq idBody) }>0
+        }
+        else{
+            ParametersBodys.update({ParametersBodys.idBody eq idBody}){
+                it[ParametersBodys.idBody] = idBody
+                it[ParametersBodys.idChild] = idChild
+                it[ParametersBodys.childHeightFact] = childHeightFact
+                it[ParametersBodys.childWeightFact] = null
+                it[ParametersBodys.dateOfAffixingCh] = dateOfAffixingCh
+            }
+            return@dbQuery true
+        }
+        return@dbQuery false
+    }
+
     override suspend fun insertParametersBody(idChild: Int, height: Float?, weight: Float?, date: LocalDate): ParametersBody? = dbQuery{
         val insertStatement = ParametersBodys.insert {
             it[ParametersBodys.idChild] = idChild

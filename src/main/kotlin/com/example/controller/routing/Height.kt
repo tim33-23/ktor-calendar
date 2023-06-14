@@ -57,8 +57,6 @@ fun Application.configureHeight() {
             get("/addHeight"){
                 val userSession = call.principal<UserSession>()
                 if(userSession!=null){
-                    val idChild = userSession.idChild
-
                     call.respond(FreeMarkerContent("templates/parametrs/addHeight.ftl", null))
                 }
                 else{

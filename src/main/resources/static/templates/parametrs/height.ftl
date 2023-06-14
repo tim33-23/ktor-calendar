@@ -173,38 +173,41 @@
                     </tr>
                     <#if height?has_content && height.parametersBody?has_content>
                         <#list height.parametersBody as body  >
-                            <tr>
-                                <td width="100px">
-                                    <div style="padding-top: 10px">
-                                        <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                            <b>
-                                                ${body.childHeightFact} см
-                                            </b>
-                                        </p>
-                                    </div>
-                                </td>
-                                <td width="100px">
-                                    <div style="padding-top: 10px">
-                                        <p style="font-size: 20px;font-family: 'Arial',SansSerif">
-                                            <b>
-                                                ${body.dateofAffixingCh}
-                                            </b>
-                                        </p>
-                                    </div>
-                                </td>
-                                <td>
-                                    <form method="post" action="/editHeight">
-                                        <input name="idBodyEd" type="number" value=${body.idBody} style="display: none">
-                                        <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
-                                    </form>
-                                </td>
-                                <td align="top">
-                                    <form method="post" action="/deletedHeight" >
-                                        <input name="idBodyDe" type="number" value=${body.idBody} style="display: none">
-                                        <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
-                                    </form>
-                                </td>
-                            </tr>
+                            <#if body.childHeightFact?has_content>
+                                <tr>
+                                    <td width="100px">
+                                        <div style="padding-top: 10px">
+                                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                                <b>
+                                                    ${body.childHeightFact} см
+                                                </b>
+                                            </p>
+                                        </div>
+                                    </td>
+                                    <td width="100px">
+                                        <div style="padding-top: 10px">
+                                            <p style="font-size: 20px;font-family: 'Arial',SansSerif">
+                                                <b>
+                                                    ${body.dateofAffixingCh}
+                                                </b>
+                                            </p>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <form method="post" action="/editHeight">
+                                            <input name="idBodyEd" type="number" value=${body.idBody} style="display: none">
+                                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Изменить</button>
+                                        </form>
+                                    </td>
+                                    <td align="top">
+                                        <form method="post" action="/deletedHeight" >
+                                            <input name="idBodyDe" type="number" value=${body.idBody} style="display: none">
+                                            <button class="btn btn-secondary" type="submit" style="vertical-align: top">Удалить</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </#if>
+
                         </#list>
 
                     </#if>

@@ -5,6 +5,7 @@ import com.example.dao.DAOFacade
 import com.example.dao.DAOFacadeImpl
 import com.example.dto.ParametersBody
 import com.example.dto.UserSession
+import com.example.services.HeightPage
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.freemarker.*
@@ -30,7 +31,10 @@ fun Application.configureWeight() {
                     val idChild = userSession.idChild
                     val child = idChild?.let { it1 -> dao.child(it1) }
                     if(child != null){
-                        call.respond(FreeMarkerContent("templates/parametrs/weight.ftl", null))
+
+                        val model = HeightPage().getModelForWeightPage(idChild)
+
+                        call.respond(FreeMarkerContent("templates/parametrs/weight.ftl", model))
                     }
                     else{
                         val parent = dao.parent(email)
@@ -67,19 +71,21 @@ fun Application.configureWeight() {
                     val dateParameters = formParameters["dateParametrs"]?.toLocalDate()
                     var newBody: ParametersBody? = null
                     if(idChild != null && weight != null && dateParameters != null){
-/*                        val body = dao.parametersBody(idChild, dateParameters)
+                        val body = dao.parametersBody(idChild, dateParameters)
                         if(body==null){
                             newBody = dao.insertParametersBody(idChild, null, weight, dateParameters)
                         }
                         else{
-                            if(dao.updateParametersBody(body.idBody, idChild, body.childHeightFact, weight, dateParameters)){
+                            val heightAdd = dao.updateParametersBody(body.idBody, idChild, body.childHeightFact, weight, dateParameters)
+                            if(heightAdd){
                                 newBody = dao.parametersBody(idChild, dateParameters)
                             }
                             else{
                                 newBody = null
                             }
-                        }*/
-                        call.respond(FreeMarkerContent("templates/parametrs/weight2.ftl", null))
+                        }
+                        val model = HeightPage().getModelForWeightPage(idChild)
+                        call.respond(FreeMarkerContent("templates/parametrs/weight.ftl", model))
                     }
                     else{
                         call.respond(FreeMarkerContent("templates/parametrs/addWeight.ftl", null))
@@ -89,6 +95,29 @@ fun Application.configureWeight() {
                     call.respond(FreeMarkerContent("templates/authorization/login.ftl", null))
                 }
             }
+
+
+            post("/deletedWeight") {
+                val userSession = call.principal<UserSession>()
+                val formParameters = call.receiveParameters()
+                if(userSession!=null){
+                    val idChild = userSession.idChild
+                    val idBody = formParameters["idBodyDe"]?.toInt()
+                    if(idChild != null && idBody != null){
+                        val del = dao.deleteWeight(idBody)
+                        val model = HeightPage().getModelForHeightPage(idChild)
+                        call.respond(FreeMarkerContent("templates/parametrs/weight.ftl", model))
+                    }
+                    else{
+                        call.respond(FreeMarkerContent("templates/parametrs/addHeight.ftl", null))
+                    }
+                }
+                else{
+                    call.respond(FreeMarkerContent("templates/authorization/login.ftl", null))
+                }
+            }
+
+
         }
     }
 }
