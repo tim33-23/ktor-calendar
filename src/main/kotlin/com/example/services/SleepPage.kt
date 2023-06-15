@@ -105,6 +105,7 @@ class SleepPage {
         var timeDream : DateTimePeriod? = null
         var timeDay : DateTimePeriod? = null
         var timeNoSleep: DateTimePeriod? = null
+        var timeNightSleep: DateTimePeriod?=null
         for(dream in dreams){
             countDream++
             if(dream.dateTimeSlEnded!=null){
@@ -123,15 +124,17 @@ class SleepPage {
                         periodString = period.minutes.toString() + " минут"
                     }
                     var day: Boolean = false
+                    if(timeNoSleep==null){
+                        timeNoSleep = period
+                    }
+                    else{
+                        timeNoSleep += period
+                    }
                     if(d3.date.compareTo(d2.date) == 1){
                         day=true
-                        if(timeNoSleep==null){
-                            timeNoSleep = period
-                        }
-                        else{
-                            timeNoSleep += period
-                        }
+
                     }
+
 
 
                         dreams2.add(DreamForTemplate(-1, -1, DateFormat().format(d3), DateFormat().format(d2), periodString, day))
@@ -163,11 +166,11 @@ class SleepPage {
                     }
                 }
                 else{
-                    if(timeNoSleep==null){
-                        timeNoSleep = period
+                    if(timeNightSleep==null){
+                        timeNightSleep = period
                     }
                     else{
-                        timeNoSleep += period
+                        timeNightSleep += period
                     }
                 }
 
@@ -268,15 +271,6 @@ class SleepPage {
                     minute = timeDream.minutes - timeDay.minutes
                 }
                 timeNight = hours.toString() + " часов "+minute.toString()+" минут"
-                if(timeNoSleep!=null){
-                    if(timeNoSleep.minutes>minute){
-                        timeNoSleeping = (timeNoSleep.hours-hours).toString()+ " часов "+(timeNoSleep.minutes-minute).toString()+" минут"
-                    }
-                    else{
-                        timeNoSleeping = (timeNoSleep.hours-hours-1).toString()+ " часов "+(timeNoSleep.minutes-minute+60).toString()+" минут"
-                    }
-
-                }
             }
             else{
                 timeNight = timeDream.hours.toString()+ " часов "+timeDream.minutes.toString()+" минут"
@@ -284,9 +278,11 @@ class SleepPage {
 
             allTimeDream = timeDream.hours.toString()+ " часов "+timeDream.minutes.toString()+" минут"
         }
-        if(timeNoSleeping=="-" && timeNoSleep!=null){
+
+        if(timeNoSleep!=null){
             timeNoSleeping = timeNoSleep.hours.toString()+ " часов "+timeNoSleep.minutes.toString()+" минут"
         }
+
 
         return DreamsWithStatistic(dreams2, StatisticSleeping(allTimeDream, timeDayDream, timeNoSleeping, countDream, timeNight))
     }
