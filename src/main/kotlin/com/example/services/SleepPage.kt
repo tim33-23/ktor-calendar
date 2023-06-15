@@ -230,24 +230,17 @@ class SleepPage {
                 periodString = period.minutes.toString() + " минут"
             }
             var day: Boolean = false
+            if(timeNoSleep==null){
+                timeNoSleep = period
+            }
+            else{
+                timeNoSleep += period
+            }
             if(d1.date.compareTo(d2.date) == 0)
             {
                 day=true
-                if(timeNoSleep==null){
-                    timeNoSleep = period
-                }
-                else{
-                    timeNoSleep += period
-                }
             }
-            else{
-                if(timeNoSleep==null){
-                    timeNoSleep = period
-                }
-                else{
-                    timeNoSleep += period
-                }
-            }
+
 
             dreams2.add(DreamForTemplate(-1, -1, DateFormat().format(d1), "0", periodString, day))
 
