@@ -184,6 +184,13 @@
                             </p>
                         </div>
                     </td>
+                    <td>
+                        <form method="post" action="/deleteVaccina">
+                            <button type="submit" class="btn btn-lg" style="vertical-align: center" >
+                                <img src="/static/trash.png" alt="" width="30" height="30">
+                            </button>
+                        </form>
+                    </td>
                 </tr>
                 <tr style="width: 100%">
                     <td style="border-left: black 2px solid;border-bottom:black 2px solid; border-right:black 2px solid ">

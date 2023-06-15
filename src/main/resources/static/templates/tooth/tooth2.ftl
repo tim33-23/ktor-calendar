@@ -283,14 +283,22 @@
                 </div>
             </td>
             <td width="200px">
-                <div>
-                    <button type="button" class="btn btn-lg" style="vertical-align: center" >
-                        <img src="/static/pen.png" alt="" width="30" height="30">
-                    </button>
-                    <button type="button" class="btn btn-lg" style="vertical-align: center" >
-                        <img src="/static/trash.png" alt="" width="30" height="30">
-                    </button>
-                </div>
+                <table>
+                    <tr>
+                        <td>
+                            <button type="button" class="btn btn-lg" style="vertical-align: center" >
+                                <img src="/static/pen.png" alt="" width="30" height="30">
+                            </button>
+                        </td>
+                        <td>
+                            <form method="post" action="/deleteToth">
+                                <button type="submit" class="btn btn-lg" style="vertical-align: center" >
+                                    <img src="/static/trash.png" alt="" width="30" height="30">
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
     </table>

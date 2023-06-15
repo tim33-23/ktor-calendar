@@ -98,11 +98,11 @@ class HeightPage {
             if(body.childHeightFact!=null){
                 if(month[m] == -1F){
                     month[m] = body.childHeightFact
+                    if(last<m)
+                        last = m
                 }
 
-
             }
-            last = m
         }
         var sumLnt = 0.0
         var sumLnY = 0.0
@@ -122,9 +122,9 @@ class HeightPage {
             }
             else{
                 count++
-                sumLnY += ln(month[i])
+                sumLnY += ln(month[i]/10)
                 sumLnt += ln((i+1).toDouble())
-                sumLnYXLnT += ln(month[i])*ln((i+1).toDouble())
+                sumLnYXLnT += ln(month[i]/10)*ln((i+1).toDouble())
                 sumlnTXLnT += ln((i+1).toDouble())*ln((i+1).toDouble())
                 if(i==0){
                     value = value+month[i].toString()
@@ -146,7 +146,7 @@ class HeightPage {
         val a = exp(lna)
         for(i in last+1..11)
         {
-            val v = a*((i-3).toDouble().pow(b))
+            val v = a*((i).toDouble().pow(b))*10-10
             valueTeor = valueTeor + "," + String.format("%.1f", v.toFloat()).replace(",", ".")
         }
 
@@ -177,11 +177,12 @@ class HeightPage {
             val m = period.months
             if(body.childWeightFact!=null){
                 if(month[m] == -1F){
-                    count++
                     month[m] = body.childWeightFact
+                    if(last<m)
+                        last = m
                 }
+
             }
-            last = m
         }
         var sumLnt = 0.0
         var sumLnY = 0.0
@@ -201,9 +202,9 @@ class HeightPage {
             }
             else{
                 count++
-                sumLnY += ln(month[i])
+                sumLnY += ln(month[i]/1000)
                 sumLnt += ln((i+1).toDouble())
-                sumLnYXLnT += ln(month[i])*ln((i+1).toDouble())
+                sumLnYXLnT += ln(month[i]/1000)*ln((i+1).toDouble())
                 sumlnTXLnT += ln((i+1).toDouble())*ln((i+1).toDouble())
                 if(i==0){
                     value = value+month[i].toString()
@@ -225,7 +226,7 @@ class HeightPage {
         val a = exp(lna)
         for(i in last+1..11)
         {
-            val v = a*((i-3).toDouble().pow(b))
+            val v = a*((i).toDouble().pow(b))*1000-1000
             valueTeor = valueTeor + "," + String.format("%.1f", v.toFloat()).replace(",", ".")
         }
 

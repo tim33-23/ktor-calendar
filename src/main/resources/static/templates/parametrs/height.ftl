@@ -5,8 +5,10 @@
 <script src="https://bootstraptema.ru/plugins/2016/shieldui/script.js"></script>
 <#assign data3 = "[[],[],[],[],[],[],[],[],[],[],[]]"/>
 <#assign data4 = "[[],[],[],[],[],[],[],[],[],[],[]]"/>
-<#assign dataUpNorm = "[50.4, 55, 58.4, 61.2, 63.5, 65.5, 67.3, 68.8, 70.3, 71.8, 73.1, 74.5, 75.8]"/>
-<#assign dataLowNorm = "[47.9, 52.5, 55.7, 58.4, 60.6, 62.5, 64.2, 65.7, 67.2, 68.5, 69.8, 71.1, 72.3]"/>
+
+
+<#assign dataUpNorm = "[51, 55.6, 59.1, 61.9, 64.3, 66.2, 68, 69.6, 71.1, 72.6, 73.9, 75.3]"/>
+<#assign dataLowNorm = "[47.3, 51.7, 55, 57.7, 59.9, 61.8, 63.5, 65, 66.4, 67.7, 69, 70.3]"/>
 <#if height?has_content && height.value?has_content && height.valueTeor?has_content>
     <#assign data3 = height.value/>
     <#assign data4 = height.valueTeor/>
@@ -94,7 +96,7 @@
                             },
                             axisY: [{
                                 min:45,
-                                max: 100,
+                                max: 80,
                                 title: {
                                     text: 'Рост(см)',
                                     style: {

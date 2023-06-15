@@ -267,8 +267,16 @@ class SleepPage {
                     hours = timeDream.hours - timeDay.hours
                     minute = timeDream.minutes - timeDay.minutes
                 }
-                var timePeriod = DateTimePeriod(0,0,0,timeDream.hours -  timeDay.hours )
                 timeNight = hours.toString() + " часов "+minute.toString()+" минут"
+                if(timeNoSleep!=null){
+                    if(timeNoSleep.minutes>minute){
+                        timeNoSleeping = (timeNoSleep.hours-hours).toString()+ " часов "+(timeNoSleep.minutes-minute).toString()+" минут"
+                    }
+                    else{
+                        timeNoSleeping = (timeNoSleep.hours-hours-1).toString()+ " часов "+(timeNoSleep.minutes-minute+60).toString()+" минут"
+                    }
+
+                }
             }
             else{
                 timeNight = timeDream.hours.toString()+ " часов "+timeDream.minutes.toString()+" минут"
@@ -276,7 +284,7 @@ class SleepPage {
 
             allTimeDream = timeDream.hours.toString()+ " часов "+timeDream.minutes.toString()+" минут"
         }
-        if(timeNoSleep!=null){
+        if(timeNoSleeping=="-" && timeNoSleep!=null){
             timeNoSleeping = timeNoSleep.hours.toString()+ " часов "+timeNoSleep.minutes.toString()+" минут"
         }
 

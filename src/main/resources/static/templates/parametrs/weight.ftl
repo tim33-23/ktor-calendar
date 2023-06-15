@@ -3,8 +3,13 @@
 <#include "../head-config.ftl"/>
 <script src="https://bootstraptema.ru/plugins/jquery/jquery-1.11.3.min.js"></script>
 <script src="https://bootstraptema.ru/plugins/2016/shieldui/script.js"></script>
+
+
+
 <#assign data3 = "[[],[],[],[],[],[],[],[],[],[],[]]"/>
 <#assign data4 = "[[],[],[],[],[],[],[],[],[],[],[]]"/>
+<#assign lowWeight = "[2800, 3600, 4500, 5200, 5700, 6100, 6500, 6800, 7000, 7300, 7500, 7700]"/>
+<#assign upWeight = "[3700, 4800, 5800, 6600, 7300, 7800, 8200, 8600, 9000, 9300, 9600, 9900]"/>
 <#if height?has_content && height.value?has_content && height.valueTeor?has_content>
     <#assign data3 = height.value/>
     <#assign data4 = height.valueTeor/>
@@ -78,6 +83,8 @@
                 <script>
                     var data2 = ${data3};
                     var dataTeor = ${data4};
+                    var up = ${upWeight};
+                    var low = ${lowWeight}
                     $(function () {
                         $("#chart").shieldChart({
                             theme: "light",
@@ -122,7 +129,7 @@
                                 seriesType: 'line',
                                 axis: 0,
                                 collectionAlias: "Верхняя норма веса",
-                                data: [3600, 4600, 5690, 6460, 7000, 7500, 7900, 8300, 8600, 8900, 9200, 9500, 9700]
+                                data: up
                             }, {
                                 seriesType: 'line',
                                 axis: 1,
@@ -137,7 +144,7 @@
                                 seriesType: 'line',
                                 axis: 2,
                                 collectionAlias: "Нижняя норма веса",
-                                data: [2900, 3800, 4700, 5400, 5900, 6400, 6700, 7000, 7300, 7600, 7810, 8000, 8200]
+                                data: low
                             }]
                         });
                     });
